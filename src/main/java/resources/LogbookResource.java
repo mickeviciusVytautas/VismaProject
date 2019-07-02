@@ -26,21 +26,18 @@ public class LogbookResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response createLogbook(Logbook logbook){
         logbookEJB.create(logbook);
-
         return Response.ok(logbook.toJson()).build();
     }
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getLogbook() {
-        Departure departure = new Departure(new Date(), "port");
-        Catch aCatch = new Catch("afrikines silkes", 1L);
-        Arrival arrival = new Arrival("amazing port", new Date());
-        EndOfFishing endOfFishing = new EndOfFishing(new Date());
-        Logbook logbook =  new Logbook(departure, aCatch, arrival, endOfFishing);
-        return Response.ok(logbook.toJson())
-                .header("hello", "world")
-                .build();
-    }
+
+//    @GET
+//    @Produces(MediaType.APPLICATION_JSON)
+//    @Path("{id}")
+//    public Response getLogbook(@PathParam("id") Long id) {
+//        logbookEJB.findB
+//        return Response.ok(logbook.toJson())
+//                .header("hello", "world")
+//                .build();
+//    }
 
     @GET
     @Path("/all")

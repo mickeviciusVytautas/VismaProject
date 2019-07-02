@@ -16,7 +16,7 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name = "Arrival")
+@Table
 public class Arrival implements Serializable {
 
     @Id

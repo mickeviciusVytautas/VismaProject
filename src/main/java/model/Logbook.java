@@ -36,6 +36,9 @@ public class Logbook {
     @OneToOne
     private EndOfFishing endOfFishing;
 
+    public Logbook(Departure departure){
+        this.departure = departure;
+    }
     public Logbook(Departure departure, Catch aCatch, Arrival arrival, EndOfFishing endOfFishing) {
         this.departure = departure;
         this.aCatch = aCatch;

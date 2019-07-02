@@ -1,7 +1,6 @@
 package EJB;
 
 import model.Logbook;
-import sun.rmi.runtime.Log;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -21,6 +20,10 @@ public class LogbookEJBImpl implements LogbookEJB {
 
     @Override
     public void create(Logbook logbook) {
+        em.persist(logbook.getDeparture());
+        em.persist(logbook.getACatch());
+        em.persist(logbook.getArrival());
+        em.persist(logbook.getEndOfFishing());
         em.persist(logbook);
 
     }
