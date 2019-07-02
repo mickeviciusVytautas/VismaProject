@@ -5,12 +5,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class Logbook {
+@NoArgsConstructor
+public class Catch {
 
-    private Departure departure;
-    private Catch aCatch;
-
+    private String species;
+    private Long weight;
 
 }
