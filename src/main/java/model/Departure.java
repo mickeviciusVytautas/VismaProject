@@ -33,8 +33,8 @@ public class Departure {
 
     public JsonObject toJson(){
         return Json.createObjectBuilder()
-                .add("date", date.toString())
-                .add("port", port)
+                .add("Port", port)
+                .add("Date", date.toString())
                 .build();
     }
 

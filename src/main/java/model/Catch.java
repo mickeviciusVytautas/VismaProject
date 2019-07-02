@@ -33,8 +33,8 @@ public class Catch {
 
     public JsonObject toJson(){
         return Json.createObjectBuilder()
-                .add("species", species)
-                .add("weight", weight)
+                .add("Species", species)
+                .add("Weight", weight)
                 .build();
     }
 

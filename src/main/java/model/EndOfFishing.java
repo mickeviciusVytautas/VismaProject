@@ -30,7 +30,7 @@ public class EndOfFishing {
 
     public JsonObject toJson(){
         return Json.createObjectBuilder()
-                .add("date", date.toString())
+                .add("Date", date.toString())
                 .build();
     }
 }

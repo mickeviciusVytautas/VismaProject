@@ -34,8 +34,8 @@ public class Arrival {
 
     public JsonObject toJson(){
         return Json.createObjectBuilder()
-                .add("port", port)
-                .add("date", date.toString())
+                .add("Port", port)
+                .add("Date", date.toString())
                 .build();
     }
 }

@@ -10,10 +10,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 @Data
 @NoArgsConstructor
+@XmlRootElement
 public class Logbook {
 
     @Id
@@ -38,21 +40,12 @@ public class Logbook {
 
     public JsonObject toJson() {
         return Json.createObjectBuilder()
-                .add("departure", Json.createObjectBuilder()
-                    .add("port", departure.getPort())
-                    .add("date", departure.getDate().toString())
-                    .build())
-                .add("catch",  Json.createObjectBuilder()
-                    .add("species", aCatch.getSpecies())
-                    .add("weight", aCatch.getWeight())
-                    .build())
-                .add("arrival", Json.createObjectBuilder()
-                    .add("port", arrival.getPort())
-                    .add("date", arrival.getDate().toString())
-                    .build())
-                .add("endOfFishing", Json.createObjectBuilder()
-                    .add("date", endOfFishing.getDate().toString())
-                    .build())
+                .add("Logbook", Json.createObjectBuilder()
+                    .add("Departure", departure.toJson())
+                    .add("Catch",  aCatch.toJson())
+                    .add("Arrival", arrival.toJson())
+                    .add("EndOfFishing", endOfFishing.toJson())
+                        .build())
                 .build();
     }
 }
