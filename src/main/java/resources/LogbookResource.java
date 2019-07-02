@@ -1,9 +1,8 @@
 package resources;
 
-import model.Catch;
-import model.Departure;
-import model.Logbook;
+import model.*;
 
+import javax.json.JsonObject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.time.LocalDateTime;
@@ -14,8 +13,13 @@ public class LogbookResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Logbook getLogbooks() {
-        return new Logbook(new Departure(new Date(), "port"), new Catch("afrikines silkes", 1L  ));
+    public JsonObject getLogbooks() {
+        Departure departure = new Departure(new Date(), "port");
+        Catch aCatch = new Catch("afrikines silkes", 1L);
+        Arrival arrival = new Arrival("amazing port", new Date());
+        EndOfFishing endOfFishing = new EndOfFishing(new Date());
+        Logbook logbook =  new Logbook(departure, aCatch, arrival, endOfFishing);
+        return logbook.toJson();
     }
 
     @POST
