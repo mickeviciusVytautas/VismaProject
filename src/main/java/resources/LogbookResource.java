@@ -29,15 +29,15 @@ public class LogbookResource {
         return Response.ok(logbook.toJson()).build();
     }
 
-//    @GET
-//    @Produces(MediaType.APPLICATION_JSON)
-//    @Path("{id}")
-//    public Response getLogbook(@PathParam("id") Long id) {
-//        logbookEJB.findB
-//        return Response.ok(logbook.toJson())
-//                .header("hello", "world")
-//                .build();
-//    }
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("{id}")
+    public Response getLogbook(@PathParam("id") Long id) {
+        Logbook logbook = logbookEJB.findById(id);
+        return Response.ok(logbook.toJson())
+                .header("hello", "world")
+                .build();
+    }
 
     @GET
     @Path("/all")

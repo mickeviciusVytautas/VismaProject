@@ -19,6 +19,11 @@ public class LogbookEJBImpl implements LogbookEJB {
     }
 
     @Override
+    public Logbook findById(Long id) {
+        return em.find(Logbook.class, id);
+    }
+
+    @Override
     public void create(Logbook logbook) {
         em.persist(logbook.getDeparture());
         em.persist(logbook.getACatch());
