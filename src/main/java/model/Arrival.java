@@ -6,25 +6,28 @@ import lombok.NoArgsConstructor;
 
 import javax.json.Json;
 import javax.json.JsonObject;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlTransient;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
 @NoArgsConstructor
-public class Arrival {
+@Entity
+@Table(name = "Arrival")
+public class Arrival implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @XmlTransient
     private Long id;
     @NotNull
+    @Column
     private String port;
     @NotNull
+    @Column
     private Date date;
 
     public Arrival(String port, Date date) {

@@ -6,9 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.json.Json;
 import javax.json.JsonObject;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -16,19 +14,26 @@ import javax.xml.bind.annotation.XmlTransient;
 @Data
 @NoArgsConstructor
 @XmlRootElement
+@Entity
+@NamedQuery(name = Logbook.FIND_ALL, query = "select g from Logbook g")
 public class Logbook {
 
+    public static final String FIND_ALL = "findAll";
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @XmlTransient
     private Long id;
     @NotNull
+    @OneToOne
     private Departure departure;
     @NotNull
+    @OneToOne
     private Catch aCatch;
     @NotNull
+    @OneToOne
     private Arrival arrival;
     @NotNull
+    @OneToOne
     private EndOfFishing endOfFishing;
 
     public Logbook(Departure departure, Catch aCatch, Arrival arrival, EndOfFishing endOfFishing) {
