@@ -1,12 +1,13 @@
 package EJB;
 
 import model.Logbook;
-import strategy.SavingContext;
+import strategy.SavingStrategy;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,7 +17,6 @@ public class LogbookEJBImpl implements LogbookEJB {
     @PersistenceContext
     EntityManager em;
 
-    private SavingContext savingContext;
     @Override
     public List findAll() {
         Query q = em.createQuery("SELECT a FROM Logbook a");
@@ -29,13 +29,9 @@ public class LogbookEJBImpl implements LogbookEJB {
     }
 
     @Override
-    public void create(Logbook logbook, String location) {
-        em.persist(logbook.getDeparture());
-        em.persist(logbook.getACatch());
-        em.persist(logbook.getArrival());
-        em.persist(logbook.getEndOfFishing());
-        em.persist(logbook);
-
+    public Response create(Logbook logbook, SavingStrategy savingStrategy) {
+       savingStrategy.save(logbook);
+        return Response.ok().build();
     }
 
     @Override

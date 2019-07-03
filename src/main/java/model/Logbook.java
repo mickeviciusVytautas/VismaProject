@@ -1,6 +1,6 @@
 package model;
 
-import lombok.AllArgsConstructor;
+import auxilary.ConnectionType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -33,15 +33,18 @@ public class Logbook {
     @NotNull
     @OneToOne
     private EndOfFishing endOfFishing;
-
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private ConnectionType connectionType;
     public Logbook(Departure departure){
         this.departure = departure;
     }
-    public Logbook(Departure departure, Catch aCatch, Arrival arrival, EndOfFishing endOfFishing) {
+    public Logbook(Departure departure, Catch aCatch, Arrival arrival, EndOfFishing endOfFishing, String connectionType) {
         this.departure = departure;
         this.aCatch = aCatch;
         this.arrival = arrival;
         this.endOfFishing = endOfFishing;
+        this.connectionType = ConnectionType.valueOf(connectionType);
     }
 
     public JsonObject toJson() {

@@ -1,5 +1,5 @@
 package auxilary;
 
-public enum CommunicationType {
+public enum ConnectionType {
     SATELITE, INTERNET
 }

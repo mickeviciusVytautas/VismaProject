@@ -1,14 +1,14 @@
 package resources;
 
 import EJB.LogbookEJB;
-import EJB.LogbookEJBImpl;
 import model.*;
+import strategy.DBSavingStrategy;
+import strategy.FileSavingStrategy;
 
-import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.json.Json;
-import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
+import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -24,8 +24,16 @@ public class LogbookResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createLogbook(Logbook logbook, @QueryParam("location") String location){
-        logbookEJB.create(logbook, location);
+    public Response createLogbook(@Valid Logbook logbook){
+        switch (logbook.getConnectionType())
+        {
+            case SATELITE:
+                logbookEJB.create(logbook, new FileSavingStrategy());
+                break;
+            case INTERNET:
+                logbookEJB.create(logbook, new DBSavingStrategy());
+                break;
+        }
         return Response.ok(logbook.toJson()).build();
     }
 

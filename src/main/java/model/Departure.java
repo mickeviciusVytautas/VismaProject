@@ -7,7 +7,6 @@ import javax.json.JsonObject;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlTransient;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -22,11 +21,11 @@ public class Departure {
     @Setter(AccessLevel.NONE)
     private Long id;
     @NotNull
-    private LocalDate date;
+    private Date date;
     @NotNull
     private String port;
 
-    public Departure(LocalDate date, String port) {
+    public Departure(Date date, String port) {
         this.date = date;
         this.port = port;
     }
