@@ -1,13 +1,11 @@
 package resources;
 
 import EJB.ArrivalEJB;
-import EJB.ArrivalEJBImpl;
 import model.Arrival;
 
 
 import javax.inject.Inject;
 import javax.json.Json;
-import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.ws.rs.*;
 

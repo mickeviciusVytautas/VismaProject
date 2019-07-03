@@ -1,6 +1,10 @@
-package EJB;
+package EJB.impl;
 
+import EJB.LogbookEJB;
+import camel.RouteContext;
 import model.Logbook;
+import strategy.DBSavingStrategy;
+import strategy.FileSavingStrategy;
 import strategy.SavingStrategy;
 
 import javax.ejb.Stateless;
@@ -17,6 +21,7 @@ public class LogbookEJBImpl implements LogbookEJB {
     @PersistenceContext
     EntityManager em;
 
+    private SavingStrategy savingStrategy;
     @Override
     public List findAll() {
         Query q = em.createQuery("SELECT a FROM Logbook a");
@@ -29,15 +34,25 @@ public class LogbookEJBImpl implements LogbookEJB {
     }
 
     @Override
-    public Response create(Logbook logbook, SavingStrategy savingStrategy) {
-       savingStrategy.save(logbook);
-        return Response.ok().build();
+    public Response create(Logbook logbook) {
+        RouteContext context = new RouteContext();
+        context.cameel();
+        switch (logbook.getConnectionType())
+        {
+            case SATELITE:
+                savingStrategy = new FileSavingStrategy();
+                break;
+            case INTERNET:
+                savingStrategy = new DBSavingStrategy(em);
+                break;
+        }
+       return savingStrategy.save(logbook);
     }
 
     @Override
     public void update(Long id, Logbook logbook) {
         Logbook entity = em.find(Logbook.class, id);
-        entity.setACatch(logbook.getACatch());
+        entity.setCatchList(logbook.getCatchList());
         entity.setArrival(logbook.getArrival());
         entity.setDeparture(logbook.getDeparture());
         entity.setEndOfFishing(logbook.getEndOfFishing());

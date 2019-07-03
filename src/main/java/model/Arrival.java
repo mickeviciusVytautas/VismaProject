@@ -1,5 +1,9 @@
 package model;
 
+import auxilary.LocalDateDeserializer;
+import auxilary.LocalDateSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,6 +14,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -27,10 +32,11 @@ public class Arrival implements Serializable {
     @Column
     private String port;
     @NotNull
-    @Column
-    private Date date;
+    @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonDeserialize(using = LocalDateDeserializer.class)
+    private LocalDate date;
 
-    public Arrival(String port, Date date) {
+    public Arrival(String port, LocalDate date) {
         this.port = port;
         this.date = date;
     }

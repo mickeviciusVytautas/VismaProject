@@ -1,5 +1,6 @@
-package EJB;
+package EJB.impl;
 
+import EJB.EndOfFishingEJB;
 import model.EndOfFishing;
 import model.Logbook;
 
@@ -10,7 +11,7 @@ import javax.persistence.Query;
 import java.util.List;
 
 @Stateless
-public class EndOfFishingEJBImpl implements EndOfFishingEJB{
+public class EndOfFishingEJBImpl implements EndOfFishingEJB {
 
     @PersistenceContext
     EntityManager em;

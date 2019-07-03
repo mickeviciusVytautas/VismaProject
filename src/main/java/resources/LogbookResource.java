@@ -25,16 +25,7 @@ public class LogbookResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createLogbook(@Valid Logbook logbook){
-        switch (logbook.getConnectionType())
-        {
-            case SATELITE:
-                logbookEJB.create(logbook, new FileSavingStrategy());
-                break;
-            case INTERNET:
-                logbookEJB.create(logbook, new DBSavingStrategy());
-                break;
-        }
-        return Response.ok(logbook.toJson()).build();
+        return logbookEJB.create(logbook);
     }
 
     @GET

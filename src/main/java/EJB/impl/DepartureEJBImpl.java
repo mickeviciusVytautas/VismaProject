@@ -1,5 +1,6 @@
-package EJB;
+package EJB.impl;
 
+import EJB.DepartureEJB;
 import model.Departure;
 import model.Logbook;
 

@@ -1,5 +1,9 @@
 package model;
 
+import auxilary.LocalDateDeserializer;
+import auxilary.LocalDateSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.*;
 
 import javax.json.Json;
@@ -7,8 +11,8 @@ import javax.json.JsonObject;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlTransient;
-import java.time.LocalDateTime;
-import java.util.Date;
+import java.time.LocalDate;
+
 
 @Data
 @NoArgsConstructor
@@ -21,11 +25,13 @@ public class Departure {
     @Setter(AccessLevel.NONE)
     private Long id;
     @NotNull
-    private Date date;
+    @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonDeserialize(using = LocalDateDeserializer.class)
+    private LocalDate date;
     @NotNull
     private String port;
 
-    public Departure(Date date, String port) {
+    public Departure(LocalDate date, String port) {
         this.date = date;
         this.port = port;
     }

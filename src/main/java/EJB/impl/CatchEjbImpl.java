@@ -1,5 +1,6 @@
-package EJB;
+package EJB.impl;
 
+import EJB.CatchEjb;
 import model.Catch;
 import model.Logbook;
 

@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface LogbookEJB {
     List findAll();
     Optional<Logbook> findById(Long id);
-    Response create(Logbook logbook, SavingStrategy savingStrategy);
+    Response create(Logbook logbook);
     void update(Long id, Logbook logbook);
     void remove(Long id);
 

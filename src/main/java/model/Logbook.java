@@ -5,11 +5,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.json.Json;
+import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -25,8 +28,8 @@ public class Logbook {
     @OneToOne
     private Departure departure;
     @NotNull
-    @OneToOne
-    private Catch aCatch;
+    @OneToMany
+    private List<Catch> catchList = new ArrayList<>();
     @NotNull
     @OneToOne
     private Arrival arrival;
@@ -39,19 +42,21 @@ public class Logbook {
     public Logbook(Departure departure){
         this.departure = departure;
     }
-    public Logbook(Departure departure, Catch aCatch, Arrival arrival, EndOfFishing endOfFishing, String connectionType) {
+    public Logbook(Departure departure, List<Catch> catchList, Arrival arrival, EndOfFishing endOfFishing, String connectionType) {
         this.departure = departure;
-        this.aCatch = aCatch;
+        this.catchList = catchList;
         this.arrival = arrival;
         this.endOfFishing = endOfFishing;
         this.connectionType = ConnectionType.valueOf(connectionType);
     }
 
     public JsonObject toJson() {
+        JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
+        catchList.forEach(c -> jsonArrayBuilder.add(c.toJson()));
         return Json.createObjectBuilder()
                 .add("Logbook", Json.createObjectBuilder()
                     .add("Departure", departure.toJson())
-                    .add("Catch",  aCatch.toJson())
+                    .add("CatchList",  jsonArrayBuilder.build())
                     .add("Arrival", arrival.toJson())
                     .add("EndOfFishing", endOfFishing.toJson())
                         .build())
