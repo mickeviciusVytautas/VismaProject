@@ -15,10 +15,8 @@ import javax.xml.bind.annotation.XmlTransient;
 @NoArgsConstructor
 @XmlRootElement
 @Entity
-@NamedQuery(name = Logbook.FIND_ALL, query = "select g from Logbook g")
 public class Logbook {
 
-    public static final String FIND_ALL = "findAll";
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @XmlTransient

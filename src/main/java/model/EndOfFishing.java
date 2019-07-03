@@ -12,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlTransient;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -24,9 +25,9 @@ public class EndOfFishing {
     @XmlTransient
     private Long id;
     @NotNull
-    private Date date;
+    private LocalDate date;
 
-    public EndOfFishing(Date date) {
+    public EndOfFishing(LocalDate date) {
         this.date = date;
     }
 

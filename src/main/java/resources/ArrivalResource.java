@@ -13,8 +13,8 @@ import javax.ws.rs.*;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.Date;
 import java.util.List;
+
 @Path("/arrival")
 public class ArrivalResource {
     @Inject
@@ -30,19 +30,17 @@ public class ArrivalResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("{arrivalId}")
-    public Response getArrival(@PathParam("arrivalId") Long arrivalId) {
-       List<Arrival> arrival = arrivalEJB.findAll();
+    @Path("{id}")
+    public Response getArrival(@PathParam("id") Long id) {
+        Arrival arrival = arrivalEJB.findById(id);
         return Response.ok(arrival)
-                .header("hello", "world")
                 .build();
     }
 
     @GET
     @Path("/all")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getLogbooks() {
-        arrivalEJB.create(new Arrival("port", new Date()));
+    public Response getArrivals() {
         List<Arrival> arrivalList = arrivalEJB.findAll();
         JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
         arrivalList.forEach(a -> jsonArrayBuilder.add(a.toJson()));
@@ -56,4 +54,5 @@ public class ArrivalResource {
         arrivalEJB.remove(id);
         return Response.ok().build();
     }
+
 }

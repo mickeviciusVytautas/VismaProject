@@ -10,6 +10,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -28,9 +29,9 @@ public class Arrival implements Serializable {
     private String port;
     @NotNull
     @Column
-    private Date date;
+    private LocalDate date;
 
-    public Arrival(String port, Date date) {
+    public Arrival(String port, LocalDate date) {
         this.port = port;
         this.date = date;
     }

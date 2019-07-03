@@ -6,6 +6,7 @@ import model.Logbook;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import java.util.List;
 
 @Stateless
@@ -16,8 +17,14 @@ public class CatchEjbImpl implements CatchEjb {
 
     @Override
     public List<Catch> findAll() {
-        return this.em.createNamedQuery(Catch.FIND_ALL).getResultList();
+        Query q = em.createQuery("SELECT a FROM Catch a");
+        return q.getResultList();
 
+    }
+
+    @Override
+    public Catch findById(Long id) {
+        return em.find(Catch.class, id);
     }
 
     @Override
@@ -35,6 +42,7 @@ public class CatchEjbImpl implements CatchEjb {
 
     @Override
     public void remove(Long id) {
-        em.remove(id);
+        Catch entity = em.find(Catch.class, id);
+        em.remove(entity);
     }
 }

@@ -14,10 +14,9 @@ import javax.xml.bind.annotation.XmlTransient;
 @Data
 @NoArgsConstructor
 @Entity
-@NamedQuery(name = Catch.FIND_ALL, query = "select g from Catch g")
 public class Catch {
 
-    public static final String FIND_ALL = "find all" ;
+
     @Id
     @XmlTransient
     @GeneratedValue(strategy = GenerationType.IDENTITY)

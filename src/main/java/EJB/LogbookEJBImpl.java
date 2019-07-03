@@ -1,30 +1,35 @@
 package EJB;
 
 import model.Logbook;
+import strategy.SavingContext;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import java.util.List;
+import java.util.Optional;
 
 @Stateless
 public class LogbookEJBImpl implements LogbookEJB {
 
-    @PersistenceContext(name = "prod")
+    @PersistenceContext
     EntityManager em;
 
+    private SavingContext savingContext;
     @Override
     public List findAll() {
-        return this.em.createNamedQuery(Logbook.FIND_ALL).getResultList();
+        Query q = em.createQuery("SELECT a FROM Logbook a");
+        return q.getResultList();
     }
 
     @Override
-    public Logbook findById(Long id) {
-        return em.find(Logbook.class, id);
+    public Optional<Logbook> findById(Long id) {
+        return Optional.ofNullable(em.find(Logbook.class, id));
     }
 
     @Override
-    public void create(Logbook logbook) {
+    public void create(Logbook logbook, String location) {
         em.persist(logbook.getDeparture());
         em.persist(logbook.getACatch());
         em.persist(logbook.getArrival());
@@ -45,7 +50,8 @@ public class LogbookEJBImpl implements LogbookEJB {
 
     @Override
     public void remove(Long id) {
-        em.merge(id);
+        Logbook entity = em.find(Logbook.class, id);
+        em.remove(entity);
     }
 
 }

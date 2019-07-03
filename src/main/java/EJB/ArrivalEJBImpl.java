@@ -1,6 +1,7 @@
 package EJB;
 
 import model.Arrival;
+import model.Logbook;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -21,6 +22,11 @@ public class ArrivalEJBImpl implements ArrivalEJB {
     }
 
     @Override
+    public Arrival findById(Long id) {
+        return em.find(Arrival.class, id);
+    }
+
+    @Override
     public void create(Arrival arrival) {
         em.persist(arrival);
     }
@@ -35,7 +41,8 @@ public class ArrivalEJBImpl implements ArrivalEJB {
 
     @Override
     public void remove(Long id) {
-        em.remove(id);
+        Arrival entity = em.find(Arrival.class, id);
+        em.remove(entity);
     }
 
 
