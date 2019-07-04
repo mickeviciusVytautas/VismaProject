@@ -25,16 +25,16 @@ public class Logbook {
     @XmlTransient
     private Long id;
     @NotNull
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private Departure departure;
     @NotNull
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Catch> catchList = new ArrayList<>();
     @NotNull
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private Arrival arrival;
     @NotNull
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private EndOfFishing endOfFishing;
     @NotNull
     @Enumerated(EnumType.STRING)
@@ -54,11 +54,11 @@ public class Logbook {
         JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
         catchList.forEach(c -> jsonArrayBuilder.add(c.toJson()));
         return Json.createObjectBuilder()
-                .add("Logbook", Json.createObjectBuilder()
-                    .add("Departure", departure.toJson())
-                    .add("CatchList",  jsonArrayBuilder.build())
-                    .add("Arrival", arrival.toJson())
-                    .add("EndOfFishing", endOfFishing.toJson())
+                .add("logbook", Json.createObjectBuilder()
+                    .add("departure", departure.toJson())
+                    .add("catchList",  jsonArrayBuilder.build())
+                    .add("arrival", arrival.toJson())
+                    .add("endOfFishing", endOfFishing.toJson())
                         .build())
                 .build();
     }

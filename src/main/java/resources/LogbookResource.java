@@ -1,6 +1,7 @@
 package resources;
 
 import EJB.LogbookEJB;
+import camel.DataSaveContext;
 import model.*;
 import strategy.DBSavingStrategy;
 import strategy.FileSavingStrategy;
@@ -18,6 +19,8 @@ import java.util.Optional;
 @Path("/logbook")
 public class LogbookResource {
 
+    DataSaveContext dataSaveContext;
+
     @Inject
     LogbookEJB logbookEJB;
 
@@ -32,7 +35,6 @@ public class LogbookResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{id}")
     public Response getLogbook(@PathParam("id") Long id) {
-
         Optional<Logbook> optionalLogbook = logbookEJB.findById(id);
         if(optionalLogbook.isPresent()) {
             return Response.ok(optionalLogbook.get().toJson())
@@ -46,6 +48,7 @@ public class LogbookResource {
     @Path("/all")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getLogbooks() {
+        DataSaveContext.start();
         List<Logbook> logbookList = logbookEJB.findAll();
         JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
         logbookList.forEach(l -> jsonArrayBuilder.add(l.toJson()));

@@ -18,10 +18,6 @@ public class DBSavingStrategy implements SavingStrategy {
     }
     @Override
     public Response save(Logbook logbook) {
-        em.persist(logbook.getDeparture());
-        logbook.getCatchList().forEach(c -> em.persist(c));
-        em.persist(logbook.getArrival());
-        em.persist(logbook.getEndOfFishing());
         em.persist(logbook);
         return Response.ok("Successfully saved logbook to database.").build();
     }

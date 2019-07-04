@@ -1,7 +1,7 @@
 package EJB.impl;
 
 import EJB.LogbookEJB;
-import camel.RouteContext;
+import camel.DataSaveContext;
 import model.Logbook;
 import strategy.DBSavingStrategy;
 import strategy.FileSavingStrategy;
@@ -35,14 +35,12 @@ public class LogbookEJBImpl implements LogbookEJB {
 
     @Override
     public Response create(Logbook logbook) {
-        RouteContext context = new RouteContext();
-        context.cameel();
         switch (logbook.getConnectionType())
         {
-            case SATELITE:
+            case OFFLINE:
                 savingStrategy = new FileSavingStrategy();
                 break;
-            case INTERNET:
+            case ONLINE:
                 savingStrategy = new DBSavingStrategy(em);
                 break;
         }
