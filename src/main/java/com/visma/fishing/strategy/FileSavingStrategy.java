@@ -13,11 +13,9 @@ public class FileSavingStrategy implements SavingStrategy {
     @Override
     public Response save(Logbook logbook) {
         String localDate = DateFormatter.formatLocalDateTime(LocalDateTime.now());
-        String filePath = "C:\\Program Files\\wildfly-9.0.2.Final\\bin\\files\\" + localDate + ".json";
-        try {
-            FileWriter fileWriter = new FileWriter(filePath);
+        String filePath = "C:\\dev\\files\\" + localDate + ".json";
+        try (FileWriter fileWriter = new FileWriter(filePath)){
             fileWriter.write(logbook.toJson().toString());
-            fileWriter.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
