@@ -19,13 +19,11 @@ public class DataSaveRouteBuilder extends RouteBuilder {
                     Logbook logbook;
                     logbook = mapper.readValue(file, Logbook.class);
                     logbook.setConnectionType(ConnectionType.ONLINE);
-                    System.out.println(logbook.toJson());
                     exchange.getOut().setBody(logbook.toJson().toString());
-
                 })
                 .setHeader(Exchange.HTTP_METHOD, constant("POST"))
                 .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
-                .to("http://localhost:8080/deployments/api/logbook");
+                .to("http://localhost:8080/exploded/api/logbook");
     }
 
 }

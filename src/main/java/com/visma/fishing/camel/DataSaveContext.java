@@ -17,11 +17,8 @@ public class DataSaveContext {
 
 
         try {
-//            JndiContext jndiContext = new JndiContext();
-//            jndiContext.bind("LogbookEJB", logbookEJB);
             CamelContext camelContext = new DefaultCamelContext();
             camelContext.addRoutes(new DataSaveRouteBuilder());
-
             camelContext.start();
             Thread.sleep(6000);
             camelContext.stop();
