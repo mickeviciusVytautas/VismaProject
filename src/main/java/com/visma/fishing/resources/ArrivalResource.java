@@ -15,6 +15,7 @@ import java.util.List;
 
 @Path("/arrival")
 public class ArrivalResource {
+
     @Inject
     ArrivalEJB arrivalEJB;
 

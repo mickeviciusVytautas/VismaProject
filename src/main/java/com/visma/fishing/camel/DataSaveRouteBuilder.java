@@ -6,15 +6,15 @@ import com.visma.fishing.model.Logbook;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 
-import java.io.File;
-
 public class DataSaveRouteBuilder extends RouteBuilder {
 
+//    TODO: "&delete=true" doesn't work (.convertBodyTo(String.class) after from is also not helping)
     @Override
     public void configure() throws Exception {
-        from("file:C:\\Program Files\\wildfly-9.0.2.Final\\bin\\files\\")
+        from("file:C:\\Program Files\\wildfly-9.0.2.Final\\bin\\files\\?noop=true&delete=true")
+                .convertBodyTo(String.class)
                 .process(exchange -> {
-                    File file = exchange.getIn().getBody(File.class);
+                    String file = exchange.getIn().getBody(String.class);
                     ObjectMapper mapper = new ObjectMapper();
                     Logbook logbook;
                     logbook = mapper.readValue(file, Logbook.class);
@@ -23,7 +23,7 @@ public class DataSaveRouteBuilder extends RouteBuilder {
                 })
                 .setHeader(Exchange.HTTP_METHOD, constant("POST"))
                 .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
-                .to("http://localhost:8080/exploded/api/logbook");
+                .to("http://localhost:8080/exploded/api/logbook/");
     }
 
 }

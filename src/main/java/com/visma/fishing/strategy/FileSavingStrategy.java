@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 
 public class FileSavingStrategy implements SavingStrategy {
+
     @Override
     public Response save(Logbook logbook) {
         String localDate = DateFormatter.formatLocalDateTime(LocalDateTime.now());
@@ -23,4 +24,5 @@ public class FileSavingStrategy implements SavingStrategy {
 
         return Response.ok("Successfully saved logbook to file system.").build();
     }
+
 }

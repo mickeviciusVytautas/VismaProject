@@ -7,7 +7,7 @@ import javax.ws.rs.core.Response;
 
 public class DBSavingStrategy implements SavingStrategy {
 
-    EntityManager em;
+    private EntityManager em;
 
     public DBSavingStrategy (EntityManager entityManager){
         this.em = entityManager;
@@ -17,4 +17,5 @@ public class DBSavingStrategy implements SavingStrategy {
         em.persist(logbook);
         return Response.ok("Successfully saved logbook to database.").build();
     }
+
 }

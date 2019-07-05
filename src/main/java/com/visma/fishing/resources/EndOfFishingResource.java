@@ -13,6 +13,7 @@ import java.util.List;
 
 @Path("/endoffishing")
 public class EndOfFishingResource {
+
     @Inject
     EndOfFishingEJB endOfFishingEjb;
 
@@ -50,4 +51,5 @@ public class EndOfFishingResource {
         endOfFishingEjb.remove(id);
         return Response.ok().build();
     }
+
 }

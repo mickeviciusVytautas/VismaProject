@@ -1,7 +1,6 @@
 package com.visma.fishing.resources;
 
 import com.visma.fishing.EJB.LogbookEJB;
-import com.visma.fishing.camel.DataSaveContext;
 import com.visma.fishing.model.*;
 
 import javax.inject.Inject;
@@ -16,8 +15,6 @@ import java.util.Optional;
 
 @Path("/logbook")
 public class LogbookResource {
-
-    DataSaveContext dataSaveContext = new DataSaveContext();
 
     @Inject
     LogbookEJB logbookEJB;
@@ -46,7 +43,6 @@ public class LogbookResource {
     @Path("/all")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getLogbooks() {
-        dataSaveContext.start();
         List<Logbook> logbookList = logbookEJB.findAll();
         JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
         logbookList.forEach(l -> jsonArrayBuilder.add(l.toJson()));
@@ -60,4 +56,5 @@ public class LogbookResource {
         logbookEJB.remove(id);
         return Response.ok().build();
     }
+
 }

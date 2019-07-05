@@ -13,6 +13,7 @@ import java.util.List;
 
 @Path("/catch")
 public class CatchResource {
+
     @Inject
     CatchEjb catchEjb;
 
@@ -50,4 +51,5 @@ public class CatchResource {
         catchEjb.remove(id);
         return Response.ok().build();
     }
+
 }

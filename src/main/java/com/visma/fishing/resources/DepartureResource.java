@@ -12,6 +12,7 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 
 public class DepartureResource {
+
     @Inject
     DepartureEJB departureEJB;
 
@@ -49,4 +50,5 @@ public class DepartureResource {
         departureEJB.remove(id);
         return Response.ok().build();
     }
+
 }
