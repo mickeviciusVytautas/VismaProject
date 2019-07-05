@@ -28,7 +28,7 @@ public class Logbook {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private Departure departure;
     @NotNull
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Catch> catchList = new ArrayList<>();
     @NotNull
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -58,6 +58,7 @@ public class Logbook {
                     .add("catchList",  jsonArrayBuilder.build())
                     .add("arrival", arrival.toJson())
                     .add("endOfFishing", endOfFishing.toJson())
+                    .add("connectionType", connectionType.toString())
                         .build();
     }
 }
