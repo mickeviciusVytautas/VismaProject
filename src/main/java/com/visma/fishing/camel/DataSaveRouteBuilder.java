@@ -16,7 +16,7 @@ public class DataSaveRouteBuilder extends RouteBuilder {
                 .process(exchange -> {
                     File file = exchange.getIn().getBody(File.class);
                     ObjectMapper mapper = new ObjectMapper();
-                    Logbook logbook = null;
+                    Logbook logbook;
                     logbook = mapper.readValue(file, Logbook.class);
                     logbook.setConnectionType(ConnectionType.ONLINE);
                     System.out.println(logbook.toJson());
