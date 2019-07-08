@@ -10,16 +10,14 @@ import java.io.File;
 
 public class DataSaveRouteBuilder extends RouteBuilder {
 
-//    TODO: "&delete=true" doesn't work (.convertBodyTo(String.class) after from is also not helping)
     @Override
     public void configure() throws Exception {
-        from("file:C:\\dev\\files\\?noop=false&delete=true")
+        from("file:C:\\dev\\inbox\\?noop=false&delete=true")
                 .process(exchange -> {
                     File file = exchange.getIn().getBody(File.class);
                     ObjectMapper mapper = new ObjectMapper();
                     Logbook logbook;
                     logbook = mapper.readValue(file, Logbook.class);
-                    logbook.setConnectionType(ConnectionType.ONLINE);
                     exchange.getOut().setBody(logbook.toJson().toString());
                 })
                 .setHeader(Exchange.HTTP_METHOD, constant("POST"))

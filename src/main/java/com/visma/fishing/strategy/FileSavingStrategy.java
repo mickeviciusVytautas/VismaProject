@@ -13,7 +13,7 @@ public class FileSavingStrategy implements SavingStrategy {
     @Override
     public Response save(Logbook logbook) {
         String localDate = DateFormatter.formatLocalDateTime(LocalDateTime.now());
-        String filePath = "C:\\dev\\files\\" + localDate + ".json";
+        String filePath = "C:\\dev\\database\\" + localDate + ".json";
         try (FileWriter fileWriter = new FileWriter(filePath)){
             fileWriter.write(logbook.toJson().toString());
         } catch (IOException e) {

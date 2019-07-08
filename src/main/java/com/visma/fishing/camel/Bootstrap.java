@@ -23,7 +23,6 @@ public class Bootstrap {
     public void init (){
         logger.info(">> Create CamelContext and register Camel Router.");
         try {
-
             context.addRoutes(new DataSaveRouteBuilder());
             context.start();
 

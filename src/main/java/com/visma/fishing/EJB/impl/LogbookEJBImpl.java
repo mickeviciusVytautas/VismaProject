@@ -36,10 +36,10 @@ public class LogbookEJBImpl implements LogbookEJB {
     public Response create(Logbook logbook) {
         switch (logbook.getConnectionType())
         {
-            case OFFLINE:
+            case SATELLITE:
                 savingStrategy = new FileSavingStrategy();
                 break;
-            case ONLINE:
+            case NETWORK:
                 savingStrategy = new DBSavingStrategy(em);
                 break;
         }
