@@ -1,7 +1,6 @@
 package com.visma.fishing.camel;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.visma.fishing.auxilary.ConnectionType;
 import com.visma.fishing.model.Logbook;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -11,7 +10,7 @@ import java.io.File;
 public class DataSaveRouteBuilder extends RouteBuilder {
 
     @Override
-    public void configure() throws Exception {
+    public void configure() {
         from("timer://dataTimer?period=10000&delay=5s")
                 .pollEnrich("file:C:\\dev\\inbox\\?delete=true&noop=false")
                 .process(exchange -> {
@@ -19,7 +18,7 @@ public class DataSaveRouteBuilder extends RouteBuilder {
                     ObjectMapper mapper = new ObjectMapper();
                     Logbook logbook;
                     logbook = mapper.readValue(file, Logbook.class);
-                    exchange.getOut().setBody(logbook.toJson().toString());
+                    exchange.getOut().setBody(logbook.toString());
                 })
                 .setHeader(Exchange.HTTP_METHOD, constant("POST"))
                 .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))

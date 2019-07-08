@@ -1,5 +1,6 @@
 package com.visma.fishing.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.visma.fishing.auxilary.LocalDateDeserializer;
 import com.visma.fishing.auxilary.LocalDateSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -21,8 +22,8 @@ public class Departure {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @XmlTransient
     @Setter(AccessLevel.NONE)
+    @JsonIgnore
     private Long id;
     @NotNull
     @JsonSerialize(using = LocalDateSerializer.class)
@@ -41,6 +42,10 @@ public class Departure {
                 .add("port", port)
                 .add("date", date.toString())
                 .build();
+    }
+
+    public Long getId(){
+        return id;
     }
 
 }

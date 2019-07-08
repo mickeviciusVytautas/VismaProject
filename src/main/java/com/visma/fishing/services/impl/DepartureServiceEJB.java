@@ -1,36 +1,39 @@
-package com.visma.fishing.EJB.impl;
+package com.visma.fishing.services.impl;
 
-import com.visma.fishing.EJB.DepartureEJB;
+import com.visma.fishing.services.DepartureService;
 import com.visma.fishing.model.Departure;
 import com.visma.fishing.model.Logbook;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.Optional;
 
 @Stateless
-public class DepartureEJBImpl implements DepartureEJB {
+public class DepartureServiceEJB implements DepartureService {
 
     @PersistenceContext
     EntityManager em;
 
-
     @Override
     public List<Departure> findAll() {
-        Query q = em.createQuery("SELECT a FROM Departure a");
+        TypedQuery<Departure> q = em.createQuery("SELECT a FROM Departure a", Departure.class);
         return q.getResultList();
     }
 
     @Override
-    public Departure findById(Long id) {
-        return em.find(Departure.class, id);
+    public Optional<Departure> findById(Long id) {
+        return Optional.ofNullable(em.find(Departure.class, id));
     }
 
     @Override
-    public void create(Departure departure) {
+    public Response create(Departure departure) {
         em.persist(departure);
+        return Response.ok("Successfully saved departure to file system.").build();
+
     }
 
     @Override

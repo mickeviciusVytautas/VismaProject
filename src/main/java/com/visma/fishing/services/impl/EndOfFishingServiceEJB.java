@@ -1,34 +1,37 @@
-package com.visma.fishing.EJB.impl;
+package com.visma.fishing.services.impl;
 
-import com.visma.fishing.EJB.EndOfFishingEJB;
+import com.visma.fishing.services.EndOfFishingService;
 import com.visma.fishing.model.EndOfFishing;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.Optional;
 
 @Stateless
-public class EndOfFishingEJBImpl implements EndOfFishingEJB {
+public class EndOfFishingServiceEJB implements EndOfFishingService {
 
     @PersistenceContext
     EntityManager em;
 
     @Override
-    public List findAll() {
-        Query q = em.createQuery("SELECT a FROM EndOfFishing a");
+    public List<EndOfFishing> findAll() {
+        TypedQuery<EndOfFishing> q = em.createQuery("SELECT a FROM EndOfFishing a", EndOfFishing.class);
         return q.getResultList();
     }
 
     @Override
-    public EndOfFishing findById(Long id) {
-        return em.find(EndOfFishing.class, id);
+    public Optional<EndOfFishing> findById(Long id) {
+        return Optional.ofNullable(em.find(EndOfFishing.class, id));
     }
 
     @Override
-    public void create(EndOfFishing endOfFishing) {
+    public Response create(EndOfFishing endOfFishing) {
         em.persist(endOfFishing);
+        return Response.ok("Successfully saved endOfFishing to database.").build();
     }
 
     @Override

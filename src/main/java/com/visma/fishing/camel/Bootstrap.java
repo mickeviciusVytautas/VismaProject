@@ -25,11 +25,9 @@ public class Bootstrap {
         try {
             context.addRoutes(new DataSaveRouteBuilder());
             context.start();
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     @PreDestroy

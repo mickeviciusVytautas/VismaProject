@@ -1,35 +1,38 @@
-package com.visma.fishing.EJB.impl;
+package com.visma.fishing.services.impl;
 
-import com.visma.fishing.EJB.CatchEjb;
+import com.visma.fishing.services.CatchService;
 import com.visma.fishing.model.Catch;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.Optional;
 
 @Stateless
-public class CatchEjbImpl implements CatchEjb {
+public class CatchServiceEJB implements CatchService {
 
     @PersistenceContext(name = "prod")
     EntityManager em;
 
     @Override
     public List<Catch> findAll() {
-        Query q = em.createQuery("SELECT a FROM Catch a");
+        TypedQuery<Catch> q = em.createQuery("SELECT a FROM Catch a", Catch.class);
         return q.getResultList();
 
     }
 
     @Override
-    public Catch findById(Long id) {
-        return em.find(Catch.class, id);
+    public Optional<Catch> findById(Long id) {
+        return Optional.ofNullable(em.find(Catch.class, id));
     }
 
     @Override
-    public void create(Catch aCatch) {
+    public Response create(Catch aCatch) {
         em.persist(aCatch);
+        return Response.ok("Successfully saved endOfFishing to database.").build();
     }
 
     @Override

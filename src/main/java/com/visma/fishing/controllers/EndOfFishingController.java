@@ -1,44 +1,43 @@
-package com.visma.fishing.resources;
+package com.visma.fishing.controllers;
 
-import com.visma.fishing.EJB.EndOfFishingEJB;
+import com.visma.fishing.services.EndOfFishingService;
 import com.visma.fishing.model.EndOfFishing;
 
 import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
+import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
 @Path("/endoffishing")
-public class EndOfFishingResource {
+public class EndOfFishingController {
 
     @Inject
-    EndOfFishingEJB endOfFishingEjb;
+    EndOfFishingService endOfFishingService;
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response createEndOfFishing(EndOfFishing endOfFishing){
-        endOfFishingEjb.create(endOfFishing);
-        return Response.ok(endOfFishing.toJson()).build();
+    public Response createEndOfFishing(@Valid EndOfFishing endOfFishing){
+        return endOfFishingService.create(endOfFishing);
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{id}")
     public Response getEndOfFishing(@PathParam("id") Long id) {
-        EndOfFishing endOfFishing = endOfFishingEjb.findById(id);
-        return Response.ok(endOfFishing.toJson())
-                .build();
+        return endOfFishingService.findById(id)
+                .map(endOfFishing -> Response.status(Response.Status.FOUND).entity(endOfFishing).build())
+                .orElse(Response.status(Response.Status.NOT_FOUND).entity("EndOfFishing by id " + id + " was not found.").build());
     }
 
     @GET
     @Path("/all")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getEndOfFishings() {
-        List<EndOfFishing> endOfFishingList = endOfFishingEjb.findAll();
+    public Response getEndOfFishingList() {
+        List<EndOfFishing> endOfFishingList = endOfFishingService.findAll();
         JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
         endOfFishingList.forEach(l -> jsonArrayBuilder.add(l.toJson()));
         return Response.ok(jsonArrayBuilder.build())
@@ -48,7 +47,7 @@ public class EndOfFishingResource {
     @DELETE
     @Path("{id}")
     public Response deleteEndOfFishing(@PathParam("id")Long id) {
-        endOfFishingEjb.remove(id);
+        endOfFishingService.remove(id);
         return Response.ok().build();
     }
 

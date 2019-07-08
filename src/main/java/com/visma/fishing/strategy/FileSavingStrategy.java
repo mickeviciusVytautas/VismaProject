@@ -1,21 +1,25 @@
 package com.visma.fishing.strategy;
 
-import com.visma.fishing.auxilary.DateFormatter;
 import com.visma.fishing.model.Logbook;
 
 import javax.ws.rs.core.Response;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.time.LocalDateTime;
 
 public class FileSavingStrategy implements SavingStrategy {
 
+    private String FILE_PATH;
+
+    public FileSavingStrategy(String FILE_PATH) {
+        this.FILE_PATH = FILE_PATH;
+    }
+
     @Override
     public Response save(Logbook logbook) {
-        String localDate = DateFormatter.formatLocalDateTime(LocalDateTime.now());
-        String filePath = "C:\\dev\\database\\" + localDate + ".json";
+        String localDate = logbook.getDeparture().getDate().toString();
+        String filePath = FILE_PATH + localDate + System.currentTimeMillis() + ".json";
         try (FileWriter fileWriter = new FileWriter(filePath)){
-            fileWriter.write(logbook.toJson().toString());
+            fileWriter.write(logbook.toString());
         } catch (IOException e) {
             e.printStackTrace();
         }

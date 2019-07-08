@@ -1,5 +1,6 @@
 package com.visma.fishing.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.visma.fishing.auxilary.LocalDateDeserializer;
 import com.visma.fishing.auxilary.LocalDateSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -18,15 +19,14 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @Entity
-@Table
 public class Arrival implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @XmlTransient
+    @JsonIgnore
+
     private Long id;
     @NotNull
-    @Column
     private String port;
     @NotNull
     @JsonSerialize(using = LocalDateSerializer.class)
@@ -44,4 +44,10 @@ public class Arrival implements Serializable {
                 .add("date", date.toString())
                 .build();
     }
+
+    public Long getId(){
+        return id;
+    }
+
+
 }
