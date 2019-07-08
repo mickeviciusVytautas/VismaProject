@@ -12,7 +12,8 @@ public class DataSaveRouteBuilder extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("file:C:\\dev\\inbox\\?noop=false&delete=true")
+        from("timer://dataTimer?period=10000&delay=5s")
+                .pollEnrich("file:C:\\dev\\inbox\\?delete=true&noop=false")
                 .process(exchange -> {
                     File file = exchange.getIn().getBody(File.class);
                     ObjectMapper mapper = new ObjectMapper();
