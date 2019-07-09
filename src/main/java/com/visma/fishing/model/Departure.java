@@ -2,6 +2,7 @@ package com.visma.fishing.model;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.DateSerializer;
 import com.visma.fishing.auxilary.LocalDateDeserializer;
 import com.visma.fishing.auxilary.LocalDateSerializer;
 import com.visma.fishing.model.base.BaseEntity;
@@ -11,11 +12,10 @@ import lombok.NoArgsConstructor;
 
 import javax.json.Json;
 import javax.json.JsonObject;
-import javax.persistence.Entity;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.Date;
 
 
 @EqualsAndHashCode(callSuper = true)
@@ -28,13 +28,12 @@ import java.time.LocalDate;
 public class Departure extends BaseEntity {
 
     @NotNull
-    @JsonSerialize(using = LocalDateSerializer.class)
-    @JsonDeserialize(using = LocalDateDeserializer.class)
-    private LocalDate date;
+    @Temporal(TemporalType.DATE)
+    private Date date;
     @NotNull
     private String port;
 
-    public Departure(LocalDate date, String port) {
+    public Departure(Date date, String port) {
         this.date = date;
         this.port = port;
     }

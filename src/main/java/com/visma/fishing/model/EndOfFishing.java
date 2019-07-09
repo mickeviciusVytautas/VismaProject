@@ -11,11 +11,10 @@ import lombok.NoArgsConstructor;
 
 import javax.json.Json;
 import javax.json.JsonObject;
-import javax.persistence.Entity;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.Date;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -27,11 +26,10 @@ import java.time.LocalDate;
 public class EndOfFishing extends BaseEntity {
 
     @NotNull
-    @JsonSerialize(using = LocalDateSerializer.class)
-    @JsonDeserialize(using = LocalDateDeserializer.class)
-    private LocalDate date;
+    @Temporal(TemporalType.DATE)
+    private Date date;
 
-    public EndOfFishing(LocalDate date) {
+    public EndOfFishing(Date date) {
         this.date = date;
     }
 
