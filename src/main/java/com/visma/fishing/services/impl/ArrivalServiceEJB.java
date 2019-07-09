@@ -7,10 +7,12 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
 import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Optional;
 
+@Transactional
 @Stateless
 public class ArrivalServiceEJB implements ArrivalService {
 
@@ -19,7 +21,7 @@ public class ArrivalServiceEJB implements ArrivalService {
 
     @Override
     public List<Arrival> findAll() {
-        TypedQuery<Arrival> q = em.createQuery("SELECT a FROM Arrival a", Arrival.class);
+        TypedQuery<Arrival> q = em.createNamedQuery("arrival.findAll", Arrival.class);
         return q.getResultList();
     }
 

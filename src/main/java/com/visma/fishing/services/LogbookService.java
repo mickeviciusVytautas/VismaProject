@@ -14,6 +14,8 @@ public interface LogbookService {
     void update(Long id, Logbook logbook);
     void remove(Long id);
 
-    void findByDeparturePort(String portName);
-
+    List<Logbook> findByDeparturePort(String portName);
+    List<Logbook> findByArrivalPort(String port);
+    List<Logbook> findBySpecies(String species);
+    List<Logbook> findWhereCatchWeightIsBigger(Long weight);
 }

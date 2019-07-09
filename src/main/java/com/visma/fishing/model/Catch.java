@@ -1,27 +1,26 @@
 package com.visma.fishing.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.visma.fishing.model.base.BaseEntity;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.json.Json;
 import javax.json.JsonObject;
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.validation.constraints.NotNull;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 @Entity
-public class Catch {
+@NamedQueries(
+        @NamedQuery(name = "catch.findAll", query = "SELECT c FROM Catch c")
+)
+public class Catch extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
-    private Long id;
     @NotNull
     private String species;
     @NotNull
@@ -39,7 +38,4 @@ public class Catch {
                 .build();
     }
 
-    public Long getId(){
-        return id;
-    }
 }

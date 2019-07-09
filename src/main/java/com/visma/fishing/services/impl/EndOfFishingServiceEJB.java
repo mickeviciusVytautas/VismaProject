@@ -1,16 +1,18 @@
 package com.visma.fishing.services.impl;
 
-import com.visma.fishing.services.EndOfFishingService;
 import com.visma.fishing.model.EndOfFishing;
+import com.visma.fishing.services.EndOfFishingService;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
 import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Optional;
 
+@Transactional
 @Stateless
 public class EndOfFishingServiceEJB implements EndOfFishingService {
 

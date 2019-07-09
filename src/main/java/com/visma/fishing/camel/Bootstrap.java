@@ -15,9 +15,9 @@ import javax.ejb.Startup;
 @Startup
 public class Bootstrap {
 
-    CamelContext context = new DefaultCamelContext();
+    private CamelContext context = new DefaultCamelContext();
 
-    Logger logger = LoggerFactory.getLogger(Bootstrap.class);
+    private Logger logger = LoggerFactory.getLogger(Bootstrap.class);
 
     @PostConstruct
     public void init (){
@@ -26,7 +26,8 @@ public class Bootstrap {
             context.addRoutes(new DataSaveRouteBuilder());
             context.start();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(">> Failed to create CamelContext and register Camel Router.", e);
+
         }
     }
 
@@ -35,7 +36,7 @@ public class Bootstrap {
         try {
             context.stop();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(">> CamelContext stopping failed.", e);
         }
         logger.info(">> CamelContext stopped.");
     }

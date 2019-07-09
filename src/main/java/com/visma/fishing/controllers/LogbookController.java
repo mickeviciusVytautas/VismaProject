@@ -4,8 +4,6 @@ import com.visma.fishing.services.LogbookService;
 import com.visma.fishing.model.Logbook;
 
 import javax.inject.Inject;
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -49,10 +47,31 @@ public class LogbookController {
     }
 
     @GET
-    @Path("/port")
-    public Response getLogbooksByDeparturePort(String portName){
-        logbookService.findByDeparturePort(portName);
-        return null;
+    @Path("/departure/{port}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Logbook> getLogbooksByDeparturePort(@PathParam("port") String port){
+        return logbookService.findByDeparturePort(port);
+    }
+
+    @GET
+    @Path("/arrival/{port}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Logbook> getLogbooksByArrivalPort(@PathParam("port") String port){
+        return logbookService.findByArrivalPort(port);
+    }
+
+    @GET
+    @Path("/catch/{species}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Logbook> getLogbooksBySpecies(@PathParam("species") String species){
+        return logbookService.findBySpecies(species);
+    }
+
+    @GET
+    @Path("/catch/more/{weight}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Logbook> getLogbooksWhereWeightIsBigger(@PathParam("weight") Long weight){
+        return logbookService.findWhereCatchWeightIsBigger(weight);
     }
 
     @DELETE

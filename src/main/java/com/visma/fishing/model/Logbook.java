@@ -1,10 +1,11 @@
 package com.visma.fishing.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.visma.fishing.auxilary.ConnectionType;
+import com.visma.fishing.model.base.BaseEntity;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -12,15 +13,15 @@ import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 @Entity
-public class Logbook {
+@NamedQueries(
+        @NamedQuery(name = "logbook.findAll", query = "SELECT l FROM Logbook l")
+)
+public class Logbook extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
-    private Long id;
     @NotNull
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private Departure departure;
@@ -56,7 +57,4 @@ public class Logbook {
          return logbook;
     }
 
-    public Long getId(){
-        return id;
-    }
 }
