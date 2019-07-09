@@ -17,7 +17,7 @@ public class FileSavingStrategy implements SavingStrategy {
     @Override
     public Response save(Logbook logbook) {
         String localDate = logbook.getDeparture().getDate().toString();
-        String filePath = FILE_PATH + localDate + System.currentTimeMillis() + ".json";
+        String filePath = FILE_PATH + System.currentTimeMillis() + ".json";
         try (FileWriter fileWriter = new FileWriter(filePath)){
             fileWriter.write(logbook.toString());
         } catch (IOException e) {

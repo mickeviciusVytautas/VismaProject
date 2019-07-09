@@ -20,7 +20,7 @@ import java.util.Optional;
 @Stateless
 public class LogbookServiceEJB implements LogbookService {
 
-    public static final String LOGBOOK_DISTINCT_START = "SELECT  distinct (L.*) from LOGBOOK L" +
+    private static final String LOGBOOK_DISTINCT_START = "SELECT  distinct (L.*) from LOGBOOK L" +
             "    JOIN LOGBOOK_CATCH LC on L.ID = LC.LOGBOOK_ID" +
             "    JOIN CATCH C on LC.CATCHLIST_ID = C.ID";
 
