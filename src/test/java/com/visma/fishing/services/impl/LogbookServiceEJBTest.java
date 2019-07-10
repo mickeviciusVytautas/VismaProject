@@ -17,11 +17,10 @@ import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -70,19 +69,20 @@ public class LogbookServiceEJBTest {
     }
 
     @Test
-    public void findByIdShouldReturnExistingLogbook() {
-
+    public void findByIdShouldReturnCorrectStatusCode() {
         when(em.find(eq(Logbook.class), anyString())).thenReturn(logbookOne);
 
-        Optional<Logbook> optionalLogbook = service.findById("asdasd");
-        assertTrue( "Logbook is not present", optionalLogbook.isPresent());
+        Response response = service.findById("id");
+        assertEquals( 302, response.getStatus());
 
+        when(em.find(eq(Logbook.class), anyString())).thenReturn(null);
+
+        response = service.findById("id");
+        assertEquals(404, response.getStatus());
     }
 
     @Test
     public void createShouldReturnOkStatusCode() {
-
-        doNothing().when(em).persist(eq(Logbook.class));
 
         Response response = service.create(logbookOne);
         assertEquals("Logbook creation by NETWORK status is incorrect",201, response.getStatus());
@@ -99,11 +99,18 @@ public class LogbookServiceEJBTest {
         when(em.createNamedQuery("logbook.findAll", Logbook.class)).thenReturn(query);
         when(query.getResultList()).thenReturn(logbookList);
 
-        assertEquals("Incorrect size of logbooks is found", 1, logbookList.size());
+        List<Logbook> resultList = service.findAll();
+        assertEquals("Incorrect size of logbooks is found", 1, resultList.size());
+        verify(em, times(1)).createNamedQuery("logbook.findAll", Logbook.class);
 
-        logbookList.add(logbookOne);
+    }
 
-        assertEquals("Incorrect size of logbooks is found", 2, logbookList.size());
+    @Test
+    public void remove() {
+        when(em.find(eq(Logbook.class), anyString())).thenReturn(logbookOne);
+        service.remove("1");
+
+        verify(em, times(1)).remove(logbookOne);
     }
 
 @Ignore
@@ -141,17 +148,5 @@ public class LogbookServiceEJBTest {
     }
 
 
-    @Test
-    public void createBySatellite() {
-    }
 
-    @Test
-    public void update() {
-
-        service.update(1L, logbookOne);
-    }
-
-    @Test
-    public void remove() {
-    }
 }

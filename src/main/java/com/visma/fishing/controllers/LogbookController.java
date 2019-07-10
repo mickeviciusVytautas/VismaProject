@@ -22,20 +22,11 @@ public class LogbookController {
         return logbookService.create(logbook);
     }
 
-    @POST
-    @Path("/satellite")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response createLogbookToFileSystem(@Valid Logbook logbook){
-        return logbookService.createBySatellite(logbook);
-    }
-
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{id}")
     public Response getLogbook(@PathParam("id") String id) {
-        return logbookService.findById(id)
-                .map(logbook -> Response.status(Response.Status.FOUND).entity(logbook).build())
-                .orElse(Response.status(Response.Status.NOT_FOUND).entity("Logbook by id " + id + " was not found.").build());
+        return logbookService.findById(id);
     }
 
     @GET
@@ -44,6 +35,13 @@ public class LogbookController {
     public Response getLogbooks() {
         List<Logbook> logbookList = logbookService.findAll();
         return Response.ok(logbookList).build();
+    }
+
+    @PUT
+    @Path("{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response updateLogbookById(@PathParam("id") String id, Logbook logbook){
+        return logbookService.update(id, logbook);
     }
 
     @GET
@@ -76,7 +74,7 @@ public class LogbookController {
 
     @DELETE
     @Path("{id}")
-    public void deleteLogbookById(@PathParam("id")Long id) {
+    public void deleteLogbookById(@PathParam("id")String id) {
         logbookService.remove(id);
     }
 

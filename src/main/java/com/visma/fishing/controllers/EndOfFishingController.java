@@ -7,6 +7,7 @@ import com.visma.fishing.model.EndOfFishing;
 import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
+import javax.print.attribute.standard.Media;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -48,6 +49,13 @@ public class EndOfFishingController {
     public Response deleteEndOfFishing(@PathParam("id")String id) {
         endOfFishingService.remove(id);
         return Response.ok().build();
+    }
+
+    @PUT
+    @Path("{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response updateEndOfFishing(@PathParam("id") String id, EndOfFishing endOfFishing){
+        return endOfFishingService.update(id, endOfFishing);
     }
 
     @GET

@@ -39,6 +39,13 @@ public class DepartureController {
         return departureService.findAll();
     }
 
+    @PUT
+    @Path("{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response updateDepartureById(@PathParam("id") String id, Departure departure){
+        return departureService.update(id, departure);
+    }
+
     @DELETE
     @Path("{id}")
     public void deleteDepartureById(@PathParam("id")String id) {

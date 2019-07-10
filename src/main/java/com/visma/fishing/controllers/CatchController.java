@@ -40,6 +40,13 @@ public class CatchController {
         return catchService.findAll();
     }
 
+    @PUT
+    @Path("{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response updateCatchById(@PathParam("id") String id, Catch aCatch){
+        return catchService.update(id, aCatch);
+    }
+
     @DELETE
     @Path("{id}")
     public Response deleteCatchById(@PathParam("id")String id) {

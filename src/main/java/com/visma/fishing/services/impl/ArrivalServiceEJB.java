@@ -43,7 +43,7 @@ public class ArrivalServiceEJB implements ArrivalService {
     @Override
     public Response create(Arrival arrival) {
         em.persist(arrival);
-        return Response.ok("Successfully saved arrival to database.").build();
+        return Response.status(Response.Status.CREATED).entity("Successfully saved arrival to database.").build();
 
     }
 

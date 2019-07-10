@@ -39,6 +39,13 @@ public class ArrivalController {
         return arrivalService.findAll();
     }
 
+    @PUT
+    @Path("{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response updateArrivalById(@PathParam("id") String id, Arrival arrival){
+        return arrivalService.update(id, arrival);
+    }
+
     @DELETE
     @Path("{id}")
     public void deleteArrivalById(@PathParam("id")String id) {

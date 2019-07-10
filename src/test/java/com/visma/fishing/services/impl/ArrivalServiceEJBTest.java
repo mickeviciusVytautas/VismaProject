@@ -54,12 +54,8 @@ public class ArrivalServiceEJBTest {
         arrivalList.add(arrival);
 
         List<Arrival> resultList = service.findAll();
-
+        verify(em, times(1)).createNamedQuery("arrival.findAll", Arrival.class);
         assertEquals(1, resultList.size());
-
-        arrivalList.add(arrival);
-
-        assertEquals(2, resultList.size());
     }
 
     @Test
@@ -77,8 +73,6 @@ public class ArrivalServiceEJBTest {
 
     @Test
     public void createShouldReturnCreatedStatusCode() {
-        doNothing().when(em).persist(eq(Arrival.class));
-
         Response response = service.create(arrival);
         assertEquals(201, response.getStatus());
     }
@@ -87,18 +81,17 @@ public class ArrivalServiceEJBTest {
     public void updateShouldReturnAcceptedStatusCode() {
         when(em.find(eq(Arrival.class), anyString())).thenReturn(arrival);
         Arrival arrivalTwo = new Arrival(PORT_2, DATE_2);
-        doNothing().when(em).persist(eq(Arrival.class));
         Response response = service.update("1", arrivalTwo);
 
         assertEquals(202, response.getStatus());
     }
 
-//    TODO: How to test void remove?
     @Test
     public void remove() {
         when(em.find(eq(Arrival.class), anyString())).thenReturn(arrival);
         service.remove("1");
 
+        verify(em, times(1)).remove(arrival);
     }
 
     @Test

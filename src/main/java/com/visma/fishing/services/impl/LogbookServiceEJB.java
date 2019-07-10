@@ -73,8 +73,10 @@ public class LogbookServiceEJB implements LogbookService {
     }
 
     @Override
-    public Optional<Logbook> findById(String id) {
-        return Optional.ofNullable(em.find(Logbook.class, id));
+    public Response findById(String id) {
+        return Optional.ofNullable(em.find(Logbook.class, id))
+                .map(logbook -> Response.status(Response.Status.FOUND).entity(logbook).build())
+                .orElse(Response.status(Response.Status.NOT_FOUND).entity("Logbook by id " + id + " was not found.").build());
     }
 
     @Override
@@ -128,23 +130,18 @@ public class LogbookServiceEJB implements LogbookService {
     }
 
     @Override
-    public Response createBySatellite(Logbook logbook){
-        return new FileSavingStrategy(inboxPath).save(logbook);
-    }
-
-
-    @Override
-    public void update(Long id, Logbook logbook) {
+    public Response update(String id, Logbook logbook) {
         Logbook entity = em.find(Logbook.class, id);
         entity.setCatchList(logbook.getCatchList());
         entity.setArrival(logbook.getArrival());
         entity.setDeparture(logbook.getDeparture());
         entity.setEndOfFishing(logbook.getEndOfFishing());
         em.merge(entity);
+        return Response.status(Response.Status.ACCEPTED).entity("Successfully updated logbook.").build();
     }
 
     @Override
-    public void remove(Long id) {
+    public void remove(String id) {
         Logbook entity = em.find(Logbook.class, id);
         em.remove(entity);
     }

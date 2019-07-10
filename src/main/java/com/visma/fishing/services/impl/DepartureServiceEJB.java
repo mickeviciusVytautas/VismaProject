@@ -59,7 +59,7 @@ public class DepartureServiceEJB implements DepartureService {
 
     @Override
     public void remove(String id) {
-        Logbook entity = em.find(Logbook.class, id);
+        Departure entity = em.find(Departure.class, id);
         em.remove(entity);
     }
 

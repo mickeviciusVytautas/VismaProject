@@ -19,7 +19,7 @@ import java.util.List;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DepartureServiceEJBTest {
@@ -55,12 +55,10 @@ public class DepartureServiceEJBTest {
         departureList.add(departure);
 
         List<Departure> resultList = service.findAll();
+        verify(em, times(1)).createNamedQuery("departure.findAll", Departure.class);
 
         assertEquals(1, resultList.size());
 
-        departureList.add(departure);
-
-        assertEquals(2, resultList.size());
     }
 
     @Test
@@ -94,12 +92,12 @@ public class DepartureServiceEJBTest {
         assertEquals(202, response.getStatus());
     }
 
-    //    TODO: How to test void remove?
     @Test
     public void remove() {
         when(em.find(eq(Departure.class), anyString())).thenReturn(departure);
         service.remove("1");
 
+        verify(em, times(1)).remove(departure);
     }
 
     @Test
