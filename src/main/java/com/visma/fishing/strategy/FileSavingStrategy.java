@@ -24,7 +24,7 @@ public class FileSavingStrategy implements SavingStrategy {
             e.printStackTrace();
         }
 
-        return Response.ok("Successfully saved logbook to file system.").build();
+        return Response.status(Response.Status.CREATED).entity("Successfully saved logbook to file system.").build();
     }
 
 }

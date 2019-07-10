@@ -110,7 +110,7 @@ public class LogbookServiceEJB implements LogbookService {
     }
 
     @Override
-    public List<Logbook> findByDeparturePeriod(Date start, Date end){
+    public List<Logbook> findByDeparturePeriod(String start, String end){
         return em.createNativeQuery(
                 SELECT_LOGBOOK_BY_DEPARTURE_DATE, Logbook.class)
                 .setParameter(1, start)

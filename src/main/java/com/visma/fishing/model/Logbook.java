@@ -26,19 +26,19 @@ public class Logbook extends BaseEntity {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private Departure departure;
     @NotNull
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    private List<Catch> catchList = new ArrayList<>();
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    private EndOfFishing endOfFishing;
     @NotNull
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private Arrival arrival;
     @NotNull
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    private EndOfFishing endOfFishing;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<Catch> catchList = new ArrayList<>();
     @NotNull
     @Enumerated(EnumType.STRING)
     private ConnectionType connectionType;
 
-    public Logbook(Departure departure, List<Catch> catchList, Arrival arrival, EndOfFishing endOfFishing, String connectionType) {
+    public Logbook(Departure departure, EndOfFishing endOfFishing, Arrival arrival, List<Catch> catchList, String connectionType) {
         this.departure = departure;
         this.catchList = catchList;
         this.arrival = arrival;
@@ -56,5 +56,6 @@ public class Logbook extends BaseEntity {
         }
          return logbook;
     }
+
 
 }

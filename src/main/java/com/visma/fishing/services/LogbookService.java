@@ -19,6 +19,6 @@ public interface LogbookService {
     List<Logbook> findByArrivalPort(String port);
     List<Logbook> findBySpecies(String species);
     List<Logbook> findWhereCatchWeightIsBigger(Long weight);
-    List<Logbook> findByDeparturePeriod(Date start, Date end);
+    List<Logbook> findByDeparturePeriod(String start, String end);
 
 }
