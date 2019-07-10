@@ -27,7 +27,7 @@ public class DepartureServiceEJB implements DepartureService {
     }
 
     @Override
-    public Optional<Departure> findById(Long id) {
+    public Optional<Departure> findById(String id) {
         return Optional.ofNullable(em.find(Departure.class, id));
     }
 

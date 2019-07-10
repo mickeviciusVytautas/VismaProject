@@ -27,7 +27,7 @@ public class CatchServiceEJB implements CatchService {
     }
 
     @Override
-    public Optional<Catch> findById(Long id) {
+    public Optional<Catch> findById(String id) {
         return Optional.ofNullable(em.find(Catch.class, id));
     }
 

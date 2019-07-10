@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface CatchService {
     List<Catch> findAll();
-    Optional<Catch> findById(Long id);
+    Optional<Catch> findById(String id);
     Response create(Catch aCatch);
     void update(Long id, Catch aCatch);
     void remove(Long id);

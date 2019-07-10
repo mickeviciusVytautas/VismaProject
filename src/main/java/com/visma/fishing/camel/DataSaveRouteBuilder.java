@@ -9,9 +9,9 @@ import java.io.File;
 
 public class DataSaveRouteBuilder extends RouteBuilder {
 
-    public static final String TIMER_CONFIGURATION = "timer://dataTimer?fixedRate=true&period=10000&delay=5s";
-    public static final String FILE_LOCATION = "file:C:\\dev\\inbox\\?delete=true&noop=false";
-    public static final String HTTP_POST_LOGBOOK = "http://localhost:8080/exploded/api/logbook/";
+    private static final String TIMER_CONFIGURATION = "timer://dataTimer?fixedRate=true&period=10000&delay=5s";
+    private static final String FILE_LOCATION = "file:C:\\dev\\inbox\\?delete=true&noop=false";
+    private static final String HTTP_POST_LOGBOOK = "http://localhost:8080/exploded/api/logbook/";
 
     @Override
     public void configure() {

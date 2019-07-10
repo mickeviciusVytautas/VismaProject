@@ -5,6 +5,7 @@ import com.visma.fishing.auxilary.ConnectionType;
 import com.visma.fishing.model.Logbook;
 import com.visma.fishing.strategy.DBSavingStrategy;
 import com.visma.fishing.strategy.FileSavingStrategy;
+import com.visma.fishing.strategy.SavingStrategy;
 import io.xlate.inject.Property;
 import io.xlate.inject.PropertyResource;
 
@@ -13,6 +14,7 @@ import javax.inject.Inject;
 import javax.persistence.*;
 import javax.transaction.Transactional;
 import javax.ws.rs.core.Response;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,7 +22,8 @@ import java.util.Optional;
 @Stateless
 public class LogbookServiceEJB implements LogbookService {
 
-    private static final String LOGBOOK_DISTINCT_START = "SELECT  distinct (L.*) from LOGBOOK L" +
+    private static final String LOGBOOK_DISTINCT_START =
+            "    SELECT  distinct (L.*) from LOGBOOK L" +
             "    JOIN LOGBOOK_CATCH LC on L.ID = LC.LOGBOOK_ID" +
             "    JOIN CATCH C on LC.CATCHLIST_ID = C.ID";
 
@@ -44,6 +47,11 @@ public class LogbookServiceEJB implements LogbookService {
                 LOGBOOK_DISTINCT_START +
             "    WHERE C.WEIGHT > ?1";
 
+    private static final String SELECT_LOGBOOK_BY_DEPARTURE_DATE =
+                LOGBOOK_SELECT_START +
+            "    join DEPARTURE D on L.DEPARTURE_ID = D.ID" +
+            "    where D.DATE between ?1 and  ?2";
+
     @Inject
     @Property(name = "databasePath",
             resource = @PropertyResource("classpath:application.properties"))
@@ -57,14 +65,15 @@ public class LogbookServiceEJB implements LogbookService {
     @PersistenceContext
     private EntityManager em;
 
+    private SavingStrategy savingStrategy;
     @Override
     public List<Logbook> findAll() {
-        TypedQuery<Logbook> q = em.createQuery("SELECT a FROM Logbook a", Logbook.class);
+        TypedQuery<Logbook> q = em.createNamedQuery("logbook.findAll", Logbook.class);
         return q.getResultList();
     }
 
     @Override
-    public Optional<Logbook> findById(Long id) {
+    public Optional<Logbook> findById(String id) {
         return Optional.ofNullable(em.find(Logbook.class, id));
     }
 
@@ -101,11 +110,21 @@ public class LogbookServiceEJB implements LogbookService {
     }
 
     @Override
+    public List<Logbook> findByDeparturePeriod(Date start, Date end){
+        return em.createNativeQuery(
+                SELECT_LOGBOOK_BY_DEPARTURE_DATE, Logbook.class)
+                .setParameter(1, start)
+                .setParameter(2, end)
+                .getResultList();
+    }
+
+    @Override
     public Response create(Logbook logbook) {
         if (logbook.getConnectionType() == ConnectionType.NETWORK) {
-            return new DBSavingStrategy(em).save(logbook);
+            savingStrategy = new DBSavingStrategy(em);
         }
-        return new FileSavingStrategy(databasePath).save(logbook);
+        savingStrategy = new FileSavingStrategy(databasePath);
+        return savingStrategy.save(logbook);
     }
 
     @Override

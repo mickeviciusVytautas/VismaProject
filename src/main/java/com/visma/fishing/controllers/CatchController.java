@@ -28,7 +28,7 @@ public class CatchController {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{id}")
-    public Response getCatch(@PathParam("id") Long id) {
+    public Response getCatch(@PathParam("id") String id) {
         return catchService.findById(id)
                 .map(aCatch -> Response.status(Response.Status.FOUND).entity(aCatch).build())
                 .orElse(Response.status(Response.Status.NOT_FOUND).entity("Catch by id " + id + " was not found.").build());

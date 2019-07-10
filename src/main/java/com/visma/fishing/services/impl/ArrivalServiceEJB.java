@@ -26,7 +26,7 @@ public class ArrivalServiceEJB implements ArrivalService {
     }
 
     @Override
-    public Optional<Arrival> findById(Long id) {
+    public Optional<Arrival> findById(String id) {
         return Optional.ofNullable(em.find(Arrival.class, id));
     }
 

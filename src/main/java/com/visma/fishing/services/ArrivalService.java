@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface ArrivalService {
     List<Arrival> findAll();
-    Optional<Arrival> findById(Long id);
+    Optional<Arrival> findById(String id);
     Response create(Arrival arrival);
     Response update(Long id, Arrival arrival);
     void remove(Long id);

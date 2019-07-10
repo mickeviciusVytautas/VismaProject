@@ -5,6 +5,8 @@ import com.visma.fishing.model.Logbook;
 import javax.persistence.EntityManager;
 import javax.ws.rs.core.Response;
 
+import static javax.ws.rs.core.Response.*;
+
 public class DBSavingStrategy implements SavingStrategy {
 
     private EntityManager em;
@@ -15,7 +17,7 @@ public class DBSavingStrategy implements SavingStrategy {
     @Override
     public Response save(Logbook logbook) {
         em.persist(logbook);
-        return Response.ok("Successfully saved logbook to database.").build();
+        return status(Status.CREATED).entity("Successfully saved logbook to database.").build();
     }
 
 }

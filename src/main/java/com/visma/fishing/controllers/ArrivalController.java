@@ -38,7 +38,7 @@ public class ArrivalController {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{id}")
-    public Response getArrival(@PathParam("id") Long id) {
+    public Response getArrival(@PathParam("id") String id) {
         return arrivalService.findById(id)
                 .map(arrival -> Response.status(Response.Status.FOUND).entity(arrival).build())
                 .orElse(Response.status(Response.Status.NOT_FOUND).entity("Arrival by id " + id + " was not found.").build());

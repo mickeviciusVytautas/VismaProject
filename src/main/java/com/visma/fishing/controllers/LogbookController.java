@@ -32,7 +32,7 @@ public class LogbookController {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{id}")
-    public Response getLogbook(@PathParam("id") Long id) {
+    public Response getLogbook(@PathParam("id") String id) {
         return logbookService.findById(id)
                 .map(logbook -> Response.status(Response.Status.FOUND).entity(logbook).build())
                 .orElse(Response.status(Response.Status.NOT_FOUND).entity("Logbook by id " + id + " was not found.").build());

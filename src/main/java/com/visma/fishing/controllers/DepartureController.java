@@ -27,7 +27,7 @@ public class DepartureController {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{id}")
-    public Response getDeparture(@PathParam("id") Long id) {
+    public Response getDeparture(@PathParam("id") String id) {
         return departureService.findById(id)
                 .map(departure -> Response.status(Response.Status.FOUND).entity(departure).build())
                 .orElse(Response.status(Response.Status.NOT_FOUND).entity("Departure by id " + id + " was not found.").build());

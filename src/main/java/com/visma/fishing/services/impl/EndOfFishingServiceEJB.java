@@ -26,7 +26,7 @@ public class EndOfFishingServiceEJB implements EndOfFishingService {
     }
 
     @Override
-    public Optional<EndOfFishing> findById(Long id) {
+    public Optional<EndOfFishing> findById(String id) {
         return Optional.ofNullable(em.find(EndOfFishing.class, id));
     }
 

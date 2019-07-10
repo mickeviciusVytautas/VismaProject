@@ -27,7 +27,7 @@ public class EndOfFishingController {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{id}")
-    public Response getEndOfFishing(@PathParam("id") Long id) {
+    public Response getEndOfFishing(@PathParam("id") String id) {
         return endOfFishingService.findById(id)
                 .map(endOfFishing -> Response.status(Response.Status.FOUND).entity(endOfFishing).build())
                 .orElse(Response.status(Response.Status.NOT_FOUND).entity("EndOfFishing by id " + id + " was not found.").build());
