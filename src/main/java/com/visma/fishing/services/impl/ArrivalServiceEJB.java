@@ -34,8 +34,10 @@ public class ArrivalServiceEJB implements ArrivalService {
     }
 
     @Override
-    public Optional<Arrival> findById(String id) {
-        return Optional.ofNullable(em.find(Arrival.class, id));
+    public Response findById(String id) {
+        return Optional.ofNullable(em.find(Arrival.class, id)).map(
+                arrival -> Response.status(Response.Status.FOUND).entity(arrival).build())
+                .orElse(Response.status(Response.Status.NOT_FOUND).entity("Arrival by id " + id + " is not found.").build());
     }
 
     @Override
@@ -50,7 +52,7 @@ public class ArrivalServiceEJB implements ArrivalService {
         Arrival entity = em.find(Arrival.class, id);
         entity.setPort(arrival.getPort());
         em.merge(entity);
-        return Response.ok("Successfully updated arrival.").build();
+        return Response.status(Response.Status.ACCEPTED).entity("Successfully updated arrival.").build();
 
     }
 

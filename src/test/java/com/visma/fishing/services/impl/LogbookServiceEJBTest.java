@@ -82,7 +82,7 @@ public class LogbookServiceEJBTest {
     @Test
     public void createShouldReturnOkStatusCode() {
 
-        doNothing().when(em).persist(any(Logbook.class));
+        doNothing().when(em).persist(eq(Logbook.class));
 
         Response response = service.create(logbookOne);
         assertEquals("Logbook creation by NETWORK status is incorrect",201, response.getStatus());
@@ -110,7 +110,8 @@ public class LogbookServiceEJBTest {
     @Test
     public void findByDeparturePort() {
 
-        when(em.createNativeQuery(anyString(), eq(Logbook.class))).thenReturn(query);
+        when(em.createNativeQuery(anyString(), eq(Logbook.class)).setParameter(1, PORT_DEPARTURE_1)).thenReturn(query);
+
         when(query.getResultList()).thenReturn(logbookList);
         logbookList = service.findByDeparturePort(PORT_DEPARTURE_1);
 

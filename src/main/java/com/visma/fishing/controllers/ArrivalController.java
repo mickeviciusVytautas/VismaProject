@@ -29,9 +29,7 @@ public class ArrivalController {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{id}")
     public Response getArrival(@PathParam("id") String id) {
-        return arrivalService.findById(id)
-                .map(arrival -> Response.status(Response.Status.FOUND).entity(arrival).build())
-                .orElse(Response.status(Response.Status.NOT_FOUND).entity("Arrival by id " + id + " was not found.").build());
+        return arrivalService.findById(id);
     }
 
     @GET
@@ -43,7 +41,7 @@ public class ArrivalController {
 
     @DELETE
     @Path("{id}")
-    public void deleteArrivalById(@PathParam("id")Long id) {
+    public void deleteArrivalById(@PathParam("id")String id) {
         arrivalService.remove(id);
     }
 

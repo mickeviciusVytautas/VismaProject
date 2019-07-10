@@ -10,7 +10,7 @@ import java.util.Optional;
  */
 public interface Service<T, ID extends Serializable> {
     List<T> findAll();
-    Optional<T> findById(ID id);
+    Response findById(ID id);
     Response create(T t);
     Response update(ID id, T t);
     void remove(ID id);
