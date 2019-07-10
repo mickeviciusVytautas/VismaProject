@@ -1,5 +1,6 @@
 package com.visma.fishing.controllers;
 
+import com.visma.fishing.model.Departure;
 import com.visma.fishing.services.EndOfFishingService;
 import com.visma.fishing.model.EndOfFishing;
 
@@ -28,9 +29,7 @@ public class EndOfFishingController {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{id}")
     public Response getEndOfFishing(@PathParam("id") String id) {
-        return endOfFishingService.findById(id)
-                .map(endOfFishing -> Response.status(Response.Status.FOUND).entity(endOfFishing).build())
-                .orElse(Response.status(Response.Status.NOT_FOUND).entity("EndOfFishing by id " + id + " was not found.").build());
+        return endOfFishingService.findById(id);
     }
 
     @GET
@@ -46,9 +45,15 @@ public class EndOfFishingController {
 
     @DELETE
     @Path("{id}")
-    public Response deleteEndOfFishing(@PathParam("id")Long id) {
+    public Response deleteEndOfFishing(@PathParam("id")String id) {
         endOfFishingService.remove(id);
         return Response.ok().build();
     }
 
+    @GET
+    @Path("/search/{start}/{end}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<EndOfFishing> findEndOfFishingByPeriod(@PathParam("start") String start, @PathParam("end") String end){
+        return endOfFishingService.findByPeriod(start, end);
+    }
 }

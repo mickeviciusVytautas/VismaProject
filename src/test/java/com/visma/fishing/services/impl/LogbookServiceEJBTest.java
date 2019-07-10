@@ -110,7 +110,7 @@ public class LogbookServiceEJBTest {
     @Test
     public void findByDeparturePort() {
 
-        when(em.createNativeQuery(anyString(), eq(Logbook.class)).setParameter(1, PORT_DEPARTURE_1)).thenReturn(query);
+        when(em.createNativeQuery("SELECT ?1", Logbook.class).setParameter(1, PORT_DEPARTURE_1)).thenReturn(query);
 
         when(query.getResultList()).thenReturn(logbookList);
         logbookList = service.findByDeparturePort(PORT_DEPARTURE_1);

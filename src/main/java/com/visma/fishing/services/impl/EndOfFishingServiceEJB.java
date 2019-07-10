@@ -16,35 +16,51 @@ import java.util.Optional;
 @Stateless
 public class EndOfFishingServiceEJB implements EndOfFishingService {
 
+    private static final String QUERY_START = "SELECT E.* FROM ENDOFFISHING E ";
+    private static final String QUERY_FIND_BY_DATE =
+            QUERY_START
+                    + " WHERE E.DATE BETWEEN ?1 and ?2 ";
+
     @PersistenceContext
     EntityManager em;
 
     @Override
     public List<EndOfFishing> findAll() {
-        TypedQuery<EndOfFishing> q = em.createQuery("SELECT a FROM EndOfFishing a", EndOfFishing.class);
+        TypedQuery<EndOfFishing> q = em.createNamedQuery("endOfFishing.findAll", EndOfFishing.class);
         return q.getResultList();
     }
 
     @Override
-    public Optional<EndOfFishing> findById(String id) {
-        return Optional.ofNullable(em.find(EndOfFishing.class, id));
+    public Response findById(String id) {
+        return Optional.ofNullable(em.find(EndOfFishing.class, id))
+                .map(endOfFishing -> Response.status(Response.Status.FOUND).entity(endOfFishing).build())
+                .orElse(Response.status(Response.Status.NOT_FOUND).entity("EndOfFishing by id " + id + " was not found.").build());
     }
 
     @Override
     public Response create(EndOfFishing endOfFishing) {
         em.persist(endOfFishing);
-        return Response.ok("Successfully saved endOfFishing to database.").build();
+        return Response.status(Response.Status.CREATED).entity("Successfully saved endOfFishing to database.").build();
     }
 
     @Override
-    public void update(Long id, EndOfFishing endOfFishing) {
+    public Response update(String id, EndOfFishing endOfFishing) {
         EndOfFishing entity = em.find(EndOfFishing.class, id);
         entity.setDate(endOfFishing.getDate());
+        return Response.status(Response.Status.ACCEPTED).entity("Successfully updated endOfFishing.").build();
     }
 
     @Override
-    public void remove(Long id) {
+    public void remove(String id) {
         EndOfFishing entity = em.find(EndOfFishing.class, id);
         em.remove(entity);
+    }
+
+    @Override
+    public List<EndOfFishing> findByPeriod(String start, String end){
+        return em.createNativeQuery(QUERY_FIND_BY_DATE, EndOfFishing.class)
+                .setParameter(1, start)
+                .setParameter(2, end)
+                .getResultList();
     }
 }

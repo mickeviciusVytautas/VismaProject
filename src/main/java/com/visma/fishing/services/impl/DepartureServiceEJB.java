@@ -17,38 +17,64 @@ import java.util.Optional;
 @Stateless
 public class DepartureServiceEJB implements DepartureService {
 
+    private static final String QUERY_START = "SELECT D.* FROM DEPARTURE D ";
+    private static final String QUERY_FIND_BY_PORT =
+            QUERY_START
+                    + " WHERE D.PORT LIKE ?1 ";
+    private static final String QUERY_FIND_BY_DATE =
+            QUERY_START
+                    + " WHERE D.DATE BETWEEN ?1 and ?2 ";
+
     @PersistenceContext
     EntityManager em;
 
     @Override
     public List<Departure> findAll() {
-        TypedQuery<Departure> q = em.createQuery("SELECT a FROM Departure a", Departure.class);
+        TypedQuery<Departure> q = em.createNamedQuery("departure.findAll", Departure.class);
         return q.getResultList();
     }
 
     @Override
-    public Optional<Departure> findById(String id) {
-        return Optional.ofNullable(em.find(Departure.class, id));
+    public Response findById(String id) {
+        return Optional.ofNullable(em.find(Departure.class, id)).map(
+                departure -> Response.status(Response.Status.FOUND).entity(departure).build())
+                .orElse(Response.status(Response.Status.NOT_FOUND).entity("Departure by id " + id + " is not found.").build());
     }
 
     @Override
     public Response create(Departure departure) {
         em.persist(departure);
-        return Response.ok("Successfully saved departure to file system.").build();
+        return Response.status(Response.Status.CREATED).entity("Successfully saved departure to file system.").build();
 
     }
 
     @Override
-    public void update(Long id, Departure departure) {
+    public Response update(String id, Departure departure) {
         Departure entity = em.find(Departure.class, id);
         entity.setDate(departure.getDate());
         entity.setPort(departure.getPort());
         em.merge(entity);
+        return Response.status(Response.Status.ACCEPTED).entity("Successfully updated departure.").build();
     }
 
     @Override
-    public void remove(Long id) {
+    public void remove(String id) {
         Logbook entity = em.find(Logbook.class, id);
         em.remove(entity);
+    }
+
+    @Override
+    public List<Departure> findByPort(String port){
+        return em.createNativeQuery(QUERY_FIND_BY_PORT, Departure.class)
+                .setParameter(1, port)
+                .getResultList();
+    }
+
+    @Override
+    public List<Departure> findByPeriod(String start, String end){
+        return em.createNativeQuery(QUERY_FIND_BY_DATE, Departure.class)
+                .setParameter(1, start)
+                .setParameter(2, end)
+                .getResultList();
     }
 }
