@@ -1,4 +1,4 @@
-package com.visma.fishing.model;
+package com.visma.fishing.model.configuration;
 
 import com.visma.fishing.model.base.BaseEntity;
 

@@ -11,7 +11,11 @@ public class FileSavingStrategy implements SavingStrategy {
     private String FILE_PATH;
 
     public FileSavingStrategy(String FILE_PATH) {
-        this.FILE_PATH = FILE_PATH;
+        if(FILE_PATH != null) {
+            this.FILE_PATH = FILE_PATH;
+        } else {
+            this.FILE_PATH = "C:\\dev\\database\\";
+        }
     }
 
     @Override

@@ -66,10 +66,10 @@ public class LogbookController {
     }
 
     @GET
-    @Path("/catch/more/{weight}")
+    @Path("/search/weight/{weight}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Logbook> getLogbooksWhereWeightIsBigger(@PathParam("weight") Long weight){
-        return logbookService.findWhereCatchWeightIsBigger(weight);
+    public List<Logbook> getCatchesByWeight(@PathParam("weight") Long weight, @QueryParam("lower") boolean searchWithLowerWeight) {
+        return logbookService.findByWeight(weight, searchWithLowerWeight);
     }
 
     @DELETE

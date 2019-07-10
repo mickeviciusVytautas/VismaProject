@@ -1,8 +1,7 @@
 package com.visma.fishing.services.impl;
 
-import com.visma.fishing.services.DepartureService;
 import com.visma.fishing.model.Departure;
-import com.visma.fishing.model.Logbook;
+import com.visma.fishing.services.DepartureService;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
