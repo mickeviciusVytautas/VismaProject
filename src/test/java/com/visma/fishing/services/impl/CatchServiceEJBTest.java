@@ -26,6 +26,7 @@ public class CatchServiceEJBTest {
 
     private static final String SPECIES_1 = "species 1";
     private static final String SPECIES_2 = "SPECIES 2";
+    private static final String ID_1 = "ID 1";
     private static final Long WEIGHT_1 = 10L;
     private static final Long WEIGHT_2 = 100L;
 
@@ -42,21 +43,23 @@ public class CatchServiceEJBTest {
 
     private List<Catch> catchList = new ArrayList<>();
 
+    private List<Catch> resultList = new ArrayList<>();
+
     @Before
     public void init(){
         aCatch = new Catch(SPECIES_1, WEIGHT_1);
+        catchList.add(aCatch);
+
     }
     @Test
     public void findAllShouldReturnCorrectListSize() {
         when(em.createNamedQuery("catch.findAll", Catch.class)).thenReturn(query);
         when(query.getResultList()).thenReturn(catchList);
 
-        catchList.add(aCatch);
+        resultList = service.findAll();
 
-        List<Catch> resultList = service.findAll();
         verify(em, times(1)).createNamedQuery("catch.findAll", Catch.class);
-
-        assertEquals(1, resultList.size());
+        assertEquals("Size of catch list should be 1.", 1, resultList.size());
 
     }
 
@@ -64,45 +67,65 @@ public class CatchServiceEJBTest {
     public void findByIdShouldReturnCorrectStatusCode() {
         when(em.find(eq(Catch.class), anyString())).thenReturn(aCatch);
 
-        Response response = service.findById("id");
-        assertEquals( 302, response.getStatus());
+        Response response = service.findById(ID_1);
+        verify(em, times(1)).find(eq(Catch.class), anyString());
+        assertEquals("FindById catch should return status code FOUND", Response.Status.FOUND.getStatusCode(), response.getStatus());
 
         when(em.find(eq(Catch.class), anyString())).thenReturn(null);
 
-        response = service.findById("id");
-        assertEquals(404, response.getStatus());
+        response = service.findById(ID_1);
+        verify(em, times(2)).find(eq(Catch.class), anyString());
+        assertEquals("FindById catch should return status code NOT_FOUND", Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
     }
 
     @Test
     public void createShouldReturnCreatedStatusCode() {
         Response response = service.create(aCatch);
-        assertEquals(201, response.getStatus());
+        assertEquals("Catch creation should return status code CREATED.", Response.Status.CREATED.getStatusCode(), response.getStatus());
     }
-
-    @Test
-    public void updateShouldReturnAcceptedStatusCode() {
-        when(em.find(eq(Catch.class), anyString())).thenReturn(aCatch);
-        Catch catchTwo = new Catch(SPECIES_2, WEIGHT_2);
-        Response response = service.update("1", catchTwo);
-
-        assertEquals(202, response.getStatus());
-    }
-
 
     @Test
     public void remove() {
         when(em.find(eq(Catch.class), anyString())).thenReturn(aCatch);
-        service.remove("1");
+        service.remove(ID_1);
 
         verify(em, times(1)).remove(aCatch);
 
     }
 
     @Test
-    public void findByPort() {
+    public void updateShouldReturnAcceptedStatusCode() {
+        when(em.find(eq(Catch.class), anyString())).thenReturn(aCatch);
+        Catch catchTwo = new Catch(SPECIES_2, WEIGHT_2);
+        Response response = service.update(ID_1, aCatch);
+
+        verify(em, times(1)).merge(any(Catch.class));
+        assertEquals("Catch update returned incorrect status code", Response.Status.ACCEPTED.getStatusCode(), response.getStatus());
     }
 
     @Test
-    public void findByPeriod() {
+    public void findBySpeciesShouldReturnCatchList() {
+        when(em.createNativeQuery(anyString(), eq(Catch.class))).thenReturn(query);
+        when(query.setParameter(anyInt(), anyString())).thenReturn(query);
+        when(query.getResultList()).thenReturn(catchList);
+
+        resultList = service.findBySpecies(SPECIES_1);
+
+        verify(em, times(1)).createNativeQuery(anyString(), eq(Catch.class));
+        verify(query, times(1)).setParameter(anyInt(), anyString());
+        assertEquals("Species list size should be 1.", 1, resultList.size());
+    }
+
+    @Test
+    public void findByWeight() {
+        when(em.createNativeQuery(anyString(), eq(Catch.class))).thenReturn(query);
+        when(query.setParameter(anyInt(), anyLong())).thenReturn(query);
+        when(query.getResultList()).thenReturn(catchList);
+
+        resultList = service.findByWeight(WEIGHT_1, false);
+
+        verify(em, times(1)).createNativeQuery(anyString(), eq(Catch.class));
+        verify(query, times(1)).setParameter(anyInt(), anyLong());
+        assertEquals("Species list size should be 1.", 1, resultList.size());
     }
 }

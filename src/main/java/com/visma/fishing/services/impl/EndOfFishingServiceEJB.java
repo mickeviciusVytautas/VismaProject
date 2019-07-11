@@ -20,6 +20,10 @@ public class EndOfFishingServiceEJB implements EndOfFishingService {
     private static final String QUERY_FIND_BY_DATE =
             QUERY_START
                     + " WHERE E.DATE BETWEEN ?1 and ?2 ";
+    private static final String QUERY_FIND_BY_PORT =
+            QUERY_START
+                    + " WHERE E.PORT LIKE ?1 ";
+
 
     @PersistenceContext
     EntityManager em;
@@ -47,6 +51,7 @@ public class EndOfFishingServiceEJB implements EndOfFishingService {
     public Response update(String id, EndOfFishing endOfFishing) {
         EndOfFishing entity = em.find(EndOfFishing.class, id);
         entity.setDate(endOfFishing.getDate());
+        em.merge(entity);
         return Response.status(Response.Status.ACCEPTED).entity("Successfully updated endOfFishing.").build();
     }
 
@@ -63,4 +68,5 @@ public class EndOfFishingServiceEJB implements EndOfFishingService {
                 .setParameter(2, end)
                 .getResultList();
     }
+
 }

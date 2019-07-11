@@ -30,9 +30,8 @@ public class LogbookServiceEJBTest {
     private static final String SPECIES_1 = "species 1";
     private static final String ID_1 = "ID 1";
     private static final Long WEIGHT = 10L;
-    private static final Date DATE_1 = new Date(2019 - 5 - 1);
-    private static final Date DATE_2 = new Date(2019 - 6 - 1);
-
+    private static final Date DATE_1 = new Date();
+    private static final Date DATE_2 = new Date();
     @Mock
     private EntityManager em;
 
@@ -41,7 +40,6 @@ public class LogbookServiceEJBTest {
 
     private Logbook logbookOne;
 
-    private Logbook logbookTwo;
 
     private List<Logbook> logbookList = new ArrayList<>();
 
@@ -72,48 +70,58 @@ public class LogbookServiceEJBTest {
     }
 
     @Test
+    public void findAllShouldReturnLogbookList() {
+        when(em.createNamedQuery("logbook.findAll", Logbook.class)).thenReturn(query);
+        when(query.getResultList()).thenReturn(logbookList);
+
+        List<Logbook> resultList = service.findAll();
+
+        assertEquals("Logbook list size should be 1.", 1, resultList.size());
+        verify(em, times(1)).createNamedQuery("logbook.findAll", Logbook.class);
+    }
+
+    @Test
     public void findByIdShouldReturnCorrectStatusCode() {
         when(em.find(eq(Logbook.class), anyString())).thenReturn(logbookOne);
 
         Response response = service.findById(ID_1);
         verify(em, times(1)).find(eq(Logbook.class), anyString());
-        assertEquals( 302, response.getStatus());
+        assertEquals("FindById logbook should return status code FOUND", Response.Status.FOUND.getStatusCode(), response.getStatus());
 
         when(em.find(eq(Logbook.class), anyString())).thenReturn(null);
 
         response = service.findById(ID_1);
-        assertEquals(404, response.getStatus());
+        verify(em, times(2)).find(eq(Logbook.class), anyString());
+        assertEquals("FindById logbook should return status code NOT_FOUND", Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
     }
 
     @Test
     public void createShouldReturnCorrectStatusCode() {
         Response response = service.create(logbookOne);
         verify(em, times(1)).persist(any(Logbook.class));
-        assertEquals("Logbook creation by NETWORK returned incorrect status.",201, response.getStatus());
+        assertEquals("Logbook creation by NETWORK should return status code CREATED.", Response.Status.CREATED.getStatusCode(), response.getStatus());
 
         logbookOne.setConnectionType(ConnectionType.NETWORK);
 
         Response responseSatellite = service.create(logbookOne);
-        assertEquals("Logbook creation by SATELLITE returned incorrect status.", 201, responseSatellite.getStatus());
+        assertEquals("Logbook creation by SATELLITE should return status code CREATED.", Response.Status.CREATED.getStatusCode(), responseSatellite.getStatus());
     }
 
     @Test
-     public void findAllShouldReturnLogbookList() {
-        when(em.createNamedQuery("logbook.findAll", Logbook.class)).thenReturn(query);
-        when(query.getResultList()).thenReturn(logbookList);
-
-        List<Logbook> resultList = service.findAll();
-        assertEquals("Incorrect size of logbooks is found.", 1, resultList.size());
-        verify(em, times(1)).createNamedQuery("logbook.findAll", Logbook.class);
-
-    }
-
-    @Test
-    public void removeShouldInvokeEntityManagerRemove() {
+    public void removeShouldInvokeEntityManagersRemove() {
         when(em.find(eq(Logbook.class), anyString())).thenReturn(logbookOne);
         service.remove(ID_1);
 
         verify(em, times(1)).remove(logbookOne);
+    }
+
+    @Test
+    public void updateShouldReturnCorrectStatusCode() {
+        when(em.find(eq(Logbook.class), anyString())).thenReturn(logbookOne);
+        Response response = service.update(ID_1, logbookOne);
+
+        verify(em, times(1)).merge(any(Logbook.class));
+        assertEquals("Logbook update returned incorrect status code", Response.Status.ACCEPTED.getStatusCode(), response.getStatus());
     }
 
     @Test
@@ -126,7 +134,7 @@ public class LogbookServiceEJBTest {
 
         verify(em, times(1)).createNativeQuery(anyString(), eq(Logbook.class));
         verify(query, times(1)).setParameter(anyInt(), anyString());
-        assertEquals("Incorrect size of logbooks is found.", 1, resultList.size());
+        assertEquals("Logbook list size should be 1.", 1, resultList.size());
     }
 
     @Test
@@ -137,10 +145,9 @@ public class LogbookServiceEJBTest {
 
         resultList = service.findByArrivalPort(PORT_ARRIVAL_1);
 
-
         verify(em, times(1)).createNativeQuery(anyString(), eq(Logbook.class));
         verify(query, times(1)).setParameter(anyInt(), anyString());
-        assertEquals("Incorrect size of logbooks is found.", 1, resultList.size());
+        assertEquals("Logbook list size should be 1.", 1, resultList.size());
     }
 
     @Test
@@ -153,7 +160,7 @@ public class LogbookServiceEJBTest {
 
         verify(em, times(1)).createNativeQuery(anyString(), eq(Logbook.class));
         verify(query, times(1)).setParameter(anyInt(), anyString());
-        assertEquals("Incorrect size of logbooks is found.", 1, resultList.size());
+        assertEquals("Logbook list size should be 1.", 1, resultList.size());
     }
 
     @Test
@@ -166,7 +173,7 @@ public class LogbookServiceEJBTest {
 
         verify(em, times(1)).createNativeQuery(anyString(), eq(Logbook.class));
         verify(query, times(1)).setParameter(anyInt(), anyLong());
-        assertEquals("Incorrect size of logbooks is found.", 1, resultList.size());
+        assertEquals("Logbook list size should be 1.", 1, resultList.size());
     }
 
     @Test
@@ -179,15 +186,7 @@ public class LogbookServiceEJBTest {
 
         verify(em, times(1)).createNativeQuery(anyString(), eq(Logbook.class));
         verify(query, times(2)).setParameter(anyInt(), anyString());
-        assertEquals("Incorrect size of logbooks is found.", 1, resultList.size());
+        assertEquals("Logbook list size should be 1.", 1, resultList.size());
     }
 
-    @Test
-    public void updateShouldReturnCorrectStatusCode() {
-        when(em.find(eq(Logbook.class), anyString())).thenReturn(logbookOne);
-        Response response = service.update(ID_1, logbookOne);
-
-        verify(em, times(1)).merge(any(Logbook.class));
-        assertEquals("Logbook update returned incorrect status code", 202, response.getStatus());
-    }
 }

@@ -24,7 +24,7 @@ public class ArrivalServiceEJB implements ArrivalService {
             QUERY_START
             + " WHERE A.DATE BETWEEN ?1 and ?2 ";
 
-            @PersistenceContext
+    @PersistenceContext
     EntityManager em;
 
     @Override
