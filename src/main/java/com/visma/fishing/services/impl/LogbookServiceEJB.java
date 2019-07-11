@@ -71,7 +71,6 @@ public class LogbookServiceEJB implements LogbookService {
     @PersistenceContext
     private EntityManager em;
 
-    private SavingStrategy savingStrategy;
     @Override
     public List<Logbook> findAll() {
         TypedQuery<Logbook> q = em.createNamedQuery("logbook.findAll", Logbook.class);
@@ -89,7 +88,7 @@ public class LogbookServiceEJB implements LogbookService {
     public List<Logbook> findByDeparturePort(String port) {
         return em.createNativeQuery(
                 QUERY_FIND_BY_DEPARTURE_PORT, Logbook.class)
-                .setParameter(1, "%" + port + "%")
+                .setParameter(1,  "%" + port)
                 .getResultList();
     }
 
@@ -97,7 +96,7 @@ public class LogbookServiceEJB implements LogbookService {
     public List<Logbook> findByArrivalPort(String port) {
         return em.createNativeQuery(
                 QUERY_FIND_BY_ARRIVAL_PORT, Logbook.class)
-                .setParameter(1, "%" + port + "%")
+                .setParameter(1, "%" + port)
                 .getResultList();
     }
 
@@ -105,7 +104,7 @@ public class LogbookServiceEJB implements LogbookService {
     public List<Logbook> findBySpecies(String species) {
         return em.createNativeQuery(
                 QUERY_FIND_BY_SPECIES, Logbook.class)
-                .setParameter(1, "%" + species + "%")
+                .setParameter(1, "%" + species)
                 .getResultList();
     }
 
@@ -134,6 +133,7 @@ public class LogbookServiceEJB implements LogbookService {
 
     @Override
     public Response create(Logbook logbook) {
+        SavingStrategy savingStrategy;
         if (logbook.getConnectionType() == ConnectionType.NETWORK) {
             savingStrategy = new DBSavingStrategy(em);
         } else {

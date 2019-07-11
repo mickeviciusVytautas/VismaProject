@@ -4,7 +4,6 @@ import com.visma.fishing.auxilary.ConnectionType;
 import com.visma.fishing.builder.LogbookBuilder;
 import com.visma.fishing.model.*;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -29,9 +28,10 @@ public class LogbookServiceEJBTest {
     private static final String PORT_ARRIVAL_1= "port arrival 1";
     private static final String PORT_DEPARTURE_1 = "port departure 1";
     private static final String SPECIES_1 = "species 1";
+    private static final String ID_1 = "ID 1";
+    private static final Long WEIGHT = 10L;
     private static final Date DATE_1 = new Date(2019 - 5 - 1);
     private static final Date DATE_2 = new Date(2019 - 6 - 1);
-    private static final Date DATE_3 = new Date(2019 - 7 - 1);
 
     @Mock
     private EntityManager em;
@@ -45,16 +45,19 @@ public class LogbookServiceEJBTest {
 
     private List<Logbook> logbookList = new ArrayList<>();
 
+    private List<Logbook> resultList = new ArrayList<>();
+
     @SuppressWarnings("unchecked")
     private
     TypedQuery<Logbook> query = (TypedQuery<Logbook>) mock(TypedQuery.class);
+
     @Before
     public void init() {
         LogbookBuilder logbookBuilder = new LogbookBuilder();
         Departure departure = new Departure(PORT_DEPARTURE_1, DATE_1);
         EndOfFishing endOfFishing = new EndOfFishing(DATE_2);
-        Arrival arrival = new Arrival(PORT_ARRIVAL_1, DATE_3);
-        Catch aCatch = new Catch("s", 10L);
+        Arrival arrival = new Arrival(PORT_ARRIVAL_1, DATE_1);
+        Catch aCatch = new Catch(SPECIES_1, WEIGHT);
         List<Catch> catchList = new ArrayList<Catch>(){{add(aCatch);}};
         logbookOne = logbookBuilder
                 .setArrival(arrival)
@@ -72,81 +75,119 @@ public class LogbookServiceEJBTest {
     public void findByIdShouldReturnCorrectStatusCode() {
         when(em.find(eq(Logbook.class), anyString())).thenReturn(logbookOne);
 
-        Response response = service.findById("id");
+        Response response = service.findById(ID_1);
+        verify(em, times(1)).find(eq(Logbook.class), anyString());
         assertEquals( 302, response.getStatus());
 
         when(em.find(eq(Logbook.class), anyString())).thenReturn(null);
 
-        response = service.findById("id");
+        response = service.findById(ID_1);
         assertEquals(404, response.getStatus());
     }
 
     @Test
-    public void createShouldReturnOkStatusCode() {
-
+    public void createShouldReturnCorrectStatusCode() {
         Response response = service.create(logbookOne);
-        assertEquals("Logbook creation by NETWORK status is incorrect",201, response.getStatus());
+        verify(em, times(1)).persist(any(Logbook.class));
+        assertEquals("Logbook creation by NETWORK returned incorrect status.",201, response.getStatus());
 
-        logbookOne.setConnectionType(ConnectionType.SATELLITE);
+        logbookOne.setConnectionType(ConnectionType.NETWORK);
 
         Response responseSatellite = service.create(logbookOne);
-        assertEquals("Logbook creation by SATELLITE status is incorrect", 201, responseSatellite.getStatus());
+        assertEquals("Logbook creation by SATELLITE returned incorrect status.", 201, responseSatellite.getStatus());
     }
 
     @Test
      public void findAllShouldReturnLogbookList() {
-
         when(em.createNamedQuery("logbook.findAll", Logbook.class)).thenReturn(query);
         when(query.getResultList()).thenReturn(logbookList);
 
         List<Logbook> resultList = service.findAll();
-        assertEquals("Incorrect size of logbooks is found", 1, resultList.size());
+        assertEquals("Incorrect size of logbooks is found.", 1, resultList.size());
         verify(em, times(1)).createNamedQuery("logbook.findAll", Logbook.class);
 
     }
 
     @Test
-    public void remove() {
+    public void removeShouldInvokeEntityManagerRemove() {
         when(em.find(eq(Logbook.class), anyString())).thenReturn(logbookOne);
-        service.remove("1");
+        service.remove(ID_1);
 
         verify(em, times(1)).remove(logbookOne);
     }
 
-@Ignore
     @Test
-    public void findByDeparturePort() {
-
-        when(em.createNativeQuery("SELECT ?1", Logbook.class).setParameter(1, PORT_DEPARTURE_1)).thenReturn(query);
-
-        when(query.getResultList()).thenReturn(logbookList);
-        logbookList = service.findByDeparturePort(PORT_DEPARTURE_1);
-
-        assertEquals(1, logbookList.size());
-
-    }
-@Ignore
-    @Test
-    public void findByArrivalPort() {
+    public void findByDeparturePortShouldReturnLogbookList() {
         when(em.createNativeQuery(anyString(), eq(Logbook.class))).thenReturn(query);
+        when(query.setParameter(anyInt(), anyString())).thenReturn(query);
         when(query.getResultList()).thenReturn(logbookList);
-        logbookList = service.findByArrivalPort(PORT_ARRIVAL_1);
 
-        assertEquals(1, logbookList.size());
+        resultList = service.findByArrivalPort(PORT_DEPARTURE_1);
+
+        verify(em, times(1)).createNativeQuery(anyString(), eq(Logbook.class));
+        verify(query, times(1)).setParameter(anyInt(), anyString());
+        assertEquals("Incorrect size of logbooks is found.", 1, resultList.size());
     }
 
     @Test
-    public void findBySpecies() {
+    public void findByArrivalPortShouldReturnLogbookList() {
+        when(em.createNativeQuery(anyString(), eq(Logbook.class))).thenReturn(query);
+        when(query.setParameter(anyInt(), anyString())).thenReturn(query);
+        when(query.getResultList()).thenReturn(logbookList);
+
+        resultList = service.findByArrivalPort(PORT_ARRIVAL_1);
+
+
+        verify(em, times(1)).createNativeQuery(anyString(), eq(Logbook.class));
+        verify(query, times(1)).setParameter(anyInt(), anyString());
+        assertEquals("Incorrect size of logbooks is found.", 1, resultList.size());
     }
 
     @Test
-    public void findWhereCatchWeightIsBigger() {
+    public void findBySpeciesShouldReturnLogbookList() {
+        when(em.createNativeQuery(anyString(), eq(Logbook.class))).thenReturn(query);
+        when(query.setParameter(anyInt(), anyString())).thenReturn(query);
+        when(query.getResultList()).thenReturn(logbookList);
+
+        resultList = service.findBySpecies(SPECIES_1);
+
+        verify(em, times(1)).createNativeQuery(anyString(), eq(Logbook.class));
+        verify(query, times(1)).setParameter(anyInt(), anyString());
+        assertEquals("Incorrect size of logbooks is found.", 1, resultList.size());
     }
 
     @Test
-    public void findByDeparturePeriod() {
+    public void findWhereCatchWeightIsBiggerShouldReturnLogbookList() {
+        when(em.createNativeQuery(anyString(), eq(Logbook.class))).thenReturn(query);
+        when(query.setParameter(anyInt(), anyLong())).thenReturn(query);
+        when(query.getResultList()).thenReturn(logbookList);
+
+        resultList = service.findByWeight(WEIGHT, false);
+
+        verify(em, times(1)).createNativeQuery(anyString(), eq(Logbook.class));
+        verify(query, times(1)).setParameter(anyInt(), anyLong());
+        assertEquals("Incorrect size of logbooks is found.", 1, resultList.size());
     }
 
+    @Test
+    public void findByDeparturePeriodShouldReturnLogbookList() {
+        when(em.createNativeQuery(anyString(), eq(Logbook.class))).thenReturn(query);
+        when(query.setParameter(anyInt(), anyString())).thenReturn(query);
+        when(query.getResultList()).thenReturn(logbookList);
 
+        resultList = service.findByDeparturePeriod(DATE_1.toString(), DATE_2.toString());
 
+        verify(em, times(1)).createNativeQuery(anyString(), eq(Logbook.class));
+        verify(query, times(2)).setParameter(anyInt(), anyString());
+        assertEquals("Incorrect size of logbooks is found.", 1, resultList.size());
+    }
+
+    @Test
+    public void updateShouldReturnCorrectStatusCode() {
+        when(em.find(eq(Logbook.class), anyString())).thenReturn(logbookOne);
+        Response response = service.update(ID_1, logbookOne);
+
+        verify(em, times(1)).merge(any(Logbook.class));
+        assertEquals("Logbook update returned incorrect status code", 202, response.getStatus());
+    }
 }
