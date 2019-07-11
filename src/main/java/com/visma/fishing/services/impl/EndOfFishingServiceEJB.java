@@ -20,9 +20,6 @@ public class EndOfFishingServiceEJB implements EndOfFishingService {
     private static final String QUERY_FIND_BY_DATE =
             QUERY_START
                     + " WHERE E.DATE BETWEEN ?1 and ?2 ";
-    private static final String QUERY_FIND_BY_PORT =
-            QUERY_START
-                    + " WHERE E.PORT LIKE ?1 ";
 
 
     @PersistenceContext
@@ -61,6 +58,7 @@ public class EndOfFishingServiceEJB implements EndOfFishingService {
         em.remove(entity);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<EndOfFishing> findByPeriod(String start, String end){
         return em.createNativeQuery(QUERY_FIND_BY_DATE, EndOfFishing.class)

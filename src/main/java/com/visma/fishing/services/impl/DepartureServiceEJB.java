@@ -43,8 +43,7 @@ public class DepartureServiceEJB implements DepartureService {
     @Override
     public Response create(Departure departure) {
         em.persist(departure);
-        return Response.status(Response.Status.CREATED).entity("Successfully saved departure to file system.").build();
-
+        return Response.status(Response.Status.CREATED).entity("Successfully saved departure to database.").build();
     }
 
     @Override
@@ -62,6 +61,7 @@ public class DepartureServiceEJB implements DepartureService {
         em.remove(entity);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<Departure> findByPort(String port){
         return em.createNativeQuery(QUERY_FIND_BY_PORT, Departure.class)
@@ -69,6 +69,7 @@ public class DepartureServiceEJB implements DepartureService {
                 .getResultList();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<Departure> findByPeriod(String start, String end){
         return em.createNativeQuery(QUERY_FIND_BY_DATE, Departure.class)

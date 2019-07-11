@@ -65,6 +65,7 @@ public class CatchServiceEJB implements CatchService {
         em.remove(entity);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<Catch> findBySpecies(String species){
         return em.createNativeQuery(QUERY_FIND_BY_SPECIES, Catch.class)
@@ -72,6 +73,7 @@ public class CatchServiceEJB implements CatchService {
                 .getResultList();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<Catch> findByWeight(Long weight, boolean searchWithLowerWeight){
         if(searchWithLowerWeight){

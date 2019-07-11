@@ -21,7 +21,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Entity
 @NamedQueries(
-        @NamedQuery(name = "arrival.findAll", query = "SELECT a FROM Arrival a")
+        @NamedQuery(name = "arrival.findAll", query = "SELECT A FROM Arrival A")
 )
 public class Arrival extends BaseEntity {
 

@@ -84,6 +84,7 @@ public class LogbookServiceEJB implements LogbookService {
                 .orElse(Response.status(Response.Status.NOT_FOUND).entity("Logbook by id " + id + " was not found.").build());
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<Logbook> findByDeparturePort(String port) {
         return em.createNativeQuery(
@@ -92,6 +93,7 @@ public class LogbookServiceEJB implements LogbookService {
                 .getResultList();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<Logbook> findByArrivalPort(String port) {
         return em.createNativeQuery(
@@ -100,6 +102,7 @@ public class LogbookServiceEJB implements LogbookService {
                 .getResultList();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<Logbook> findBySpecies(String species) {
         return em.createNativeQuery(
@@ -108,6 +111,7 @@ public class LogbookServiceEJB implements LogbookService {
                 .getResultList();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<Logbook> findByWeight(Long weight, boolean searchWithLowerWeight) {
         if(searchWithLowerWeight) {
@@ -122,6 +126,7 @@ public class LogbookServiceEJB implements LogbookService {
                 .getResultList();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<Logbook> findByDeparturePeriod(String start, String end){
         return em.createNativeQuery(
