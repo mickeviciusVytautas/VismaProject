@@ -1,6 +1,5 @@
 package com.visma.fishing.services.impl;
 
-import com.sun.xml.bind.v2.model.core.ID;
 import com.visma.fishing.model.EndOfFishing;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,13 +10,12 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-import javax.sound.sampled.Port;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;

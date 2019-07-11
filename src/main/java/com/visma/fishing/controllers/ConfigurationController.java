@@ -2,7 +2,6 @@ package com.visma.fishing.controllers;
 
 import com.visma.fishing.model.configuration.Configuration;
 import com.visma.fishing.services.ConfigurationService;
-import jdk.nashorn.internal.objects.annotations.Getter;
 
 import javax.inject.Inject;
 import javax.validation.Valid;

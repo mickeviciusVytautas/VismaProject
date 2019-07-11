@@ -8,20 +8,19 @@ import java.io.IOException;
 
 public class FileSavingStrategy implements SavingStrategy {
 
-    private String FILE_PATH;
+    private String path;
 
-    public FileSavingStrategy(String FILE_PATH) {
-        if(FILE_PATH != null) {
-            this.FILE_PATH = FILE_PATH;
+    public FileSavingStrategy(String path) {
+        if(path != null) {
+            this.path = path;
         } else {
-            this.FILE_PATH = "C:\\dev\\database\\";
+            this.path = "C:\\dev\\database\\";
         }
     }
 
     @Override
     public Response save(Logbook logbook) {
-        String localDate = logbook.getDeparture().getDate().toString();
-        String filePath = FILE_PATH + System.currentTimeMillis() + ".json";
+        String filePath = this.path + System.currentTimeMillis() + ".json";
         try (FileWriter fileWriter = new FileWriter(filePath)){
             fileWriter.write(logbook.toString());
         } catch (IOException e) {

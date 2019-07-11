@@ -1,12 +1,9 @@
 package com.visma.fishing.controllers;
 
-import com.visma.fishing.model.Arrival;
-import com.visma.fishing.services.DepartureService;
 import com.visma.fishing.model.Departure;
+import com.visma.fishing.services.DepartureService;
 
 import javax.inject.Inject;
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
