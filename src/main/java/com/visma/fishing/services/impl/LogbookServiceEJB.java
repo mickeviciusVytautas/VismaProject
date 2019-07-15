@@ -65,7 +65,9 @@ public class LogbookServiceEJB implements LogbookService {
                 QUERY_FIND +
                 " join DEPARTURE D on L.DEPARTURE_ID = D.ID" +
                 " where D.DATE between ?1 and ?2";
+
     public static final String LOGBOOK_UPDATE_SUCCESS_MSG = "Successfully updated logbook with id ";
+    public static final String LOGBOOK_REMOVED_SUCCESS_MSG = "Removed logbook with id ";
 
     @Inject
     @Property(name = "databasePath",
@@ -161,20 +163,24 @@ public class LogbookServiceEJB implements LogbookService {
 
     @Override
     public Response update(String id, Logbook logbook) {
-        Logbook entity = em.find(Logbook.class, id);
-        entity.setCatchList(logbook.getCatchList());
-        entity.setArrival(logbook.getArrival());
-        entity.setDeparture(logbook.getDeparture());
-        entity.setEndOfFishing(logbook.getEndOfFishing());
-        em.merge(entity);
-        log.info(LOGBOOK_UPDATE_SUCCESS_MSG + logbook.getId());
-        return Response.status(Response.Status.ACCEPTED).entity(LOGBOOK_UPDATE_SUCCESS_MSG + logbook.getId()).build();
+        return Optional.ofNullable(em.find(Logbook.class, id)).map(entity -> {
+            entity.setCatchList(logbook.getCatchList());
+            entity.setArrival(logbook.getArrival());
+            entity.setDeparture(logbook.getDeparture());
+            entity.setEndOfFishing(logbook.getEndOfFishing());
+            em.merge(entity);
+            log.info(LOGBOOK_UPDATE_SUCCESS_MSG + logbook.getId());
+            return Response.status(Response.Status.ACCEPTED).entity(LOGBOOK_UPDATE_SUCCESS_MSG + logbook.getId()).build();
+        }).orElse(Response.status(Response.Status.ACCEPTED).entity(LOGBOOK_UPDATE_SUCCESS_MSG + logbook.getId()).build());
     }
 
     @Override
     public void remove(String id) {
-        Logbook entity = em.find(Logbook.class, id);
-        em.remove(entity);
+        Optional<Logbook> optional = Optional.ofNullable(em.find(Logbook.class, id));
+        optional.ifPresent(entity -> {
+            em.remove(entity);
+            log.info(LOGBOOK_REMOVED_SUCCESS_MSG + entity.getId());
+                });
     }
 
 }

@@ -32,11 +32,4 @@ public class Departure extends BaseEntity {
         this.port = port;
     }
 
-    public JsonObject toJson(){
-        return Json.createObjectBuilder()
-                .add("port", port)
-                .add("date", date.toString())
-                .build();
-    }
-
 }

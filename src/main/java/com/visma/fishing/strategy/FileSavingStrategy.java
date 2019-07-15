@@ -1,11 +1,12 @@
 package com.visma.fishing.strategy;
 
 import com.visma.fishing.model.Logbook;
+import lombok.extern.slf4j.Slf4j;
 
-import javax.ws.rs.core.Response;
 import java.io.FileWriter;
 import java.io.IOException;
 
+@Slf4j
 public class FileSavingStrategy implements SavingStrategy {
 
     private String path;
@@ -22,9 +23,10 @@ public class FileSavingStrategy implements SavingStrategy {
     public void save(Logbook logbook) {
         String filePath = this.path + System.currentTimeMillis() + ".json";
         try (FileWriter fileWriter = new FileWriter(filePath)){
+            log.info("Writing logbook to file system...");
             fileWriter.write(logbook.toString());
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e.toString());
         }
 
     }

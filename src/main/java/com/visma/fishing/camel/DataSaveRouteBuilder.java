@@ -2,29 +2,29 @@ package com.visma.fishing.camel;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.visma.fishing.model.Logbook;
-import io.xlate.inject.Property;
-import io.xlate.inject.PropertyResource;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 
-import javax.inject.Inject;
 import java.io.File;
 
+@EqualsAndHashCode(callSuper = true)
+@Data
+@AllArgsConstructor
 public class DataSaveRouteBuilder extends RouteBuilder {
 
-    @Inject
-    @Property(name = "inboxFolder",
-            resource = @PropertyResource("classpath:application.properties"))
-    private String inboxPath;
 
+    private String inboxFolder;
     private static final String TIMER_CONFIGURATION = "timer://dataTimer?fixedRate=true&period=10000&delay=5s";
-    private static final String FILE_LOCATION = "file:C:\\dev\\inbox\\?delete=true&noop=false";
     private static final String HTTP_POST_LOGBOOK = "http://localhost:8080/exploded/api/logbook/";
 
     @Override
     public void configure() {
+        String fileLocation = "file:" + inboxFolder + "?delete=true&noop=false";
         from(TIMER_CONFIGURATION)
-                .pollEnrich(FILE_LOCATION)
+                .pollEnrich(fileLocation)
                 .process(exchange -> {
                     File file = exchange.getIn().getBody(File.class);
                     ObjectMapper mapper = new ObjectMapper();

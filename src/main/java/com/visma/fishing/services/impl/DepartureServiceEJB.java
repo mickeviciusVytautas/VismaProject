@@ -2,6 +2,7 @@ package com.visma.fishing.services.impl;
 
 import com.visma.fishing.model.Departure;
 import com.visma.fishing.services.DepartureService;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -14,6 +15,7 @@ import java.util.Optional;
 
 @Transactional
 @Stateless
+@Slf4j
 public class DepartureServiceEJB implements DepartureService {
 
     private static final String QUERY_START = "SELECT D.* FROM DEPARTURE D ";
@@ -23,6 +25,8 @@ public class DepartureServiceEJB implements DepartureService {
     private static final String QUERY_FIND_BY_DATE =
             QUERY_START
                     + " WHERE D.DATE BETWEEN ?1 and ?2 ";
+
+    private static final String DEPARTURE_REMOVE_SUCCESS_MSG = "Removed departure with id ";
 
     @PersistenceContext
     EntityManager em;
@@ -57,8 +61,11 @@ public class DepartureServiceEJB implements DepartureService {
 
     @Override
     public void remove(String id) {
-        Departure entity = em.find(Departure.class, id);
-        em.remove(entity);
+        Optional<Departure> optional = Optional.ofNullable(em.find(Departure.class, id));
+        optional.ifPresent(entity -> {
+            em.remove(entity);
+            log.info(DEPARTURE_REMOVE_SUCCESS_MSG + entity.getId());
+        });
     }
 
     @SuppressWarnings("unchecked")

@@ -28,10 +28,4 @@ public class EndOfFishing extends BaseEntity {
         this.date = date;
     }
 
-    public JsonObject toJson(){
-        return Json.createObjectBuilder()
-                .add("date", date.toString())
-                .build();
-    }
-
 }

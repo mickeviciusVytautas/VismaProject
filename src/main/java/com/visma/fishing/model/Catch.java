@@ -31,11 +31,4 @@ public class Catch extends BaseEntity {
         this.weight = weight;
     }
 
-    public JsonObject toJson(){
-        return Json.createObjectBuilder()
-                .add("species", species)
-                .add("weight", weight)
-                .build();
-    }
-
 }

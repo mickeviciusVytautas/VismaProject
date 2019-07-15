@@ -3,9 +3,6 @@ package com.visma.fishing.strategy;
 import com.visma.fishing.model.Logbook;
 
 import javax.persistence.EntityManager;
-import javax.ws.rs.core.Response;
-
-import static javax.ws.rs.core.Response.*;
 
 public class DBSavingStrategy implements SavingStrategy {
 

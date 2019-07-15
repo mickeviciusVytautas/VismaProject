@@ -2,6 +2,7 @@ package com.visma.fishing.services.impl;
 
 import com.visma.fishing.model.EndOfFishing;
 import com.visma.fishing.services.EndOfFishingService;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -14,12 +15,16 @@ import java.util.Optional;
 
 @Transactional
 @Stateless
+@Slf4j
 public class EndOfFishingServiceEJB implements EndOfFishingService {
-
     private static final String QUERY_START = "SELECT E.* FROM ENDOFFISHING E ";
     private static final String QUERY_FIND_BY_DATE =
             QUERY_START
                     + " WHERE E.DATE BETWEEN ?1 and ?2 ";
+    private static final String END_OF_FISHING_UPDATE_SUCCESS_MSG = "Successfully updated endOfFishing with id ";
+    private static final String END_OF_FISHING_REMOVED_SUCCESS_MSG = "Removed endOfFishing with id ";
+    private static final String END_OF_FISHING_CREATE_SUCCESS_MSG = "Successfully saved endOfFishing with id ";
+    private static final String TO_DATABASE = " to database.";
 
 
     @PersistenceContext
@@ -41,7 +46,8 @@ public class EndOfFishingServiceEJB implements EndOfFishingService {
     @Override
     public Response create(EndOfFishing endOfFishing) {
         em.persist(endOfFishing);
-        return Response.status(Response.Status.CREATED).entity("Successfully saved endOfFishing to database.").build();
+        log.info(END_OF_FISHING_CREATE_SUCCESS_MSG + endOfFishing.getId() + TO_DATABASE);
+        return Response.status(Response.Status.CREATED).entity(END_OF_FISHING_CREATE_SUCCESS_MSG + endOfFishing.getId() + TO_DATABASE).build();
     }
 
     @Override
@@ -49,13 +55,18 @@ public class EndOfFishingServiceEJB implements EndOfFishingService {
         EndOfFishing entity = em.find(EndOfFishing.class, id);
         entity.setDate(endOfFishing.getDate());
         em.merge(entity);
-        return Response.status(Response.Status.ACCEPTED).entity("Successfully updated endOfFishing.").build();
+        log.info(END_OF_FISHING_UPDATE_SUCCESS_MSG + entity.getId());
+        return Response.status(Response.Status.ACCEPTED).entity(END_OF_FISHING_UPDATE_SUCCESS_MSG + endOfFishing.getId()).build();
+
     }
 
     @Override
     public void remove(String id) {
-        EndOfFishing entity = em.find(EndOfFishing.class, id);
-        em.remove(entity);
+        Optional<EndOfFishing> optional = Optional.ofNullable(em.find(EndOfFishing.class, id));
+        optional.ifPresent(entity -> {
+            em.remove(entity);
+            log.info(END_OF_FISHING_REMOVED_SUCCESS_MSG + entity.getId());
+        });
     }
 
     @SuppressWarnings("unchecked")
