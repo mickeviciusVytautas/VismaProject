@@ -9,24 +9,30 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.Optional;
+
+import static com.visma.fishing.auxiliary.Messages.*;
 
 @Path("/logbook")
 public class LogbookController {
 
     @Inject
-    LogbookService logbookService;
+    private LogbookService logbookService;
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createLogbook(@Valid Logbook logbook){
-        return logbookService.create(logbook);
+        return Response.status(Response.Status.CREATED).entity(LOGBOOK_SAVE_SUCCESS_MSG).entity(logbook).build();
+
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{id}")
     public Response getLogbook(@PathParam("id") String id) {
-        return logbookService.findById(id);
+        return logbookService.findById(id)
+                .map(logbook -> Response.status(Response.Status.FOUND).entity(logbook).build())
+                .orElse(Response.status(Response.Status.NOT_FOUND).entity(LOGBOOK_FIND_FAILED_MSG + id + ".").build());
     }
 
     @GET
@@ -40,8 +46,10 @@ public class LogbookController {
     @PUT
     @Path("{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateLogbookById(@PathParam("id") String id, Logbook logbook){
-        return logbookService.update(id, logbook);
+    public Response updateLogbookById(@PathParam("id") String id, Logbook update) {
+        Optional<Logbook> optional = logbookService.updateLogbookById(id, update);
+        return optional.map(logbook -> Response.status(Response.Status.ACCEPTED).entity(LOGBOOK_UPDATE_SUCCESS_MSG + logbook.getId() + ".").build())
+                .orElse(Response.status(Response.Status.NOT_FOUND).entity(LOGBOOK_FIND_FAILED_MSG + id + ".").build());
     }
 
     @GET
@@ -68,7 +76,7 @@ public class LogbookController {
     @GET
     @Path("/search/weight/{weight}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Logbook> getCatchesByWeight(@PathParam("weight") Long weight, @QueryParam("lower") boolean searchWithLowerWeight) {
+    public List<Logbook> getCatchesByWeightWithParameter(@PathParam("weight") Long weight, @QueryParam("lower") boolean searchWithLowerWeight) {
         return logbookService.findByWeight(weight, searchWithLowerWeight);
     }
 

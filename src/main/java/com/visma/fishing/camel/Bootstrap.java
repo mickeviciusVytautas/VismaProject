@@ -5,8 +5,6 @@ import io.xlate.inject.PropertyResource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -36,7 +34,6 @@ public class Bootstrap {
             context.start();
         } catch (Exception e) {
             log.error("Failed to create CamelContext and register Camel Router.", e);
-
         }
     }
 

@@ -9,26 +9,20 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
-import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Optional;
+
+import static com.visma.fishing.auxiliary.Messages.END_OF_FISHING_REMOVED_SUCCESS_MSG;
+import static com.visma.fishing.auxiliary.Messages.END_OF_FISHING_UPDATE_SUCCESS_MSG;
+import static com.visma.fishing.queries.Queries.END_OF_FISHING_FIND_BY_DATE;
 
 @Transactional
 @Stateless
 @Slf4j
 public class EndOfFishingServiceEJB implements EndOfFishingService {
-    private static final String QUERY_START = "SELECT E.* FROM ENDOFFISHING E ";
-    private static final String QUERY_FIND_BY_DATE =
-            QUERY_START
-                    + " WHERE E.DATE BETWEEN ?1 and ?2 ";
-    private static final String END_OF_FISHING_UPDATE_SUCCESS_MSG = "Successfully updated endOfFishing with id ";
-    private static final String END_OF_FISHING_REMOVED_SUCCESS_MSG = "Removed endOfFishing with id ";
-    private static final String END_OF_FISHING_CREATE_SUCCESS_MSG = "Successfully saved endOfFishing with id ";
-    private static final String TO_DATABASE = " to database.";
-
 
     @PersistenceContext
-    EntityManager em;
+    private EntityManager em;
 
     @Override
     public List<EndOfFishing> findAll() {
@@ -37,26 +31,26 @@ public class EndOfFishingServiceEJB implements EndOfFishingService {
     }
 
     @Override
-    public Response findById(String id) {
-        return Optional.ofNullable(em.find(EndOfFishing.class, id))
-                .map(endOfFishing -> Response.status(Response.Status.FOUND).entity(endOfFishing).build())
-                .orElse(Response.status(Response.Status.NOT_FOUND).entity("EndOfFishing by id " + id + " was not found.").build());
+    public Optional<EndOfFishing> findById(String id) {
+        return Optional.ofNullable(em.find(EndOfFishing.class, id));
     }
 
     @Override
-    public Response create(EndOfFishing endOfFishing) {
+    public EndOfFishing create(EndOfFishing endOfFishing) {
         em.persist(endOfFishing);
-        log.info(END_OF_FISHING_CREATE_SUCCESS_MSG + endOfFishing.getId() + TO_DATABASE);
-        return Response.status(Response.Status.CREATED).entity(END_OF_FISHING_CREATE_SUCCESS_MSG + endOfFishing.getId() + TO_DATABASE).build();
+        return endOfFishing;
     }
 
     @Override
-    public Response update(String id, EndOfFishing endOfFishing) {
+    public Optional<EndOfFishing> updateEndOfFishingById(String id, EndOfFishing endOfFishing) {
         EndOfFishing entity = em.find(EndOfFishing.class, id);
+        if (entity == null) {
+            return Optional.empty();
+        }
         entity.setDate(endOfFishing.getDate());
         em.merge(entity);
         log.info(END_OF_FISHING_UPDATE_SUCCESS_MSG + entity.getId());
-        return Response.status(Response.Status.ACCEPTED).entity(END_OF_FISHING_UPDATE_SUCCESS_MSG + endOfFishing.getId()).build();
+        return Optional.of(entity);
 
     }
 
@@ -72,7 +66,7 @@ public class EndOfFishingServiceEJB implements EndOfFishingService {
     @SuppressWarnings("unchecked")
     @Override
     public List<EndOfFishing> findByPeriod(String start, String end){
-        return em.createNativeQuery(QUERY_FIND_BY_DATE, EndOfFishing.class)
+        return em.createNativeQuery(END_OF_FISHING_FIND_BY_DATE, EndOfFishing.class)
                 .setParameter(1, start)
                 .setParameter(2, end)
                 .getResultList();

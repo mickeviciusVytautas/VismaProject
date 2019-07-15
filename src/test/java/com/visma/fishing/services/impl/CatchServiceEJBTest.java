@@ -13,8 +13,10 @@ import javax.persistence.TypedQuery;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -65,21 +67,17 @@ public class CatchServiceEJBTest {
     public void findByIdShouldReturnCorrectStatusCode() {
         when(em.find(eq(Catch.class), anyString())).thenReturn(aCatch);
 
-        Response response = service.findById(ID_1);
+        Optional<Catch> optional = service.findById(ID_1);
+
         verify(em, times(1)).find(eq(Catch.class), anyString());
-        assertEquals("FindById catch should return status code FOUND", Response.Status.FOUND.getStatusCode(), response.getStatus());
-
-        when(em.find(eq(Catch.class), anyString())).thenReturn(null);
-
-        response = service.findById(ID_1);
-        verify(em, times(2)).find(eq(Catch.class), anyString());
-        assertEquals("FindById catch should return status code NOT_FOUND", Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
+        assertTrue("Should contain catch.", optional.isPresent());
+        assertEquals("Should contain catch.", aCatch, optional.get());
     }
 
     @Test
-    public void createShouldReturnCreatedStatusCode() {
-        Response response = service.create(aCatch);
-        assertEquals("Catch creation should return status code CREATED.", Response.Status.CREATED.getStatusCode(), response.getStatus());
+    public void createShouldReturnCatch() {
+        Catch created = service.create(aCatch);
+        assertEquals("Catch creation should return entity.", aCatch, created);
     }
 
     @Test
@@ -94,11 +92,11 @@ public class CatchServiceEJBTest {
     @Test
     public void updateShouldReturnAcceptedStatusCode() {
         when(em.find(eq(Catch.class), anyString())).thenReturn(aCatch);
-        Catch catchTwo = new Catch(SPECIES_2, WEIGHT_2);
-        Response response = service.update(ID_1, aCatch);
+        Optional<Catch> optional = service.findById(ID_1);
 
-        verify(em, times(1)).merge(any(Catch.class));
-        assertEquals("Catch update returned incorrect status code", Response.Status.ACCEPTED.getStatusCode(), response.getStatus());
+        verify(em, times(1)).find(eq(Catch.class), anyString());
+        assertTrue("Should contain catch.", optional.isPresent());
+        assertEquals("Should contain catch.", aCatch, optional.get());
     }
 
     @Test

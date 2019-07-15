@@ -14,8 +14,10 @@ import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -63,21 +65,17 @@ public class EndOfFishingServiceEJBTest {
     public void findByIdShouldReturnCorrectStatusCode() {
         when(em.find(eq(EndOfFishing.class), anyString())).thenReturn(endOfFishing);
 
-        Response response = service.findById(ID_1);
+        Optional<EndOfFishing> optional = service.findById(ID_1);
+
         verify(em, times(1)).find(eq(EndOfFishing.class), anyString());
-        assertEquals("FindById endOffishing should return status code FOUND", Response.Status.FOUND.getStatusCode(), response.getStatus());
-
-        when(em.find(eq(EndOfFishing.class), anyString())).thenReturn(null);
-
-        response = service.findById(ID_1);
-        verify(em, times(2)).find(eq(EndOfFishing.class), anyString());
-        assertEquals("FindById endOffishing should return status code NOT_FOUND", Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
+        assertTrue("Should contain endOfFishing.", optional.isPresent());
+        assertEquals("Should contain endOfFishing.", endOfFishing, optional.get());
     }
 
     @Test
-    public void createShouldReturnCreatedStatusCode() {
-        Response response = service.create(endOfFishing);
-        assertEquals("EndOfFishing creation should return status code CREATED.", Response.Status.CREATED.getStatusCode(), response.getStatus());
+    public void createShouldReturnEndOfFishing() {
+        EndOfFishing created = service.create(endOfFishing);
+        assertEquals("EndOfFishing creation should return entity.", endOfFishing, created);
     }
 
 
@@ -94,10 +92,12 @@ public class EndOfFishingServiceEJBTest {
     public void updateShouldReturnAcceptedStatusCode() {
         when(em.find(eq(EndOfFishing.class), anyString())).thenReturn(endOfFishing);
 
-        Response response = service.update(ID_1, endOfFishing);
+        Optional<EndOfFishing> optional = service.findById(ID_1);
 
-        verify(em, times(1)).merge(any(EndOfFishing.class));
-        assertEquals("EndOFFishing update returned incorrect status code", Response.Status.ACCEPTED.getStatusCode(), response.getStatus());
+        verify(em, times(1)).find(eq(EndOfFishing.class), anyString());
+        assertTrue("Should contain endOfFishing.", optional.isPresent());
+        assertEquals("Should contain endOfFishing.", endOfFishing, optional.get());
+
     }
 
     @Test

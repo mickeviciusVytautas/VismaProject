@@ -8,24 +8,19 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
-import javax.ws.rs.core.Response;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
+import static com.visma.fishing.queries.Queries.ARRIVAL_FIND_BY_DATE;
+import static com.visma.fishing.queries.Queries.ARRIVAL_FIND_BY_PORT;
 
 @Transactional
 @Stateless
 public class ArrivalServiceEJB implements ArrivalService {
 
-    private static final String QUERY_START = "SELECT A.* FROM ARRIVAL A ";
-    private static final String QUERY_FIND_BY_PORT =
-            QUERY_START
-            + " WHERE A.PORT LIKE ?1 ";
-    private static final String QUERY_FIND_BY_DATE =
-            QUERY_START
-            + " WHERE A.DATE BETWEEN ?1 and ?2 ";
-
     @PersistenceContext
-    EntityManager em;
+    private EntityManager em;
 
     @Override
     public List<Arrival> findAll() {
@@ -34,25 +29,25 @@ public class ArrivalServiceEJB implements ArrivalService {
     }
 
     @Override
-    public Response findById(String id) {
-        return Optional.ofNullable(em.find(Arrival.class, id)).map(
-                arrival -> Response.status(Response.Status.FOUND).entity(arrival).build())
-                .orElse(Response.status(Response.Status.NOT_FOUND).entity("Arrival by id " + id + " is not found.").build());
+    public Optional<Arrival> findById(String id) {
+        return Optional.ofNullable(em.find(Arrival.class, id));
     }
 
     @Override
-    public Response create(Arrival arrival) {
+    public Arrival create(Arrival arrival) {
         em.persist(arrival);
-        return Response.status(Response.Status.CREATED).entity("Successfully saved arrival to database.").build();
-
+        return arrival;
     }
 
     @Override
-    public Response update(String id, Arrival arrival) {
+    public Optional<Arrival> updateArrivalById(String id, Arrival arrival) {
         Arrival entity = em.find(Arrival.class, id);
+        if (entity == null) {
+            return Optional.empty();
+        }
         entity.setPort(arrival.getPort());
         em.merge(entity);
-        return Response.status(Response.Status.ACCEPTED).entity("Successfully updated arrival.").build();
+        return Optional.of(entity);
 
     }
 
@@ -62,16 +57,18 @@ public class ArrivalServiceEJB implements ArrivalService {
         em.remove(entity);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<Arrival> findByPort(String port){
-        return em.createNativeQuery(QUERY_FIND_BY_PORT, Arrival.class)
+        return em.createNativeQuery(ARRIVAL_FIND_BY_PORT, Arrival.class)
                 .setParameter(1, port)
                 .getResultList();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public List<Arrival> findByPeriod(String start, String end){
-        return em.createNativeQuery(QUERY_FIND_BY_DATE, Arrival.class)
+    public List<Arrival> findByPeriod(Date start, Date end) {
+        return em.createNativeQuery(ARRIVAL_FIND_BY_DATE, Arrival.class)
                 .setParameter(1, start)
                 .setParameter(2, end)
                 .getResultList();

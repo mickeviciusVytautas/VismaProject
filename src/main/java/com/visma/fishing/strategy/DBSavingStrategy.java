@@ -12,8 +12,9 @@ public class DBSavingStrategy implements SavingStrategy {
         this.em = entityManager;
     }
     @Override
-    public void save(Logbook logbook) {
+    public Logbook save(Logbook logbook) {
         em.persist(logbook);
+        return logbook;
     }
 
 }

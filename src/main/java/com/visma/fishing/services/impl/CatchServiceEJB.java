@@ -8,27 +8,18 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
-import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Optional;
+
+import static com.visma.fishing.queries.Queries.*;
 
 @Transactional
 @Stateless
 public class CatchServiceEJB implements CatchService {
 
-    private static final String QUERY_FIND_START = "SELECT C.* FROM CATCH C ";
-    private static final String QUERY_FIND_BY_SPECIES =
-            QUERY_FIND_START
-                    + " WHERE C.SPECIES LIKE ?1 ";
-    private static final String QUERY_FIND_WITH_BIGGER_WEIGHT =
-            QUERY_FIND_START
-                    + " WHERE C.WEIGHT >= ?1 ";
-    private static final String QUERY_FIND_WITH_LOWER_WEIGHT =
-            QUERY_FIND_START
-                    + " WHERE C.WEIGHT < ?1 ";
 
     @PersistenceContext(name = "prod")
-    EntityManager em;
+    private EntityManager em;
 
     @Override
     public List<Catch> findAll() {
@@ -38,25 +29,26 @@ public class CatchServiceEJB implements CatchService {
     }
 
     @Override
-    public Response findById(String id) {
-        return Optional.ofNullable(em.find(Catch.class, id)).map(
-                aCatch -> Response.status(Response.Status.FOUND).entity(aCatch).build())
-                .orElse(Response.status(Response.Status.NOT_FOUND).entity("Catch by id " + id + " is not found.").build());
+    public Optional<Catch> findById(String id) {
+        return Optional.ofNullable(em.find(Catch.class, id));
     }
 
     @Override
-    public Response create(Catch aCatch) {
+    public Catch create(Catch aCatch) {
         em.persist(aCatch);
-        return Response.status(Response.Status.CREATED).entity("Successfully saved catch to database.").build();
+        return aCatch;
     }
 
     @Override
-    public Response update(String id, Catch aCatch) {
+    public Optional<Catch> updateCatchById(String id, Catch aCatch) {
         Catch entity = em.find(Catch.class, id);
+        if (entity == null) {
+            return Optional.empty();
+        }
         entity.setSpecies(aCatch.getSpecies());
         entity.setWeight(aCatch.getWeight());
         em.merge(entity);
-        return Response.status(Response.Status.ACCEPTED).entity("Successfully updated catch.").build();
+        return Optional.of(aCatch);
     }
 
     @Override
@@ -68,7 +60,7 @@ public class CatchServiceEJB implements CatchService {
     @SuppressWarnings("unchecked")
     @Override
     public List<Catch> findBySpecies(String species){
-        return em.createNativeQuery(QUERY_FIND_BY_SPECIES, Catch.class)
+        return em.createNativeQuery(CATCH_FIND_BY_SPECIES, Catch.class)
                 .setParameter(1, species)
                 .getResultList();
     }
@@ -77,11 +69,11 @@ public class CatchServiceEJB implements CatchService {
     @Override
     public List<Catch> findByWeight(Long weight, boolean searchWithLowerWeight){
         if(searchWithLowerWeight){
-            return em.createNativeQuery(QUERY_FIND_WITH_LOWER_WEIGHT, Catch.class)
+            return em.createNativeQuery(CATCH_FIND_WITH_LOWER_WEIGHT, Catch.class)
                     .setParameter(1, weight)
                     .getResultList();
         }
-        return em.createNativeQuery(QUERY_FIND_WITH_BIGGER_WEIGHT, Catch.class)
+        return em.createNativeQuery(CATCH_FIND_WITH_BIGGER_WEIGHT, Catch.class)
                 .setParameter(1, weight)
                 .getResultList();
     }

@@ -15,7 +15,6 @@ import java.io.File;
 @AllArgsConstructor
 public class DataSaveRouteBuilder extends RouteBuilder {
 
-
     private String inboxFolder;
     private static final String TIMER_CONFIGURATION = "timer://dataTimer?fixedRate=true&period=10000&delay=5s";
     private static final String HTTP_POST_LOGBOOK = "http://localhost:8080/exploded/api/logbook/";

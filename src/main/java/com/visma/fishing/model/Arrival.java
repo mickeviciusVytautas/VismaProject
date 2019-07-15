@@ -33,13 +33,4 @@ public class Arrival extends BaseEntity {
         this.date = date;
     }
 
-    public JsonObject toJson(){
-        return Json.createObjectBuilder()
-                .add("port", port)
-                .add("date", date.toString())
-                .build();
-    }
-
-
-
 }

@@ -15,6 +15,7 @@ import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -44,6 +45,7 @@ public class DepartureServiceEJBTest {
     private List<Departure> departureList = new ArrayList<>();
 
     private List<Departure> resultList = new ArrayList<>();
+
     @Before
     public void init(){
         departure = new Departure(PORT_1, DATE_1);
@@ -66,21 +68,17 @@ public class DepartureServiceEJBTest {
     public void findByIdShouldReturnCorrectStatusCode() {
         when(em.find(eq(Departure.class), anyString())).thenReturn(departure);
 
-        Response response = service.findById(ID_1);
+        Optional<Departure> optional = service.findById(ID_1);
+
         verify(em, times(1)).find(eq(Departure.class), anyString());
-        assertEquals("FindById departure should return status code FOUND", Response.Status.FOUND.getStatusCode(), response.getStatus());
-
-        when(em.find(eq(Departure.class), anyString())).thenReturn(null);
-
-        response = service.findById(ID_1);
-        verify(em, times(2)).find(eq(Departure.class), anyString());
-        assertEquals("FindById departure should return status code NOT_FOUND", Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
+        assertTrue("Should contain departure.", optional.isPresent());
+        assertEquals("Should contain departure.", departure, optional.get());
     }
 
     @Test
     public void createShouldReturnCreatedStatusCode() {
-        Response response = service.create(departure);
-        assertEquals("Departure creation should return status code CREATED.", Response.Status.CREATED.getStatusCode(), response.getStatus());
+        Departure created = service.create(departure);
+        assertEquals("Departure creation should return entity.", departure, created);
     }
 
     @Test
@@ -95,10 +93,11 @@ public class DepartureServiceEJBTest {
     public void updateShouldReturnAcceptedStatusCode() {
         when(em.find(eq(Departure.class), anyString())).thenReturn(departure);
 
-        Response response = service.update(ID_1, departure);
+        Optional<Departure> optional = service.findById(ID_1);
 
-        verify(em, times(1)).merge(any(Departure.class));
-        assertEquals("Departure update returned incorrect status code", Response.Status.ACCEPTED.getStatusCode(), response.getStatus());
+        verify(em, times(1)).find(eq(Departure.class), anyString());
+        assertTrue("Should contain departure.", optional.isPresent());
+        assertEquals("Should contain departure.", departure, optional.get());
     }
 
     @Test

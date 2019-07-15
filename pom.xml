@@ -69,7 +69,6 @@
             <artifactId>camel-bindy</artifactId>
             <version>2.24.1</version>
         </dependency>
-
         <dependency>
             <groupId>io.xlate</groupId>
             <artifactId>property-inject</artifactId>
@@ -93,11 +92,10 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.logging</groupId>
-            <artifactId>jboss-logging</artifactId>
-            <version>3.4.0.Final</version>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.9</version>
         </dependency>
-
 
 
     </dependencies>

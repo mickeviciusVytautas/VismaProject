@@ -4,56 +4,56 @@ import com.visma.fishing.model.EndOfFishing;
 import com.visma.fishing.services.EndOfFishingService;
 
 import javax.inject.Inject;
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
+import static com.visma.fishing.auxiliary.Messages.*;
+
 @Path("/endoffishing")
 public class EndOfFishingController {
 
+
     @Inject
-    EndOfFishingService endOfFishingService;
+    private EndOfFishingService endOfFishingService;
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createEndOfFishing(@Valid EndOfFishing endOfFishing){
-        return endOfFishingService.create(endOfFishing);
+        return Response.status(Response.Status.CREATED).entity(END_OF_FISHING_SAVE_SUCCESS_MSG).entity(endOfFishing).build();
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{id}")
     public Response getEndOfFishing(@PathParam("id") String id) {
-        return endOfFishingService.findById(id);
+        return endOfFishingService.findById(id)
+                .map(endOfFishing -> Response.status(Response.Status.FOUND).entity(endOfFishing).build())
+                .orElse(Response.status(Response.Status.NOT_FOUND).entity(END_OF_FISHING_FIND_FAILED_MSG + id + ".").build());
     }
 
     @GET
     @Path("/all")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getEndOfFishingList() {
-        List<EndOfFishing> endOfFishingList = endOfFishingService.findAll();
-        JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
-        endOfFishingList.forEach(l -> jsonArrayBuilder.add(l.toJson()));
-        return Response.ok(jsonArrayBuilder.build())
-                .build();
+    public List<EndOfFishing> getEndOfFishingList() {
+        return endOfFishingService.findAll();
     }
 
     @DELETE
     @Path("{id}")
-    public Response deleteEndOfFishing(@PathParam("id")String id) {
+    public void deleteEndOfFishing(@PathParam("id") String id) {
         endOfFishingService.remove(id);
-        return Response.ok().build();
     }
 
     @PUT
     @Path("{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateEndOfFishing(@PathParam("id") String id, EndOfFishing endOfFishing){
-        return endOfFishingService.update(id, endOfFishing);
+    public Response updateEndOfFishing(@PathParam("id") String id, EndOfFishing update) {
+        return endOfFishingService.updateEndOfFishingById(id, update)
+                .map(endOfFishing -> Response.status(Response.Status.ACCEPTED).entity(END_OF_FISHING_UPDATE_SUCCESS_MSG + endOfFishing.getId() + ".").build())
+                .orElse(Response.status(Response.Status.NOT_FOUND).entity(END_OF_FISHING_FIND_FAILED_MSG + id + ".").build());
     }
 
     @GET

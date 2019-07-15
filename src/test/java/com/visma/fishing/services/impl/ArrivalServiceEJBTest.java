@@ -15,6 +15,7 @@ import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -38,46 +39,42 @@ public class ArrivalServiceEJBTest {
 
     private Arrival arrival = new Arrival();
 
-    private List<Arrival> arrivalList = new ArrayList<>();
+    private List<Arrival> arrivals = new ArrayList<>();
 
-    private List<Arrival> resultList;
+    private List<Arrival> results;
 
     @Before
     public void init(){
         arrival = new Arrival(PORT_1, DATE_1);
-        arrivalList.add(arrival);
+        arrivals.add(arrival);
     }
 
     @Test
     public void findAllShouldReturnCorrectListSize() {
         when(em.createNamedQuery("arrival.findAll", Arrival.class)).thenReturn(query);
-        when(query.getResultList()).thenReturn(arrivalList);
+        when(query.getResultList()).thenReturn(arrivals);
 
-        resultList = service.findAll();
+        results = service.findAll();
 
         verify(em, times(1)).createNamedQuery("arrival.findAll", Arrival.class);
-        assertEquals("Size of arrival list should be 1.",1, resultList.size());
+        assertEquals("Size of arrival list should be 1.", 1, results.size());
     }
 
     @Test
     public void findByIdShouldReturnCorrectStatusCode() {
         when(em.find(eq(Arrival.class), anyString())).thenReturn(arrival);
 
-        Response response = service.findById(ID_1);
+        Optional<Arrival> optional = service.findById(ID_1);
+
         verify(em, times(1)).find(eq(Arrival.class), anyString());
-        assertEquals("FindById arrival should return status code FOUND", Response.Status.FOUND.getStatusCode(), response.getStatus());
-
-        when(em.find(eq(Arrival.class), anyString())).thenReturn(null);
-
-        response = service.findById(ID_1);
-        verify(em, times(2)).find(eq(Arrival.class), anyString());
-        assertEquals("FindById arrival should return status code NOT_FOUND", Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
+        assertTrue("Should contain arrival.", optional.isPresent());
+        assertEquals("Should contain arrival.", arrival, optional.get());
     }
 
     @Test
     public void createShouldReturnCreatedStatusCode() {
-        Response response = service.create(arrival);
-        assertEquals("Arrival creation should return status code CREATED.", Response.Status.CREATED.getStatusCode(), response.getStatus());
+        Arrival created = service.create(arrival);
+        assertEquals("Arrival creation should return entity.", arrival, created);
     }
 
     @Test
@@ -91,35 +88,36 @@ public class ArrivalServiceEJBTest {
     @Test
     public void updateShouldReturnAcceptedStatusCode() {
         when(em.find(eq(Arrival.class), anyString())).thenReturn(arrival);
-        Response response = service.update(ID_1, arrival);
+        Optional<Arrival> optional = service.findById(ID_1);
 
-        verify(em, times(1)).merge(any(Arrival.class));
-        assertEquals("Arrival update returned incorrect status code", Response.Status.ACCEPTED.getStatusCode(), response.getStatus());
+        verify(em, times(1)).find(eq(Arrival.class), anyString());
+        assertTrue("Should contain arrival.", optional.isPresent());
+        assertEquals("Should contain arrival.", arrival, optional.get());
     }
 
     @Test
     public void findByPortShouldReturnArrivalList() {
         when(em.createNativeQuery(anyString(), eq(Arrival.class))).thenReturn(query);
         when(query.setParameter(anyInt(), anyString())).thenReturn(query);
-        when(query.getResultList()).thenReturn(arrivalList);
+        when(query.getResultList()).thenReturn(arrivals);
 
-        resultList = service.findByPort(PORT_1);
+        results = service.findByPort(PORT_1);
 
         verify(em, times(1)).createNativeQuery(anyString(), eq(Arrival.class));
         verify(query, times(1)).setParameter(anyInt(), anyString());
-        assertEquals("Arrival list size should be 1.", 1, resultList.size());
+        assertEquals("Arrival list size should be 1.", 1, results.size());
     }
 
     @Test
     public void findByPeriodShouldReturnArrivalList() {
         when(em.createNativeQuery(anyString(), eq(Arrival.class))).thenReturn(query);
-        when(query.setParameter(anyInt(), anyString())).thenReturn(query);
-        when(query.getResultList()).thenReturn(arrivalList);
+        when(query.setParameter(anyInt(), any(Date.class))).thenReturn(query);
+        when(query.getResultList()).thenReturn(arrivals);
 
-        resultList = service.findByPeriod(DATE_1.toString(), DATE_2.toString());
+        results = service.findByPeriod(DATE_1, DATE_2);
 
         verify(em, times(1)).createNativeQuery(anyString(), eq(Arrival.class));
-        verify(query, times(2)).setParameter(anyInt(), anyString());
-        assertEquals("Arrival list size should be 1.", 1, resultList.size());
+        verify(query, times(2)).setParameter(anyInt(), any(Date.class));
+        assertEquals("Arrival list size should be 1.", 1, results.size());
     }
 }

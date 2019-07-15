@@ -3,8 +3,11 @@ package com.visma.fishing.services;
 import com.visma.fishing.model.Logbook;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface LogbookService extends Service<Logbook, String>{
+    Optional<Logbook> updateLogbookById(String id, Logbook logbook);
+
     List<Logbook> findByDeparturePort(String portName);
     List<Logbook> findByArrivalPort(String port);
     List<Logbook> findBySpecies(String species);

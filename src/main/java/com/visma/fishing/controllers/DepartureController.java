@@ -10,23 +10,27 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
+import static com.visma.fishing.auxiliary.Messages.*;
+
 @Path("/departure")
 public class DepartureController {
 
     @Inject
-    DepartureService departureService;
+    private DepartureService departureService;
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createDeparture(@Valid Departure departure){
-        return departureService.create(departure);
+        return Response.status(Response.Status.CREATED).entity(DEPARTURE_SAVE_SUCCESS_MSG).entity(departure).build();
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{id}")
     public Response getDeparture(@PathParam("id") String id) {
-        return departureService.findById(id);
+        return departureService.findById(id).map(
+                departure -> Response.status(Response.Status.FOUND).entity(departure).build())
+                .orElse(Response.status(Response.Status.NOT_FOUND).entity(DEPARTURE_FIND_FAILED_MSG + id + ".").build());
     }
 
     @GET
@@ -39,8 +43,10 @@ public class DepartureController {
     @PUT
     @Path("{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateDepartureById(@PathParam("id") String id, Departure departure){
-        return departureService.update(id, departure);
+    public Response updateDepartureById(@PathParam("id") String id, Departure update) {
+        return departureService.updateDepartureById(id, update)
+                .map(departure -> Response.status(Response.Status.ACCEPTED).entity(DEPARTURE_UPDATE_SUCCESS_MSG + update.getId() + ".").build())
+                .orElse(Response.status(Response.Status.NOT_FOUND).entity(DEPARTURE_FIND_FAILED_MSG + id + ".").build());
     }
 
     @DELETE

@@ -10,24 +10,28 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
+import static com.visma.fishing.auxiliary.Messages.*;
+
 @Path("/catch")
 public class CatchController {
 
     @Inject
-    CatchService catchService;
+    private CatchService catchService;
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createCatch(@Valid Catch aCatch){
-        return catchService.create(aCatch);
+        return Response.status(Response.Status.CREATED).entity(CATCH_SAVE_SUCCESS_MSG).entity(aCatch).build();
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{id}")
     public Response getCatch(@PathParam("id") String id) {
-        return catchService.findById(id);
+        return catchService.findById(id)
+                .map(aCatch -> Response.status(Response.Status.FOUND).entity(aCatch).build())
+                .orElse(Response.status(Response.Status.NOT_FOUND).entity("Catch by id " + id + " is not found.").build());
 
     }
 
@@ -42,7 +46,9 @@ public class CatchController {
     @Path("{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateCatchById(@PathParam("id") String id, Catch aCatch){
-        return catchService.update(id, aCatch);
+        return catchService.updateCatchById(id, aCatch)
+                .map(configuration -> Response.status(Response.Status.ACCEPTED).entity(CATCH_UPDATE_SUCCESS_MSG + id + ".").build())
+                .orElse(Response.status(Response.Status.NOT_FOUND).entity(CATCH_FIND_FAILED_MSG + id + ".").build());
     }
 
     @DELETE

@@ -1,6 +1,6 @@
 package com.visma.fishing.services.impl;
 
-import com.visma.fishing.auxilary.ConnectionType;
+import com.visma.fishing.model.CommunicationType;
 import com.visma.fishing.builder.LogbookBuilder;
 import com.visma.fishing.model.*;
 import org.junit.Before;
@@ -9,6 +9,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import sun.rmi.runtime.Log;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -16,8 +17,10 @@ import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -51,18 +54,19 @@ public class LogbookServiceEJBTest {
 
     @Before
     public void init() {
-        LogbookBuilder logbookBuilder = new LogbookBuilder();
+        Logbook logbook = new Logbook();
+        Logbook.LogbookBuilder logbookBuilder = logbook.new LogbookBuilder();
         Departure departure = new Departure(PORT_DEPARTURE_1, DATE_1);
         EndOfFishing endOfFishing = new EndOfFishing(DATE_2);
         Arrival arrival = new Arrival(PORT_ARRIVAL_1, DATE_1);
         Catch aCatch = new Catch(SPECIES_1, WEIGHT);
         List<Catch> catchList = new ArrayList<Catch>(){{add(aCatch);}};
         logbookOne = logbookBuilder
-                .setArrival(arrival)
-                .setDeparture(departure)
-                .setEndOfFishing(endOfFishing)
-                .setCatchList(catchList)
-                .setConnectionType(ConnectionType.NETWORK)
+                .withArrival(arrival)
+                .withDeparture(departure)
+                .withEndOfFishing(endOfFishing)
+                .withCatchList(catchList)
+                .withCommunicationType(CommunicationType.NETWORK)
                 .build();
 
         logbookList.add(logbookOne);
@@ -84,27 +88,18 @@ public class LogbookServiceEJBTest {
     public void findByIdShouldReturnCorrectStatusCode() {
         when(em.find(eq(Logbook.class), anyString())).thenReturn(logbookOne);
 
-        Response response = service.findById(ID_1);
+        Optional<Logbook> optional = service.findById(ID_1);
+
         verify(em, times(1)).find(eq(Logbook.class), anyString());
-        assertEquals("FindById logbook should return status code FOUND", Response.Status.FOUND.getStatusCode(), response.getStatus());
-
-        when(em.find(eq(Logbook.class), anyString())).thenReturn(null);
-
-        response = service.findById(ID_1);
-        verify(em, times(2)).find(eq(Logbook.class), anyString());
-        assertEquals("FindById logbook should return status code NOT_FOUND", Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
+        assertTrue("Should contain logbook.", optional.isPresent());
+        assertEquals("Should contain logbook.", logbookOne, optional.get());
     }
 
     @Test
-    public void createShouldReturnCorrectStatusCode() {
-        Response response = service.create(logbookOne);
-        verify(em, times(1)).persist(any(Logbook.class));
-        assertEquals("Logbook creation by NETWORK should return status code CREATED.", Response.Status.CREATED.getStatusCode(), response.getStatus());
+    public void createShouldReturnLogbook() {
+        Logbook created = service.create(logbookOne);
+        assertEquals("EndOfFishing creation should return entity.", logbookOne, created);
 
-        logbookOne.setConnectionType(ConnectionType.NETWORK);
-
-        Response responseSatellite = service.create(logbookOne);
-        assertEquals("Logbook creation by SATELLITE should return status code CREATED.", Response.Status.CREATED.getStatusCode(), responseSatellite.getStatus());
     }
 
     @Test
@@ -118,10 +113,11 @@ public class LogbookServiceEJBTest {
     @Test
     public void updateShouldReturnCorrectStatusCode() {
         when(em.find(eq(Logbook.class), anyString())).thenReturn(logbookOne);
-        Response response = service.update(ID_1, logbookOne);
+        Optional<Logbook> optional = service.findById(ID_1);
 
-        verify(em, times(1)).merge(any(Logbook.class));
-        assertEquals("Logbook update returned incorrect status code", Response.Status.ACCEPTED.getStatusCode(), response.getStatus());
+        verify(em, times(1)).find(eq(EndOfFishing.class), anyString());
+        assertTrue("Should contain logbook.", optional.isPresent());
+        assertEquals("Should contain logbook.", logbookOne, optional.get());
     }
 
     @Test

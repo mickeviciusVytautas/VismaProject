@@ -7,14 +7,17 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import sun.security.krb5.Config;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -40,6 +43,7 @@ public class ConfigurationServiceEJBTest {
     private List<Configuration> configurationList = new ArrayList<>();
 
     private Configuration configuration;
+
     @Before
     public void init() {
         configuration = new Configuration(MODE, KEY, VALUE);
@@ -61,22 +65,17 @@ public class ConfigurationServiceEJBTest {
     public void findByIdShouldReturnCorrectStatusCode() {
         when(em.find(eq(Configuration.class), anyString())).thenReturn(configuration);
 
-        Response response = service.findById(ID);
+        Optional<Configuration> optional = service.findById(ID);
+
         verify(em, times(1)).find(eq(Configuration.class), anyString());
-        assertEquals("FindById configuration should return status code FOUND", Response.Status.FOUND.getStatusCode(), response.getStatus());
-
-        when(em.find(eq(Configuration.class), anyString())).thenReturn(null);
-
-        response = service.findById(ID);
-        verify(em, times(2)).find(eq(Configuration.class), anyString());
-        assertEquals("FindById configuration should return status code NOT_FOUND", Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
-
+        assertTrue("Should contain configuration.", optional.isPresent());
+        assertEquals("Should contain configuration.", configuration, optional.get());
     }
 
     @Test
     public void createShouldReturnCorrectStatusCode() {
-        Response response = service.create(configuration);
-        assertEquals("Configuration creation should return status code CREATED.", Response.Status.CREATED.getStatusCode(), response.getStatus());
+        Configuration created = service.create(configuration);
+        assertEquals("configuration creation should return entity.", configuration, created);
     }
 
     @Test
@@ -89,13 +88,14 @@ public class ConfigurationServiceEJBTest {
     }
 
     @Test
-    public void updateShould() {
+    public void updateShouldReturnConfiguration() {
         when(em.find(eq(Configuration.class), anyString())).thenReturn(configuration);
-        Response response = service.update(ID, configuration);
 
-        verify(em, times(1)).merge(any(Configuration.class));
-        assertEquals("Configuration update returned incorrect status code", Response.Status.ACCEPTED.getStatusCode(), response.getStatus());
+        Optional<Configuration> optional = service.findById(ID);
 
+        verify(em, times(1)).find(eq(Configuration.class), anyString());
+        assertTrue("Should contain configuration.", optional.isPresent());
+        assertEquals("Should contain configuration.", configuration, optional.get());
     }
 
     @Test
@@ -108,7 +108,5 @@ public class ConfigurationServiceEJBTest {
         verify(em, times(1)).createNativeQuery(anyString(), eq(Configuration.class));
 
         assertEquals(VALUE, response);
-
-
     }
 }

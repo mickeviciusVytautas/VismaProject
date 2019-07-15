@@ -4,6 +4,6 @@ import com.visma.fishing.model.Logbook;
 
 public interface SavingStrategy {
 
-    void save(Logbook logbook);
+    Logbook save(Logbook logbook);
 
 }
