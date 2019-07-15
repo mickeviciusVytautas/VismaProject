@@ -74,7 +74,7 @@ public class LogbookServiceEJBTest {
         when(em.createNamedQuery("logbook.findAll", Logbook.class)).thenReturn(query);
         when(query.getResultList()).thenReturn(logbookList);
 
-        List<Logbook> resultList = service.findAll();
+        resultList = service.findAll();
 
         assertEquals("Logbook list size should be 1.", 1, resultList.size());
         verify(em, times(1)).createNamedQuery("logbook.findAll", Logbook.class);

@@ -46,9 +46,8 @@ public class ArrivalServiceEJBTest {
     public void init(){
         arrival = new Arrival(PORT_1, DATE_1);
         arrivalList.add(arrival);
-
-
     }
+
     @Test
     public void findAllShouldReturnCorrectListSize() {
         when(em.createNamedQuery("arrival.findAll", Arrival.class)).thenReturn(query);
