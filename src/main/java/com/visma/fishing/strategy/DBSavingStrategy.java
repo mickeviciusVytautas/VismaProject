@@ -15,9 +15,8 @@ public class DBSavingStrategy implements SavingStrategy {
         this.em = entityManager;
     }
     @Override
-    public Response save(Logbook logbook) {
+    public void save(Logbook logbook) {
         em.persist(logbook);
-        return status(Status.CREATED).entity("Successfully saved logbook to database.").build();
     }
 
 }

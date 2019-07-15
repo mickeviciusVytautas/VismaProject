@@ -2,12 +2,20 @@ package com.visma.fishing.camel;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.visma.fishing.model.Logbook;
+import io.xlate.inject.Property;
+import io.xlate.inject.PropertyResource;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 
+import javax.inject.Inject;
 import java.io.File;
 
 public class DataSaveRouteBuilder extends RouteBuilder {
+
+    @Inject
+    @Property(name = "inboxFolder",
+            resource = @PropertyResource("classpath:application.properties"))
+    private String inboxPath;
 
     private static final String TIMER_CONFIGURATION = "timer://dataTimer?fixedRate=true&period=10000&delay=5s";
     private static final String FILE_LOCATION = "file:C:\\dev\\inbox\\?delete=true&noop=false";

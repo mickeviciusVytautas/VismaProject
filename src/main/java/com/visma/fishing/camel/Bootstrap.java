@@ -1,5 +1,6 @@
 package com.visma.fishing.camel;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.slf4j.Logger;
@@ -13,20 +14,20 @@ import javax.ejb.Startup;
 
 @Singleton
 @Startup
+@Slf4j
 public class Bootstrap {
 
     private CamelContext context = new DefaultCamelContext();
 
-    private Logger logger = LoggerFactory.getLogger(Bootstrap.class);
 
     @PostConstruct
     public void init (){
-        logger.info(">> Create CamelContext and register Camel Router.");
+        log.info("Create CamelContext and register Camel Router.");
         try {
             context.addRoutes(new DataSaveRouteBuilder());
             context.start();
         } catch (Exception e) {
-            logger.error(">> Failed to create CamelContext and register Camel Router.", e);
+            log.error("Failed to create CamelContext and register Camel Router.", e);
 
         }
     }
@@ -36,8 +37,8 @@ public class Bootstrap {
         try {
             context.stop();
         } catch (Exception e) {
-            logger.error(">> CamelContext stopping failed.", e);
+            log.error("CamelContext stopping failed.", e);
         }
-        logger.info(">> CamelContext stopped.");
+        log.info("CamelContext stopped.");
     }
 }

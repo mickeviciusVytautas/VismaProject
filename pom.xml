@@ -86,5 +86,12 @@
             <version>2.22.2</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jboss.logging</groupId>
+            <artifactId>jboss-logging</artifactId>
+            <version>3.4.0.Final</version>
+        </dependency>
+
+
     </dependencies>
 </project>

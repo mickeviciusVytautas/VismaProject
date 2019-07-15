@@ -12,7 +12,6 @@ import javax.validation.constraints.NotNull;
 /*
  * https://stackoverflow.com/questions/2324109/what-is-the-best-way-to-manage-configuration-data
  */
-@EqualsAndHashCode(callSuper = true)
 @Entity
 @Data
 @NoArgsConstructor
@@ -21,11 +20,11 @@ import javax.validation.constraints.NotNull;
         @ConstructorResult(targetClass = Configuration.class,
                 columns = {@ColumnResult(name="mode"), @ColumnResult(name="key"), @ColumnResult(name="key")})
 })
-public class Configuration extends BaseEntity {
+public class Configuration {
 
     @NotNull
     private String mode;
-    @Column(unique = true)
+    @Id
     @NotNull
     private String key;
     @NotNull

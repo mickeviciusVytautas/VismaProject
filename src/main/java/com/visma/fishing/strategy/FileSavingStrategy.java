@@ -19,7 +19,7 @@ public class FileSavingStrategy implements SavingStrategy {
     }
 
     @Override
-    public Response save(Logbook logbook) {
+    public void save(Logbook logbook) {
         String filePath = this.path + System.currentTimeMillis() + ".json";
         try (FileWriter fileWriter = new FileWriter(filePath)){
             fileWriter.write(logbook.toString());
@@ -27,7 +27,6 @@ public class FileSavingStrategy implements SavingStrategy {
             e.printStackTrace();
         }
 
-        return Response.status(Response.Status.CREATED).entity("Successfully saved logbook to file system.").build();
     }
 
 }

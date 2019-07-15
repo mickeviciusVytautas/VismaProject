@@ -19,9 +19,18 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Optional;
 
+import static javax.ws.rs.core.Response.status;
+
+import lombok.extern.slf4j.Slf4j;
+
 @Transactional
 @Stateless
+@Slf4j
 public class LogbookServiceEJB implements LogbookService {
+
+    private static final String LOGBOOK_SAVE_SUCCESS_MSG = "Successfully saved logbook with id ";
+    private static final String TO_DATABASE = " to database.";
+    private static final String TO_FILE_SYSTEM = " to file system.";
 
     private static final String QUERY_FIND_DISTINCT =
             " SELECT  distinct (L.*) from LOGBOOK L" +
@@ -56,17 +65,13 @@ public class LogbookServiceEJB implements LogbookService {
                 QUERY_FIND +
                 " join DEPARTURE D on L.DEPARTURE_ID = D.ID" +
                 " where D.DATE between ?1 and ?2";
+    public static final String LOGBOOK_UPDATE_SUCCESS_MSG = "Successfully updated logbook with id ";
 
     @Inject
     @Property(name = "databasePath",
             resource = @PropertyResource("classpath:application.properties"),
             defaultValue = "C:\\dev\\database\\")
     private String databasePath;
-
-    @Inject
-    @Property(name = "inboxFolder",
-            resource = @PropertyResource("classpath:application.properties"))
-    private String inboxPath;
 
     @PersistenceContext
     private EntityManager em;
@@ -144,7 +149,14 @@ public class LogbookServiceEJB implements LogbookService {
         } else {
             savingStrategy = new FileSavingStrategy(databasePath);
         }
-        return savingStrategy.save(logbook);
+        savingStrategy.save(logbook);
+        if(savingStrategy instanceof DBSavingStrategy) {
+            log.info(LOGBOOK_SAVE_SUCCESS_MSG + logbook.getId() + TO_DATABASE);
+            return status(Response.Status.CREATED).entity(LOGBOOK_SAVE_SUCCESS_MSG + logbook.getId() + TO_DATABASE).build();
+        } else {
+            log.info(LOGBOOK_SAVE_SUCCESS_MSG + logbook.getId() + TO_FILE_SYSTEM);
+            return Response.status(Response.Status.CREATED).entity(LOGBOOK_SAVE_SUCCESS_MSG + logbook.getId() + TO_FILE_SYSTEM).build();
+        }
     }
 
     @Override
@@ -155,7 +167,8 @@ public class LogbookServiceEJB implements LogbookService {
         entity.setDeparture(logbook.getDeparture());
         entity.setEndOfFishing(logbook.getEndOfFishing());
         em.merge(entity);
-        return Response.status(Response.Status.ACCEPTED).entity("Successfully updated logbook.").build();
+        log.info(LOGBOOK_UPDATE_SUCCESS_MSG + logbook.getId());
+        return Response.status(Response.Status.ACCEPTED).entity(LOGBOOK_UPDATE_SUCCESS_MSG + logbook.getId()).build();
     }
 
     @Override
