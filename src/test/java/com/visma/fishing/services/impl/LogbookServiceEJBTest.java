@@ -1,7 +1,5 @@
 package com.visma.fishing.services.impl;
 
-import com.visma.fishing.model.CommunicationType;
-import com.visma.fishing.builder.LogbookBuilder;
 import com.visma.fishing.model.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,11 +7,9 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import sun.rmi.runtime.Log;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -111,11 +107,11 @@ public class LogbookServiceEJBTest {
     }
 
     @Test
-    public void updateShouldReturnCorrectStatusCode() {
+    public void updateShouldReturnLogbook() {
         when(em.find(eq(Logbook.class), anyString())).thenReturn(logbookOne);
         Optional<Logbook> optional = service.findById(ID_1);
 
-        verify(em, times(1)).find(eq(EndOfFishing.class), anyString());
+        verify(em, times(1)).find(eq(Logbook.class), anyString());
         assertTrue("Should contain logbook.", optional.isPresent());
         assertEquals("Should contain logbook.", logbookOne, optional.get());
     }

@@ -7,11 +7,9 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import sun.security.krb5.Config;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -102,7 +100,7 @@ public class ConfigurationServiceEJBTest {
     public void findValueByKey() {
         when(em.createNativeQuery(anyString(), eq(Configuration.class))).thenReturn(query);
         when(query.setParameter(anyInt(), anyString())).thenReturn(query);
-        when(query.getResultList()).thenReturn(configurationList);
+        when(query.getSingleResult()).thenReturn(configuration);
 
         String response = service.findValueByKey(KEY, DEFAULT_VALUE);
         verify(em, times(1)).createNativeQuery(anyString(), eq(Configuration.class));
