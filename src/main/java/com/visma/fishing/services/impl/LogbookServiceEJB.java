@@ -8,6 +8,7 @@ import com.visma.fishing.strategy.FileSavingStrategy;
 import com.visma.fishing.strategy.SavingStrategy;
 import io.xlate.inject.Property;
 import io.xlate.inject.PropertyResource;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -20,15 +21,11 @@ import java.util.Optional;
 
 import static com.visma.fishing.auxiliary.Messages.*;
 import static com.visma.fishing.queries.Queries.*;
-import static javax.ws.rs.core.Response.status;
-
-import lombok.extern.slf4j.Slf4j;
 
 @Transactional
 @Stateless
 @Slf4j
 public class LogbookServiceEJB implements LogbookService {
-
 
     @Inject
     @Property(name = "databasePath",
@@ -108,6 +105,7 @@ public class LogbookServiceEJB implements LogbookService {
         if (logbook.getCommunicationType() == CommunicationType.NETWORK) {
             savingStrategy = new DBSavingStrategy(em);
         } else {
+
             savingStrategy = new FileSavingStrategy(databasePath);
         }
         savingStrategy.save(logbook);
@@ -125,7 +123,7 @@ public class LogbookServiceEJB implements LogbookService {
         if (entity == null) {
             return Optional.empty();
         }
-        entity = entity.new LogbookBuilder().withArrival(logbook.getArrival())
+        entity = new Logbook.LogbookBuilder().withArrival(logbook.getArrival())
                 .withDeparture(logbook.getDeparture())
                 .withCatchList(logbook.getCatchList())
                 .withDeparture(logbook.getDeparture())
@@ -146,4 +144,13 @@ public class LogbookServiceEJB implements LogbookService {
                 });
     }
 
+    @Override
+    public List<Logbook> saveAll(List<Logbook> logbooks) {
+        for (Logbook logbook :
+                logbooks) {
+            System.out.println(logbook);
+            em.persist(logbook);
+        }
+        return logbooks;
+    }
 }

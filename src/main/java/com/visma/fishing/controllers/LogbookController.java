@@ -1,7 +1,7 @@
 package com.visma.fishing.controllers;
 
-import com.visma.fishing.services.LogbookService;
 import com.visma.fishing.model.Logbook;
+import com.visma.fishing.services.LogbookService;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -23,8 +23,8 @@ public class LogbookController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createLogbook(@Valid Logbook logbook){
+        logbookService.create(logbook);
         return Response.status(Response.Status.CREATED).entity(LOGBOOK_SAVE_SUCCESS_MSG).entity(logbook).build();
-
     }
 
     @GET

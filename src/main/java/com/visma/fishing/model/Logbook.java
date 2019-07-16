@@ -58,13 +58,14 @@ public class Logbook extends BaseEntity {
          return logbook;
     }
 
-    public class LogbookBuilder {
+    public static class LogbookBuilder {
 
         private Departure departure;
         private EndOfFishing endOfFishing;
         private Arrival arrival;
         private List<Catch> catchList;
         private CommunicationType communicationType;
+        private String id;
 
         public LogbookBuilder withDeparture(Departure departure) {
             this.departure = departure;
@@ -91,8 +92,21 @@ public class Logbook extends BaseEntity {
             return this;
         }
 
-        public Logbook build() {
-            return new Logbook(departure, endOfFishing, arrival, catchList, communicationType.toString());
+        public LogbookBuilder withId(String id) {
+            this.id = id;
+            return this;
         }
+
+        public Logbook build() {
+            Logbook logbook = new Logbook();
+            logbook.setDeparture(departure);
+            logbook.setArrival(arrival);
+            logbook.setCatchList(catchList);
+            logbook.setCommunicationType(communicationType);
+            logbook.setEndOfFishing(endOfFishing);
+            logbook.setId(id);
+            return logbook;
+        }
+
     }
 }

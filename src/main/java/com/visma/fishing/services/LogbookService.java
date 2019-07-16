@@ -8,6 +8,7 @@ import java.util.Optional;
 public interface LogbookService extends Service<Logbook, String>{
     Optional<Logbook> updateLogbookById(String id, Logbook logbook);
 
+    List<Logbook> saveAll(List<Logbook> logbooks);
     List<Logbook> findByDeparturePort(String portName);
     List<Logbook> findByArrivalPort(String port);
     List<Logbook> findBySpecies(String species);

@@ -23,6 +23,7 @@ public class EndOfFishingController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createEndOfFishing(@Valid EndOfFishing endOfFishing){
+        endOfFishingService.create(endOfFishing);
         return Response.status(Response.Status.CREATED).entity(END_OF_FISHING_SAVE_SUCCESS_MSG).entity(endOfFishing).build();
     }
 

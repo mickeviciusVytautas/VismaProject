@@ -2,12 +2,11 @@ package com.visma.fishing.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.visma.fishing.model.base.BaseEntity;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.json.Json;
-import javax.json.JsonObject;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
@@ -20,16 +19,19 @@ import java.util.Date;
 @NamedQueries(
         @NamedQuery(name = "departure.findAll", query = "SELECT d FROM Departure d")
 )
+@AllArgsConstructor
 public class Departure extends BaseEntity {
+
+    @NotNull
+    private String port;
 
     @NotNull
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Temporal(TemporalType.DATE)
     private Date date;
-    @NotNull
-    private String port;
 
-    public Departure(String port, Date date) {
+    public Departure(String id, String port, Date date) {
+        setId(id);
         this.date = date;
         this.port = port;
     }

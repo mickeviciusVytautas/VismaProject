@@ -14,6 +14,8 @@
     </properties>
 
     <build>
+        <finalName>fishingapp</finalName>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -68,7 +70,20 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-bindy</artifactId>
             <version>2.24.1</version>
+            <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-csv</artifactId>
+            <version>2.24.1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-zipfile</artifactId>
+            <version>2.24.1</version>
+        </dependency>
+
         <dependency>
             <groupId>io.xlate</groupId>
             <artifactId>property-inject</artifactId>
@@ -100,8 +115,7 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>1.7.7</version>
-            <scope>provided</scope>
+            <scope>compile</scope>
         </dependency>
-
     </dependencies>
 </project>

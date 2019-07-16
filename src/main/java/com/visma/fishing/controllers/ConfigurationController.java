@@ -26,6 +26,7 @@ public class ConfigurationController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createConfiguration(@Valid Configuration configuration){
+        configurationService.create(configuration);
         return Response.status(Response.Status.CREATED).entity(CONFIGURATION_SAVE_SUCCESS_MSG).entity(configuration).build();
     }
 

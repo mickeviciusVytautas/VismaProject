@@ -50,8 +50,7 @@ public class LogbookServiceEJBTest {
 
     @Before
     public void init() {
-        Logbook logbook = new Logbook();
-        Logbook.LogbookBuilder logbookBuilder = logbook.new LogbookBuilder();
+        Logbook.LogbookBuilder logbookBuilder = new Logbook.LogbookBuilder();
         Departure departure = new Departure(PORT_DEPARTURE_1, DATE_1);
         EndOfFishing endOfFishing = new EndOfFishing(DATE_2);
         Arrival arrival = new Arrival(PORT_ARRIVAL_1, DATE_1);
