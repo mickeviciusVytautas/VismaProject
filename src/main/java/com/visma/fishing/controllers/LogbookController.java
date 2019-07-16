@@ -21,6 +21,7 @@ public class LogbookController {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response createLogbook(@Valid Logbook logbook){
         return Response.status(Response.Status.CREATED).entity(LOGBOOK_SAVE_SUCCESS_MSG).entity(logbook).build();
 
@@ -46,6 +47,7 @@ public class LogbookController {
     @PUT
     @Path("{id}")
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response updateLogbookById(@PathParam("id") String id, Logbook update) {
         Optional<Logbook> optional = logbookService.updateLogbookById(id, update);
         return optional.map(logbook -> Response.status(Response.Status.ACCEPTED).entity(LOGBOOK_UPDATE_SUCCESS_MSG + logbook.getId() + ".").build())

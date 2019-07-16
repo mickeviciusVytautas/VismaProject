@@ -20,6 +20,7 @@ public class DepartureController {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response createDeparture(@Valid Departure departure){
         return Response.status(Response.Status.CREATED).entity(DEPARTURE_SAVE_SUCCESS_MSG).entity(departure).build();
     }
