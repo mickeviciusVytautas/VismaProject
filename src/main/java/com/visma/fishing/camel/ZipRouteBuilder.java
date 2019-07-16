@@ -6,7 +6,6 @@ import com.visma.fishing.services.LogbookService;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.dataformat.csv.CsvDataFormat;
 import org.apache.camel.model.dataformat.ZipFileDataFormat;
-import org.apache.camel.util.jndi.JndiContext;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,8 +29,6 @@ public class ZipRouteBuilder extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        JndiContext context = new JndiContext();
-        context.bind("service", logbookService);
         CsvDataFormat csvArrival = new CsvDataFormat();
         csvArrival.setSkipHeaderRecord(true).setDelimiter(';').setRecordConverter(new ArrivalRecordConverter());
         CsvDataFormat csvDeparture = new CsvDataFormat();

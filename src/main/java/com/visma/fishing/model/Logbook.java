@@ -3,11 +3,14 @@ package com.visma.fishing.model;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.visma.fishing.model.base.BaseEntity;
+import io.xlate.inject.Property;
+import io.xlate.inject.PropertyResource;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.inject.Inject;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -15,8 +18,8 @@ import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-@NoArgsConstructor
 @Entity
+@NoArgsConstructor
 @NamedQueries(
         @NamedQuery(name = "logbook.findAll", query = "SELECT l FROM Logbook l")
 )
