@@ -2,7 +2,10 @@ package com.visma.fishing.services.impl;
 
 import com.visma.fishing.model.Departure;
 import com.visma.fishing.services.DepartureService;
-import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+//import org.apache.log4j.LogManager;
+//import org.apache.log4j.Logger;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -12,14 +15,16 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-import static com.visma.fishing.auxiliary.Messages.DEPARTURE_REMOVED_SUCCESS_MSG;
+import static com.visma.fishing.messages.Messages.*;
 import static com.visma.fishing.queries.Queries.DEPARTURE_FIND_BY_DATE;
 import static com.visma.fishing.queries.Queries.DEPARTURE_FIND_BY_PORT;
 
 @Transactional
 @Stateless
-@Slf4j
 public class DepartureServiceEJB implements DepartureService {
+
+    private Logger log = LogManager.getLogger(DepartureServiceEJB.class);
+
 
     @PersistenceContext
     private EntityManager em;
@@ -38,28 +43,31 @@ public class DepartureServiceEJB implements DepartureService {
     @Override
     public Departure create(Departure departure) {
         em.persist(departure);
+        log.info(DEPARTURE_SAVE_SUCCESS_MSG, departure.getId());
         return departure;
     }
 
     @Override
     public Optional<Departure> updateDepartureById(String id, Departure departure) {
-        Departure entity = em.find(Departure.class, id);
-        if (entity == null) {
+        return Optional.ofNullable(em.find(Departure.class, id))
+                .map(entity -> {
+                    entity.setDate(departure.getDate());
+                    entity.setPort(departure.getPort());
+                    em.merge(entity);
+                    return Optional.of(entity);
+                }).orElseGet(() -> {
+            log.warn(DEPARTURE_FIND_FAILED_MSG, id);
             return Optional.empty();
-        }
-        entity.setDate(departure.getDate());
-        entity.setPort(departure.getPort());
-        em.merge(entity);
-        return Optional.of(entity);
+        });
     }
 
     @Override
     public void remove(String id) {
-        Optional<Departure> optional = Optional.ofNullable(em.find(Departure.class, id));
-        optional.ifPresent(entity -> {
-            em.remove(entity);
-            log.info(DEPARTURE_REMOVED_SUCCESS_MSG + entity.getId());
-        });
+        Optional.ofNullable(em.find(Departure.class, id))
+                .ifPresent(entity -> {
+                    em.remove(entity);
+                    log.info(DEPARTURE_REMOVED_SUCCESS_MSG, id);
+                });
     }
 
     @SuppressWarnings("unchecked")

@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static com.visma.fishing.auxiliary.Messages.*;
+import static com.visma.fishing.messages.Messages.*;
 
 @Path("/arrival")
 public class ArrivalController {

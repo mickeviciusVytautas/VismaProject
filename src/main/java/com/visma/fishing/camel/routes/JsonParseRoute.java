@@ -1,4 +1,4 @@
-package com.visma.fishing.camel;
+package com.visma.fishing.camel.routes;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.visma.fishing.model.Logbook;
@@ -13,7 +13,7 @@ import java.io.File;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor
-public class DataSaveRouteBuilder extends RouteBuilder {
+public class JsonParseRoute extends RouteBuilder {
 
     private String inboxFolder;
     private static final String TIMER_CONFIGURATION = "timer://dataTimer?fixedRate=true&period=10000&delay=5s";
@@ -29,7 +29,7 @@ public class DataSaveRouteBuilder extends RouteBuilder {
                     ObjectMapper mapper = new ObjectMapper();
                     Logbook logbook;
                     logbook = mapper.readValue(file, Logbook.class);
-                    exchange.getOut().setBody(logbook.toString());
+                    exchange.getOut().setBody(logbook);
                 })
                 .setHeader(Exchange.HTTP_METHOD, constant("POST"))
                 .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))

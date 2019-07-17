@@ -1,7 +1,10 @@
 package com.visma.fishing.services.impl;
 
+import com.fasterxml.jackson.databind.util.BeanUtil;
 import com.visma.fishing.model.Arrival;
 import com.visma.fishing.services.ArrivalService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -12,12 +15,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import static com.visma.fishing.messages.Messages.*;
 import static com.visma.fishing.queries.Queries.ARRIVAL_FIND_BY_DATE;
 import static com.visma.fishing.queries.Queries.ARRIVAL_FIND_BY_PORT;
 
 @Transactional
 @Stateless
 public class ArrivalServiceEJB implements ArrivalService {
+
+    private Logger log = LogManager.getLogger(ConfigurationServiceEJB.class);
 
     @PersistenceContext
     private EntityManager em;
@@ -36,25 +42,31 @@ public class ArrivalServiceEJB implements ArrivalService {
     @Override
     public Arrival create(Arrival arrival) {
         em.persist(arrival);
+        log.info(ARRIVAL_SAVE_SUCCESS_MSG, arrival.getId());
         return arrival;
     }
 
     @Override
     public Optional<Arrival> updateArrivalById(String id, Arrival arrival) {
-        Arrival entity = em.find(Arrival.class, id);
-        if (entity == null) {
-            return Optional.empty();
-        }
-        entity.setPort(arrival.getPort());
-        em.merge(entity);
-        return Optional.of(entity);
-
+        return Optional.ofNullable(em.find(Arrival.class, id))
+                .map(entity -> {
+                    entity.setPort(arrival.getPort());
+                    em.merge(entity);
+                    log.info(ARRIVAL_UPDATE_SUCCESS_MSG, id);
+                    return Optional.of(entity);
+                }).orElseGet(() -> {
+                    log.warn(ARRIVAL_FIND_FAILED_MSG, id);
+                    return Optional.empty();
+                });
     }
 
     @Override
     public void remove(String id) {
-        Arrival entity = em.find(Arrival.class, id);
-        em.remove(entity);
+        Optional.ofNullable(em.find(Arrival.class, id))
+                .ifPresent(entity -> {
+                    em.remove(entity);
+                    log.info(ARRIVAL_REMOVED_SUCCESS_MSG, id);
+                });
     }
 
     @SuppressWarnings("unchecked")

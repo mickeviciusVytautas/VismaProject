@@ -2,7 +2,8 @@ package com.visma.fishing.services.impl;
 
 import com.visma.fishing.model.configuration.Configuration;
 import com.visma.fishing.services.ConfigurationService;
-import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -11,13 +12,15 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+import static com.visma.fishing.messages.Messages.*;
 import static com.visma.fishing.queries.Queries.CONFIGURATION_FIND_START;
 import static com.visma.fishing.queries.Queries.CONFIGURATION_FIND_VALUE_BY_KEY;
 
 @Transactional
 @Stateless
-@Slf4j
 public class ConfigurationServiceEJB implements ConfigurationService {
+
+    private Logger log = LogManager.getLogger(ConfigurationServiceEJB.class);
 
     @PersistenceContext
     private EntityManager em;
@@ -29,38 +32,43 @@ public class ConfigurationServiceEJB implements ConfigurationService {
     }
 
     @Override
-    public Optional<Configuration> findById(String id) {
-        return Optional.ofNullable(em.find(Configuration.class, id));
+    public Optional<Configuration> findById(String key) {
+        return Optional.ofNullable(em.find(Configuration.class, key));
     }
 
     @Override
     public Configuration create(Configuration configuration) {
         em.persist(configuration);
+        log.info(CONFIGURATION_SAVE_SUCCESS_MSG, configuration.getKey());
         return configuration;
 
     }
 
     @Override
-    public Optional<Configuration> updateConfigurationByKey(String id, Configuration configuration) {
-        Configuration entity = em.find(Configuration.class, id);
-        if (entity == null) {
-            return Optional.empty();
-        }
-        entity.setKey(configuration.getKey());
-        entity.setValue(configuration.getValue());
-        entity.setMode(configuration.getMode());
-        em.merge(entity);
-        return Optional.of(entity);
-
+    public Optional<Configuration> updateConfigurationByKey(String key, Configuration configuration) {
+        return Optional.ofNullable(em.find(Configuration.class, key))
+                .map(entity -> {
+                    entity.setKey(configuration.getKey());
+                    entity.setValue(configuration.getValue());
+                    entity.setMode(configuration.getMode());
+                    em.merge(entity);
+                    log.info(CONFIGURATION_UPDATE_SUCCESS_MSG, key);
+                    return Optional.of(entity);
+                }).orElseGet(() -> {
+                    log.warn(CONFIGURATION_FIND_FAILED_MSG, key);
+                    return Optional.empty();
+                });
     }
 
     @Override
-    public void remove(String id) {
-        Configuration entity = em.find(Configuration.class, id);
-        em.remove(entity);
+    public void remove(String key) {
+        Optional.ofNullable(em.find(Configuration.class, key))
+                .ifPresent(entity -> {
+                    em.remove(entity);
+                    log.info(CONFIGURATION_REMOVED_SUCCESS_MSG, key);
+                });
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public String findValueByKey(String key, String defaultValue){
         try {

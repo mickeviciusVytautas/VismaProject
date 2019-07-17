@@ -8,7 +8,8 @@ import com.visma.fishing.strategy.FileSavingStrategy;
 import com.visma.fishing.strategy.SavingStrategy;
 import io.xlate.inject.Property;
 import io.xlate.inject.PropertyResource;
-import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -19,14 +20,14 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-import static com.visma.fishing.auxiliary.Messages.*;
+import static com.visma.fishing.messages.Messages.*;
 import static com.visma.fishing.queries.Queries.*;
 
 @Transactional
 @Stateless
-@Slf4j
 public class LogbookServiceEJB implements LogbookService {
 
+    private Logger log = LogManager.getLogger(LogbookServiceEJB.class);
     @Inject
     @Property(name = "databasePath",
             resource = @PropertyResource("classpath:application.properties"),
@@ -105,42 +106,43 @@ public class LogbookServiceEJB implements LogbookService {
         if (logbook.getCommunicationType() == CommunicationType.NETWORK) {
             savingStrategy = new DBSavingStrategy(em);
         } else {
-
             savingStrategy = new FileSavingStrategy(databasePath);
         }
         savingStrategy.save(logbook);
         if(savingStrategy instanceof DBSavingStrategy) {
-            log.info(LOGBOOK_SAVE_SUCCESS_MSG + logbook.getId() + TO_DATABASE);
+            log.info(LOGBOOK_SAVE_SUCCESS_MSG + TO_DATABASE, logbook.getId());
         } else {
-            log.info(LOGBOOK_SAVE_SUCCESS_MSG + logbook.getId() + TO_FILE_SYSTEM);
+            log.info(LOGBOOK_SAVE_SUCCESS_MSG + TO_FILE_SYSTEM, logbook.getId());
         }
         return logbook;
     }
 
     @Override
     public Optional<Logbook> updateLogbookById(String id, Logbook logbook) {
-        Logbook entity = em.find(Logbook.class, id);
-        if (entity == null) {
-            return Optional.empty();
-        }
-        entity = new Logbook.LogbookBuilder().withArrival(logbook.getArrival())
-                .withDeparture(logbook.getDeparture())
-                .withCatchList(logbook.getCatchList())
-                .withDeparture(logbook.getDeparture())
-                .withEndOfFishing(logbook.getEndOfFishing())
-                .withCommunicationType(logbook.getCommunicationType()).build();
-        entity.setEndOfFishing(logbook.getEndOfFishing());
-        em.merge(entity);
-        log.info(LOGBOOK_SAVE_SUCCESS_MSG + entity.getId() + ".");
-        return Optional.of(entity);
+        return Optional.ofNullable(em.find(Logbook.class, id))
+                .map(entity -> {
+                    entity = new Logbook.LogbookBuilder().withArrival(logbook.getArrival())
+                            .withDeparture(logbook.getDeparture())
+                            .withCatchList(logbook.getCatchList())
+                            .withDeparture(logbook.getDeparture())
+                            .withEndOfFishing(logbook.getEndOfFishing())
+                            .withCommunicationType(logbook.getCommunicationType()).build();
+                    entity.setEndOfFishing(logbook.getEndOfFishing());
+                    em.merge(entity);
+                    log.info(LOGBOOK_SAVE_SUCCESS_MSG , entity.getId());
+                    return Optional.of(entity);
+                }).orElseGet(() -> {
+                    log.warn(LOGBOOK_FIND_FAILED_MSG, id);
+                    return Optional.empty();
+        });
     }
 
     @Override
     public void remove(String id) {
-        Optional<Logbook> optional = Optional.ofNullable(em.find(Logbook.class, id));
-        optional.ifPresent(entity -> {
-            em.remove(entity);
-            log.info(LOGBOOK_REMOVED_SUCCESS_MSG + entity.getId());
+        Optional.ofNullable(em.find(Logbook.class, id))
+                .ifPresent(entity -> {
+                    em.remove(entity);
+                    log.info(LOGBOOK_REMOVED_SUCCESS_MSG, id);
                 });
     }
 
@@ -148,7 +150,6 @@ public class LogbookServiceEJB implements LogbookService {
     public List<Logbook> saveAll(List<Logbook> logbooks) {
         for (Logbook logbook :
                 logbooks) {
-            System.out.println(logbook);
             em.persist(logbook);
         }
         return logbooks;

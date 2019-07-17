@@ -2,6 +2,8 @@ package com.visma.fishing.services.impl;
 
 import com.visma.fishing.services.CatchService;
 import com.visma.fishing.model.Catch;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -11,12 +13,14 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+import static com.visma.fishing.messages.Messages.*;
 import static com.visma.fishing.queries.Queries.*;
 
 @Transactional
 @Stateless
 public class CatchServiceEJB implements CatchService {
 
+    private Logger log = LogManager.getLogger(ConfigurationServiceEJB.class);
 
     @PersistenceContext(name = "prod")
     private EntityManager em;
@@ -36,25 +40,32 @@ public class CatchServiceEJB implements CatchService {
     @Override
     public Catch create(Catch aCatch) {
         em.persist(aCatch);
+        log.info(CATCH_SAVE_SUCCESS_MSG, aCatch.getId());
         return aCatch;
     }
 
     @Override
     public Optional<Catch> updateCatchById(String id, Catch aCatch) {
-        Catch entity = em.find(Catch.class, id);
-        if (entity == null) {
-            return Optional.empty();
-        }
-        entity.setSpecies(aCatch.getSpecies());
-        entity.setWeight(aCatch.getWeight());
-        em.merge(entity);
-        return Optional.of(aCatch);
+        return Optional.ofNullable(em.find(Catch.class, id))
+                .map(entity -> {
+                    entity.setSpecies(aCatch.getSpecies());
+                    entity.setWeight(aCatch.getWeight());
+                    em.merge(entity);
+                    log.info(CATCH_UPDATE_SUCCESS_MSG, id);
+                    return Optional.of(entity);
+                }).orElseGet(() -> {
+                    log.warn(CATCH_FIND_FAILED_MSG, id);
+                    return Optional.empty();
+                });
     }
 
     @Override
     public void remove(String id) {
-        Catch entity = em.find(Catch.class, id);
-        em.remove(entity);
+        Optional.ofNullable(em.find(Catch.class, id))
+                .ifPresent(entity -> {
+                    em.remove(entity);
+                    log.info(CATCH_REMOVED_SUCCESS_MSG, id);
+                });
     }
 
     @SuppressWarnings("unchecked")

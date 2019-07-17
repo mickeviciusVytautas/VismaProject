@@ -11,7 +11,7 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Optional;
 
-import static com.visma.fishing.auxiliary.Messages.*;
+import static com.visma.fishing.messages.Messages.*;
 
 @Path("/logbook")
 public class LogbookController {

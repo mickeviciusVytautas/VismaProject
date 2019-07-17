@@ -1,11 +1,13 @@
 package com.visma.fishing.camel;
 
-import com.visma.fishing.services.LogbookService;
+import com.visma.fishing.camel.routes.JsonParseRoute;
+import com.visma.fishing.camel.routes.ZipCsvParseRoute;
 import io.xlate.inject.Property;
 import io.xlate.inject.PropertyResource;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
+//import org.apache.log4j.LogManager;
+//import org.apache.log4j.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -15,11 +17,11 @@ import javax.inject.Inject;
 
 @Singleton
 @Startup
-@Slf4j
-public class Bootstrap {
+public class StartupClass {
+//    private Logger log = LogManager.getLogger("fileAppender");
+
 
     private CamelContext context = new DefaultCamelContext();
-    private CamelContext zipContext = new DefaultCamelContext();
     @Inject
     @Property(name = "inboxFolder",
             resource = @PropertyResource("classpath:application.properties"),
@@ -27,28 +29,26 @@ public class Bootstrap {
     private String inboxFolder;
 
     @Inject
-    private LogbookService logbookService;
+    private ZipCsvParseRoute zipCsvParseRoute;
 
     @PostConstruct
     public void init (){
-        log.info("Create CamelContext and register Camel Router.");
+//        log.info("Create CamelContext and register Camel Router.");
         try {
-            zipContext.addRoutes(new ZipRouteBuilder(logbookService));
-            context.addRoutes(new DataSaveRouteBuilder(inboxFolder));
-            zipContext.start();
+            context.addRoutes(zipCsvParseRoute);
+            context.addRoutes(new JsonParseRoute(inboxFolder));
             context.start();
         } catch (Exception e) {
-            log.error("Failed to create CamelContext and register Camel Router.", e);
+//            log.error("Failed to create CamelContext and register Camel Router.", e);
         }
     }
 
     @PreDestroy
     public void shutdown(){
         try {
-            zipContext.stop();
             context.stop();
         } catch (Exception e) {
-            log.error("CamelContext stopping failed.", e);
+//            log.error("CamelContext stopping failed.", e);
         }
     }
 }

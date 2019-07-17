@@ -1,14 +1,16 @@
 package com.visma.fishing.strategy;
 
 import com.visma.fishing.model.Logbook;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.FileWriter;
 import java.io.IOException;
 
-@Slf4j
 public class FileSavingStrategy implements SavingStrategy {
+
+    private Logger log = LogManager.getLogger(FileSavingStrategy.class);
 
     private String path;
 
