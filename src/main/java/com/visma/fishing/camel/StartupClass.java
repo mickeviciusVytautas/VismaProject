@@ -6,6 +6,8 @@ import io.xlate.inject.Property;
 import io.xlate.inject.PropertyResource;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 //import org.apache.log4j.LogManager;
 //import org.apache.log4j.Logger;
 
@@ -18,7 +20,7 @@ import javax.inject.Inject;
 @Singleton
 @Startup
 public class StartupClass {
-//    private Logger log = LogManager.getLogger("fileAppender");
+    private Logger log = LogManager.getLogger(StartupClass.class);
 
 
     private CamelContext context = new DefaultCamelContext();
@@ -33,13 +35,13 @@ public class StartupClass {
 
     @PostConstruct
     public void init (){
-//        log.info("Create CamelContext and register Camel Router.");
+        log.info("Create CamelContext and register Camel Router.");
         try {
             context.addRoutes(zipCsvParseRoute);
             context.addRoutes(new JsonParseRoute(inboxFolder));
             context.start();
         } catch (Exception e) {
-//            log.error("Failed to create CamelContext and register Camel Router.", e);
+            log.error("Failed to create CamelContext and register Camel Router.", e);
         }
     }
 
@@ -48,7 +50,7 @@ public class StartupClass {
         try {
             context.stop();
         } catch (Exception e) {
-//            log.error("CamelContext stopping failed.", e);
+            log.error("CamelContext stopping failed.", e);
         }
     }
 }

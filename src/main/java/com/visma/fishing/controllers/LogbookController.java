@@ -33,7 +33,7 @@ public class LogbookController {
     public Response getLogbook(@PathParam("id") String id) {
         return logbookService.findById(id)
                 .map(logbook -> Response.status(Response.Status.FOUND).entity(logbook).build())
-                .orElse(Response.status(Response.Status.NOT_FOUND).entity(LOGBOOK_FIND_FAILED_MSG + id + ".").build());
+                .orElse(Response.status(Response.Status.NOT_FOUND).entity(LOGBOOK_FIND_FAILED_MSG).build());
     }
 
     @GET
@@ -41,7 +41,7 @@ public class LogbookController {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getLogbooks() {
         List<Logbook> logbookList = logbookService.findAll();
-        return Response.ok(logbookList).build();
+        return Response.status(Response.Status.OK).entity(logbookList).build();
     }
 
     @PUT

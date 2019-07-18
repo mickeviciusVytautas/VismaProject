@@ -1,6 +1,5 @@
 package com.visma.fishing.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.visma.fishing.model.base.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,7 +21,6 @@ import java.util.Date;
 public class EndOfFishing extends BaseEntity {
 
     @NotNull
-    @JsonFormat(pattern = "yyyy-MM-dd")
     @Temporal(TemporalType.DATE)
     private Date date;
 

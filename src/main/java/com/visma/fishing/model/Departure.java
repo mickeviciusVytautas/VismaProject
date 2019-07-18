@@ -1,6 +1,5 @@
 package com.visma.fishing.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.visma.fishing.model.base.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,7 +25,6 @@ public class Departure extends BaseEntity {
     private String port;
 
     @NotNull
-    @JsonFormat(pattern = "yyyy-MM-dd")
     @Temporal(TemporalType.DATE)
     private Date date;
 

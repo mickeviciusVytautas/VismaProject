@@ -17,7 +17,7 @@ public class JsonParseRoute extends RouteBuilder {
 
     private String inboxFolder;
     private static final String TIMER_CONFIGURATION = "timer://dataTimer?fixedRate=true&period=10000&delay=5s";
-    private static final String HTTP_POST_LOGBOOK = "http://localhost:8080/exploded/api/logbook/";
+    private static final String HTTP_POST_LOGBOOK = "http://localhost:8080/fishing/api/logbook/";
 
     @Override
     public void configure() {
@@ -29,7 +29,7 @@ public class JsonParseRoute extends RouteBuilder {
                     ObjectMapper mapper = new ObjectMapper();
                     Logbook logbook;
                     logbook = mapper.readValue(file, Logbook.class);
-                    exchange.getOut().setBody(logbook);
+                    exchange.getOut().setBody(logbook.toString());
                 })
                 .setHeader(Exchange.HTTP_METHOD, constant("POST"))
                 .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
