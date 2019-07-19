@@ -1,7 +1,13 @@
 package com.visma.fishing.services.impl;
 
-import com.visma.fishing.model.*;
+import com.visma.fishing.model.Arrival;
+import com.visma.fishing.model.Catch;
+import com.visma.fishing.model.CommunicationType;
+import com.visma.fishing.model.Departure;
+import com.visma.fishing.model.EndOfFishing;
+import com.visma.fishing.model.Logbook;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -9,6 +15,8 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
+import javax.persistence.OptimisticLockException;
 import javax.persistence.TypedQuery;
 import java.util.ArrayList;
 import java.util.Date;
@@ -19,7 +27,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.anyLong;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LogbookServiceEJBTest {
@@ -62,6 +76,7 @@ public class LogbookServiceEJBTest {
                 .withEndOfFishing(endOfFishing)
                 .withCatchList(catchList)
                 .withCommunicationType(CommunicationType.NETWORK)
+                .withId(ID_1)
                 .build();
 
         logbookList.add(logbookOne);
@@ -107,14 +122,49 @@ public class LogbookServiceEJBTest {
 
     @Test
     public void updateShouldReturnLogbook() {
-        when(em.find(eq(Logbook.class), anyString())).thenReturn(logbookOne);
-        Optional<Logbook> optional = service.findById(ID_1);
+        when(em.find(eq(Logbook.class), anyString(), any(LockModeType.class))).thenReturn(logbookOne);
+        Optional<Logbook> optional = service.updateLogbookById(ID_1, logbookOne);
 
-        verify(em, times(1)).find(eq(Logbook.class), anyString());
+        verify(em, times(1)).find(eq(Logbook.class), anyString(), any(LockModeType.class));
         assertTrue("Should contain logbook.", optional.isPresent());
-        assertEquals("Should contain logbook.", logbookOne, optional.get());
     }
 
+    @Ignore
+    @Test(expected = OptimisticLockException.class)
+    public void concurrentUpdateShouldThrowOptimisticLockException() {
+        when(em.find(eq(Logbook.class), anyString(), any(LockModeType.class))).thenReturn(logbookOne);
+        Logbook logbookUpdated = new Logbook.LogbookBuilder()
+                .withArrival(logbookOne.getArrival())
+                .withDeparture(logbookOne.getDeparture())
+                .withCatchList(logbookOne.getCatchList())
+                .withEndOfFishing(logbookOne.getEndOfFishing())
+                .withCommunicationType(logbookOne.getCommunicationType())
+                .withId(logbookOne.getId())
+                .build();
+        when(em.merge(any(Logbook.class))).thenReturn(logbookUpdated);
+        Thread first = new Thread(() -> {
+            Optional<Logbook> optional = service.updateLogbookById(ID_1, logbookOne);
+            verify(em, times(1)).find(eq(Logbook.class), anyString(), any(LockModeType.class));
+//            try {
+//                Thread.sleep(4000);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+        });
+
+        Thread second = new Thread(() -> {
+            Optional<Logbook> optional = service.updateLogbookById(ID_1, logbookOne);
+            verify(em, times(2)).find(eq(Logbook.class), anyString(), any(LockModeType.class));
+//            try {
+//                Thread.sleep(1000);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+        });
+        first.run();
+        second.run();
+
+    }
     @Test
     public void findByDeparturePortShouldReturnLogbookList() {
         when(em.createNativeQuery(anyString(), eq(Logbook.class))).thenReturn(query);

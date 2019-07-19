@@ -14,16 +14,25 @@ import org.apache.logging.log4j.Logger;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.OptimisticLockException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-import static com.visma.fishing.messages.Messages.*;
-import static com.visma.fishing.queries.Queries.*;
+import static com.visma.fishing.messages.Messages.LOGBOOK_FIND_FAILED_MSG;
+import static com.visma.fishing.messages.Messages.LOGBOOK_REMOVED_SUCCESS_MSG;
+import static com.visma.fishing.messages.Messages.LOGBOOK_SAVE_SUCCESS_MSG;
+import static com.visma.fishing.messages.Messages.LOGBOOK_UPDATE_SUCCESS_MSG;
+import static com.visma.fishing.messages.Messages.TO_DATABASE;
+import static com.visma.fishing.messages.Messages.TO_FILE_SYSTEM;
+import static com.visma.fishing.queries.Queries.LOGBOOK_FIND_BY_ARRIVAL_PORT;
+import static com.visma.fishing.queries.Queries.LOGBOOK_FIND_BY_DEPARTURE_DATE;
+import static com.visma.fishing.queries.Queries.LOGBOOK_FIND_BY_DEPARTURE_PORT;
+import static com.visma.fishing.queries.Queries.LOGBOOK_FIND_BY_SPECIES;
+import static com.visma.fishing.queries.Queries.LOGBOOK_FIND_WHERE_WEIGHT_IS_BIGGER;
+import static com.visma.fishing.queries.Queries.LOGBOOK_FIND_WHERE_WEIGHT_IS_LOWER;
 
-@Transactional
 @Stateless
 public class LogbookServiceEJB implements LogbookService {
 
@@ -121,15 +130,19 @@ public class LogbookServiceEJB implements LogbookService {
     public Optional<Logbook> updateLogbookById(String id, Logbook logbook) {
         return Optional.ofNullable(em.find(Logbook.class, id))
                 .map(entity -> {
-                    entity = new Logbook.LogbookBuilder().withArrival(logbook.getArrival())
-                            .withDeparture(logbook.getDeparture())
-                            .withCatchList(logbook.getCatchList())
-                            .withDeparture(logbook.getDeparture())
-                            .withEndOfFishing(logbook.getEndOfFishing())
-                            .withCommunicationType(logbook.getCommunicationType()).build();
-                    entity.setEndOfFishing(logbook.getEndOfFishing());
                     em.merge(entity);
-                    log.info(LOGBOOK_SAVE_SUCCESS_MSG , entity.getId());
+                    entity.setCatchList(logbook.getCatchList());
+                    entity.setDeparture(logbook.getDeparture());
+                    entity.setArrival(logbook.getArrival());
+                    entity.setCommunicationType(logbook.getCommunicationType());
+                    entity.setEndOfFishing(logbook.getEndOfFishing());
+                    try {
+                        em.flush();
+                    } catch (OptimisticLockException e) {
+                        log.error(e);
+                        return Optional.of(entity);
+                    }
+                    log.info(LOGBOOK_UPDATE_SUCCESS_MSG, entity.getId());
                     return Optional.of(entity);
                 }).orElseGet(() -> {
                     log.warn(LOGBOOK_FIND_FAILED_MSG, id);

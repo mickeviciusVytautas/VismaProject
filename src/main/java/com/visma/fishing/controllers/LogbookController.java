@@ -2,18 +2,33 @@ package com.visma.fishing.controllers;
 
 import com.visma.fishing.model.Logbook;
 import com.visma.fishing.services.LogbookService;
+import lombok.extern.log4j.Log4j2;
 
+import javax.ejb.EJBException;
 import javax.inject.Inject;
+import javax.persistence.OptimisticLockException;
 import javax.validation.Valid;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Optional;
 
-import static com.visma.fishing.messages.Messages.*;
+import static com.visma.fishing.messages.Messages.LOGBOOK_FIND_FAILED_MSG;
+import static com.visma.fishing.messages.Messages.LOGBOOK_SAVE_SUCCESS_MSG;
+import static com.visma.fishing.messages.Messages.LOGBOOK_UPDATE_SUCCESS_MSG;
+
 
 @Path("/logbook")
+@Log4j2
 public class LogbookController {
 
     @Inject
@@ -24,7 +39,7 @@ public class LogbookController {
     @Produces(MediaType.APPLICATION_JSON)
     public Response createLogbook(@Valid Logbook logbook){
         logbookService.create(logbook);
-        return Response.status(Response.Status.CREATED).entity(LOGBOOK_SAVE_SUCCESS_MSG).entity(logbook).build();
+        return Response.status(Response.Status.CREATED).entity(LOGBOOK_SAVE_SUCCESS_MSG).build();
     }
 
     @GET
@@ -49,9 +64,15 @@ public class LogbookController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateLogbookById(@PathParam("id") String id, Logbook update) {
-        Optional<Logbook> optional = logbookService.updateLogbookById(id, update);
-        return optional.map(logbook -> Response.status(Response.Status.ACCEPTED).entity(LOGBOOK_UPDATE_SUCCESS_MSG + logbook.getId() + ".").build())
-                .orElse(Response.status(Response.Status.NOT_FOUND).entity(LOGBOOK_FIND_FAILED_MSG + id + ".").build());
+        try {
+            Optional<Logbook> optional = logbookService.updateLogbookById(id, update);
+            return optional.map(logbook -> Response.status(Response.Status.ACCEPTED).entity(LOGBOOK_UPDATE_SUCCESS_MSG + logbook.getId() + ".").build())
+                    .orElse(Response.status(Response.Status.NOT_FOUND).entity(LOGBOOK_FIND_FAILED_MSG + id + ".").build());
+
+        } catch (EJBException | OptimisticLockException e) {
+            log.info(e);
+        }
+        return Response.serverError().entity("Failed").build();
     }
 
     @GET
