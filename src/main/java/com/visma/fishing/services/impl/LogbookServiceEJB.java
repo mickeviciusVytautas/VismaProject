@@ -1,5 +1,6 @@
 package com.visma.fishing.services.impl;
 
+import com.visma.fishing.exception.TransactionFailedException;
 import com.visma.fishing.model.CommunicationType;
 import com.visma.fishing.model.Logbook;
 import com.visma.fishing.services.LogbookService;
@@ -19,7 +20,9 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
+import static com.visma.fishing.messages.Messages.LOGBOOK_CONCURRENT_MSG;
 import static com.visma.fishing.messages.Messages.LOGBOOK_FIND_FAILED_MSG;
 import static com.visma.fishing.messages.Messages.LOGBOOK_REMOVED_SUCCESS_MSG;
 import static com.visma.fishing.messages.Messages.LOGBOOK_SAVE_SUCCESS_MSG;
@@ -127,8 +130,9 @@ public class LogbookServiceEJB implements LogbookService {
     }
 
     @Override
-    public Optional<Logbook> updateLogbookById(String id, Logbook logbook) {
-        return Optional.ofNullable(em.find(Logbook.class, id))
+    public Optional<Logbook> updateLogbookById(String id, Logbook logbook) throws TransactionFailedException {
+        AtomicReference<Boolean> transactionFailed = new AtomicReference<>(false);
+        Optional<Logbook> optional = Optional.ofNullable(em.find(Logbook.class, id))
                 .map(entity -> {
                     em.merge(entity);
                     entity.setCatchList(logbook.getCatchList());
@@ -140,7 +144,7 @@ public class LogbookServiceEJB implements LogbookService {
                         em.flush();
                     } catch (OptimisticLockException e) {
                         log.error(e);
-                        return Optional.of(entity);
+                        transactionFailed.set(true);
                     }
                     log.info(LOGBOOK_UPDATE_SUCCESS_MSG, entity.getId());
                     return Optional.of(entity);
@@ -148,6 +152,10 @@ public class LogbookServiceEJB implements LogbookService {
                     log.warn(LOGBOOK_FIND_FAILED_MSG, id);
                     return Optional.empty();
         });
+        if(transactionFailed.get()) {
+            throw new TransactionFailedException(LOGBOOK_CONCURRENT_MSG, id);
+        }
+        return optional;
     }
 
     @Override

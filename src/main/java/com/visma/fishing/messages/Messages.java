@@ -1,10 +1,11 @@
 package com.visma.fishing.messages;
 
 public class Messages {
-    public static final String LOGBOOK_SAVE_SUCCESS_MSG = "Successfully saved logbook with id {} ";
+    public static final String LOGBOOK_SAVE_SUCCESS_MSG = "Successfully saved logbook with id {}";
     public static final String LOGBOOK_UPDATE_SUCCESS_MSG = "Successfully updated logbook with id {}";
     public static final String LOGBOOK_REMOVED_SUCCESS_MSG = "Removed logbook with id {}";
     public static final String LOGBOOK_FIND_FAILED_MSG = "Could not find logbook with id {}";
+    public static final String LOGBOOK_CONCURRENT_MSG = "Failed to update Logbook with id {} due to concurrent modification.";
 
     public static final String TO_DATABASE = " to database";
     public static final String TO_FILE_SYSTEM = " to file system";
@@ -38,4 +39,5 @@ public class Messages {
 
     }
 
+//    public static BuildResponse
 }

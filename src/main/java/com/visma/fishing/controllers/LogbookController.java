@@ -1,8 +1,10 @@
 package com.visma.fishing.controllers;
 
+import com.visma.fishing.exception.TransactionFailedException;
 import com.visma.fishing.model.Logbook;
 import com.visma.fishing.services.LogbookService;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.ejb.EJBException;
 import javax.inject.Inject;
@@ -67,12 +69,13 @@ public class LogbookController {
         try {
             Optional<Logbook> optional = logbookService.updateLogbookById(id, update);
             return optional.map(logbook -> Response.status(Response.Status.ACCEPTED).entity(LOGBOOK_UPDATE_SUCCESS_MSG + logbook.getId() + ".").build())
-                    .orElse(Response.status(Response.Status.NOT_FOUND).entity(LOGBOOK_FIND_FAILED_MSG + id + ".").build());
+                    .orElse(Response.status(Response.Status.NOT_FOUND).entity(
+                            StringUtils.replace(LOGBOOK_FIND_FAILED_MSG , "{}", id)).build());
 
-        } catch (EJBException | OptimisticLockException e) {
-            log.info(e);
+        } catch (TransactionFailedException e) {
+            log.info(e.getMessage());
+            return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
         }
-        return Response.serverError().entity("Failed").build();
     }
 
     @GET

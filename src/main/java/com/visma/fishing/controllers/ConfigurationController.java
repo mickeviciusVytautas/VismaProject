@@ -36,8 +36,8 @@ public class ConfigurationController {
     public Response getConfiguration(@PathParam("id") String id) {
         return configurationService.findById(id).map(
                 configuration -> Response.status(Response.Status.FOUND).entity(configuration).build())
-                .orElse(Response.status(Response.Status.NOT_FOUND).entity(CONFIGURATION_FIND_FAILED_MSG + id + ".").build());
-
+                .orElse(Response.status(Response.Status.NOT_FOUND)
+                        .entity(CONFIGURATION_FIND_FAILED_MSG + id + ".").build());
     }
 
     @GET

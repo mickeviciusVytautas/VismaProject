@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CatchRecordConverter implements CsvRecordConverter<Map.Entry<String, Catch>> {
+
     @Override
     public Map.Entry<String, Catch> convertRecord(CSVRecord record) {
         Catch aCatch = new Catch(record.get("ID"), record.get("species"), Long.parseLong(record.get("weight")));

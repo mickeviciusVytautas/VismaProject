@@ -28,19 +28,20 @@ import java.util.List;
 @NamedQueries(
         @NamedQuery(name = "logbook.findAll", query = "SELECT l FROM Logbook l")
 )
+
 public class Logbook extends BaseEntity {
 
     @NotNull
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private Departure departure;
     @NotNull
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private EndOfFishing endOfFishing;
     @NotNull
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private Arrival arrival;
     @NotNull
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private List<Catch> catchList = new ArrayList<>();
     @NotNull
     @Enumerated(EnumType.STRING)
@@ -59,13 +60,19 @@ public class Logbook extends BaseEntity {
 
     public String toString() {
         ObjectMapper mapper = new ObjectMapper();
-        String logbook = null;
         try {
-            logbook = mapper.writeValueAsString(this);
+            return mapper.writeValueAsString(this);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
+            return "";
         }
-         return logbook;
+    }
+
+    public void setCatchList(List<Catch> list){
+        this.catchList.clear();
+        if(list != null){
+            this.catchList.addAll(list);
+        }
     }
 
     public static class LogbookBuilder {

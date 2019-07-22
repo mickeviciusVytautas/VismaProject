@@ -4,6 +4,8 @@ import com.visma.fishing.model.Arrival;
 import org.apache.camel.dataformat.csv.CsvRecordConverter;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.lang3.time.DateUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 //import org.apache.log4j.LogManager;
 //import org.apache.log4j.Logger;
 
@@ -13,7 +15,7 @@ import java.util.Map;
 
 
 public class ArrivalRecordConverter implements CsvRecordConverter<Map<String, Arrival>> {
-//    private Logger log = LogManager.getLogger("fileAppender");
+    private final Logger log = LogManager.getLogger(ArrivalRecordConverter.class);
 
     @Override
     public Map<String, Arrival> convertRecord(CSVRecord record) {
@@ -22,7 +24,7 @@ public class ArrivalRecordConverter implements CsvRecordConverter<Map<String, Ar
             Arrival arrival = new Arrival(record.get("ID"), record.get("port"), DateUtils.parseDate(record.get("date"), "yyyy-MM-dd"));
             map.put(record.get("logbookID"), arrival);
         } catch (ParseException e) {
-//            log.warn(e.toString());
+            log.warn(e.toString());
         }
         return map;
     }

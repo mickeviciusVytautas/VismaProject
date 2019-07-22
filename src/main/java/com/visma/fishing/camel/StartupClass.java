@@ -8,8 +8,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-//import org.apache.log4j.LogManager;
-//import org.apache.log4j.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -20,8 +18,8 @@ import javax.inject.Inject;
 @Singleton
 @Startup
 public class StartupClass {
-    private Logger log = LogManager.getLogger(StartupClass.class);
 
+    private final Logger log = LogManager.getLogger(StartupClass.class);
 
     private CamelContext context = new DefaultCamelContext();
     @Inject
@@ -47,10 +45,15 @@ public class StartupClass {
 
     @PreDestroy
     public void shutdown(){
+        boolean isSuccessful = true;
         try {
             context.stop();
         } catch (Exception e) {
             log.error("CamelContext stopping failed.", e);
+            isSuccessful = false;
+        }
+        if(isSuccessful){
+           log.info("CamelContext stopped");
         }
     }
 }

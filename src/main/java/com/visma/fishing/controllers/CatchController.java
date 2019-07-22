@@ -15,6 +15,7 @@ import static com.visma.fishing.messages.Messages.*;
 @Path("/catch")
 public class CatchController {
 
+
     @Inject
     private CatchService catchService;
 

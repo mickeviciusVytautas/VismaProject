@@ -4,10 +4,19 @@ import com.visma.fishing.model.Arrival;
 import com.visma.fishing.services.ArrivalService;
 import org.apache.commons.httpclient.util.DateParseException;
 import org.apache.commons.httpclient.util.DateUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
@@ -18,6 +27,8 @@ import static com.visma.fishing.messages.Messages.*;
 
 @Path("/arrival")
 public class ArrivalController {
+
+    private final Logger log = LogManager.getLogger(ArrivalController.class);
 
     @Inject
     private ArrivalService arrivalService;
@@ -50,8 +61,11 @@ public class ArrivalController {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateArrivalById(@PathParam("id") String id, Arrival arrival){
         return arrivalService.updateArrivalById(id, arrival)
-                .map(configuration -> Response.status(Response.Status.ACCEPTED).entity(ARRIVAL_UPDATE_SUCCESS_MSG + id + ".").build())
-                .orElse(Response.status(Response.Status.NOT_FOUND).entity(ARRIVAL_FIND_FAILED_MSG + id + ".").build());
+                .map(configuration ->
+                        Response.status(Response.Status.ACCEPTED)
+                                .entity(ARRIVAL_UPDATE_SUCCESS_MSG + id + ".").build())
+                .orElse(Response.status(Response.Status.NOT_FOUND)
+                        .entity(ARRIVAL_FIND_FAILED_MSG + id + ".").build());
     }
 
     @DELETE
@@ -76,7 +90,7 @@ public class ArrivalController {
             Date endDate = DateUtil.parseDate(end);
             return arrivalService.findByPeriod(startDate, endDate);
         } catch (DateParseException e) {
-            e.printStackTrace();
+            log.error(e);
         }
         return new ArrayList<>();
     }

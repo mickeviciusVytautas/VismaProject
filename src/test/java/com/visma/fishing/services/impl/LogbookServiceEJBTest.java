@@ -1,5 +1,6 @@
 package com.visma.fishing.services.impl;
 
+import com.visma.fishing.exception.TransactionFailedException;
 import com.visma.fishing.model.Arrival;
 import com.visma.fishing.model.Catch;
 import com.visma.fishing.model.CommunicationType;
@@ -78,7 +79,7 @@ public class LogbookServiceEJBTest {
                 .withCommunicationType(CommunicationType.NETWORK)
                 .withId(ID_1)
                 .build();
-
+        logbookOne.setVersion(0L);
         logbookList.add(logbookOne);
 
     }
@@ -122,17 +123,21 @@ public class LogbookServiceEJBTest {
 
     @Test
     public void updateShouldReturnLogbook() {
-        when(em.find(eq(Logbook.class), anyString(), any(LockModeType.class))).thenReturn(logbookOne);
-        Optional<Logbook> optional = service.updateLogbookById(ID_1, logbookOne);
+        when(em.find(eq(Logbook.class), anyString())).thenReturn(logbookOne);
+        Optional<Logbook> optional = null;
+        try {
+            optional = service.updateLogbookById(ID_1, logbookOne);
+        } catch (TransactionFailedException e) {
+            e.printStackTrace();
+        }
 
         verify(em, times(1)).find(eq(Logbook.class), anyString(), any(LockModeType.class));
         assertTrue("Should contain logbook.", optional.isPresent());
     }
 
-    @Ignore
     @Test(expected = OptimisticLockException.class)
     public void concurrentUpdateShouldThrowOptimisticLockException() {
-        when(em.find(eq(Logbook.class), anyString(), any(LockModeType.class))).thenReturn(logbookOne);
+        when(em.find(eq(Logbook.class), anyString())).thenReturn(logbookOne);
         Logbook logbookUpdated = new Logbook.LogbookBuilder()
                 .withArrival(logbookOne.getArrival())
                 .withDeparture(logbookOne.getDeparture())
@@ -143,8 +148,12 @@ public class LogbookServiceEJBTest {
                 .build();
         when(em.merge(any(Logbook.class))).thenReturn(logbookUpdated);
         Thread first = new Thread(() -> {
-            Optional<Logbook> optional = service.updateLogbookById(ID_1, logbookOne);
-            verify(em, times(1)).find(eq(Logbook.class), anyString(), any(LockModeType.class));
+            try {
+                Optional<Logbook> optional = service.updateLogbookById(ID_1, logbookOne);
+            } catch (TransactionFailedException e) {
+                e.printStackTrace();
+            }
+            verify(em, times(1)).find(eq(Logbook.class), anyString());
 //            try {
 //                Thread.sleep(4000);
 //            } catch (InterruptedException e) {
@@ -153,8 +162,12 @@ public class LogbookServiceEJBTest {
         });
 
         Thread second = new Thread(() -> {
-            Optional<Logbook> optional = service.updateLogbookById(ID_1, logbookOne);
-            verify(em, times(2)).find(eq(Logbook.class), anyString(), any(LockModeType.class));
+            try {
+                Optional<Logbook> optional = service.updateLogbookById(ID_1, logbookOne);
+            } catch (TransactionFailedException e) {
+                e.printStackTrace();
+            }
+            verify(em, times(2)).find(eq(Logbook.class), anyString());
 //            try {
 //                Thread.sleep(1000);
 //            } catch (InterruptedException e) {
