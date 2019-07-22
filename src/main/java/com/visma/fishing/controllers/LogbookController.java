@@ -1,14 +1,10 @@
 package com.visma.fishing.controllers;
 
-import com.visma.fishing.exception.TransactionFailedException;
 import com.visma.fishing.model.Logbook;
 import com.visma.fishing.services.LogbookService;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.lang3.StringUtils;
 
-import javax.ejb.EJBException;
 import javax.inject.Inject;
-import javax.persistence.OptimisticLockException;
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -22,7 +18,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
-import java.util.Optional;
 
 import static com.visma.fishing.messages.Messages.LOGBOOK_FIND_FAILED_MSG;
 import static com.visma.fishing.messages.Messages.LOGBOOK_SAVE_SUCCESS_MSG;
@@ -62,18 +57,15 @@ public class LogbookController {
     }
 
     @PUT
-    @Path("{id}")
+    @Path("")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateLogbookById(@PathParam("id") String id, Logbook update) {
+    public Response updateLogbookById(Logbook logbook) {
         try {
-            Optional<Logbook> optional = logbookService.updateLogbookById(id, update);
-            return optional.map(logbook -> Response.status(Response.Status.ACCEPTED).entity(LOGBOOK_UPDATE_SUCCESS_MSG + logbook.getId() + ".").build())
-                    .orElse(Response.status(Response.Status.NOT_FOUND).entity(
-                            StringUtils.replace(LOGBOOK_FIND_FAILED_MSG , "{}", id)).build());
-
-        } catch (TransactionFailedException e) {
-            log.info(e.getMessage());
+            logbookService.updateLogbook(logbook);
+            return Response.status(Response.Status.ACCEPTED).entity(LOGBOOK_UPDATE_SUCCESS_MSG + logbook.getId() + ".").build();
+        } catch (Exception e) {
+            log.info(e);
             return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
         }
     }

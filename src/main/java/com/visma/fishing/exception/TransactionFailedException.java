@@ -2,7 +2,7 @@ package com.visma.fishing.exception;
 
 import java.text.MessageFormat;
 
-public class TransactionFailedException extends Exception {
+public class TransactionFailedException extends RuntimeException {
 
     private final String message;
 

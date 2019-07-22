@@ -1,6 +1,5 @@
 package com.visma.fishing.services.impl;
 
-import com.visma.fishing.exception.TransactionFailedException;
 import com.visma.fishing.model.CommunicationType;
 import com.visma.fishing.model.Logbook;
 import com.visma.fishing.services.LogbookService;
@@ -15,18 +14,15 @@ import org.apache.logging.log4j.Logger;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.persistence.OptimisticLockException;
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
 
-import static com.visma.fishing.messages.Messages.LOGBOOK_CONCURRENT_MSG;
 import static com.visma.fishing.messages.Messages.LOGBOOK_FIND_FAILED_MSG;
 import static com.visma.fishing.messages.Messages.LOGBOOK_REMOVED_SUCCESS_MSG;
 import static com.visma.fishing.messages.Messages.LOGBOOK_SAVE_SUCCESS_MSG;
-import static com.visma.fishing.messages.Messages.LOGBOOK_UPDATE_SUCCESS_MSG;
 import static com.visma.fishing.messages.Messages.TO_DATABASE;
 import static com.visma.fishing.messages.Messages.TO_FILE_SYSTEM;
 import static com.visma.fishing.queries.Queries.LOGBOOK_FIND_BY_ARRIVAL_PORT;
@@ -130,32 +126,13 @@ public class LogbookServiceEJB implements LogbookService {
     }
 
     @Override
-    public Optional<Logbook> updateLogbookById(String id, Logbook logbook) throws TransactionFailedException {
-        AtomicReference<Boolean> transactionFailed = new AtomicReference<>(false);
-        Optional<Logbook> optional = Optional.ofNullable(em.find(Logbook.class, id))
-                .map(entity -> {
-                    em.merge(entity);
-                    entity.setCatchList(logbook.getCatchList());
-                    entity.setDeparture(logbook.getDeparture());
-                    entity.setArrival(logbook.getArrival());
-                    entity.setCommunicationType(logbook.getCommunicationType());
-                    entity.setEndOfFishing(logbook.getEndOfFishing());
-                    try {
-                        em.flush();
-                    } catch (OptimisticLockException e) {
-                        log.error(e);
-                        transactionFailed.set(true);
-                    }
-                    log.info(LOGBOOK_UPDATE_SUCCESS_MSG, entity.getId());
-                    return Optional.of(entity);
-                }).orElseGet(() -> {
-                    log.warn(LOGBOOK_FIND_FAILED_MSG, id);
-                    return Optional.empty();
-        });
-        if(transactionFailed.get()) {
-            throw new TransactionFailedException(LOGBOOK_CONCURRENT_MSG, id);
+    public void updateLogbook(Logbook logbook) {
+        if (em.find(Logbook.class, logbook.getId()) == null) {
+            throw new EntityNotFoundException(LOGBOOK_FIND_FAILED_MSG);
         }
-        return optional;
+        em.merge(logbook);
+        em.flush();
+
     }
 
     @Override
