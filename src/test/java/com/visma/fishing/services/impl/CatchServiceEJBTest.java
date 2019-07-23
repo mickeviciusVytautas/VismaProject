@@ -75,9 +75,10 @@ public class CatchServiceEJBTest {
     }
 
     @Test
-    public void createShouldReturnCatch() {
-        Catch created = service.create(aCatch);
-        assertEquals("Catch creation should return entity.", aCatch, created);
+    public void createShouldInvokeEMPersist() {
+        service.create(aCatch);
+        verify(em, times(1)).persist(any(Catch.class));
+
     }
 
     @Test

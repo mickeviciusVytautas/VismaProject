@@ -40,10 +40,9 @@ public class ArrivalServiceEJB implements ArrivalService {
     }
 
     @Override
-    public Arrival create(Arrival arrival) {
+    public void create(Arrival arrival) {
         em.persist(arrival);
         log.info(ARRIVAL_SAVE_SUCCESS_MSG, arrival.getId());
-        return arrival;
     }
 
     @Override

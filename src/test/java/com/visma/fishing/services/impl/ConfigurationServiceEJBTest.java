@@ -71,11 +71,11 @@ public class ConfigurationServiceEJBTest {
     }
 
     @Test
-    public void createShouldReturnCorrectStatusCode() {
-        Configuration created = service.create(configuration);
-        assertEquals("configuration creation should return entity.", configuration, created);
-    }
+    public void createShouldInvokeEMPersist() {
+        service.create(configuration);
+        verify(em, times(1)).persist(any(Configuration.class));
 
+    }
     @Test
     public void removeShouldInvokeEntityManagersRemove() {
         when(em.find(eq(Configuration.class), anyString())).thenReturn(configuration);

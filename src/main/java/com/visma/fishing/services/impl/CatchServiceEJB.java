@@ -38,10 +38,9 @@ public class CatchServiceEJB implements CatchService {
     }
 
     @Override
-    public Catch create(Catch aCatch) {
+    public void create(Catch aCatch) {
         em.persist(aCatch);
         log.info(CATCH_SAVE_SUCCESS_MSG, aCatch.getId());
-        return aCatch;
     }
 
     @Override

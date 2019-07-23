@@ -1,6 +1,6 @@
 package com.visma.fishing.services.impl;
 
-import com.visma.fishing.exception.TransactionFailedException;
+import com.visma.fishing.exception.ConcurrentChangesException;
 import com.visma.fishing.model.Arrival;
 import com.visma.fishing.model.Catch;
 import com.visma.fishing.model.CommunicationType;
@@ -107,9 +107,9 @@ public class LogbookServiceEJBTest {
     }
 
     @Test
-    public void createShouldReturnLogbook() {
-        Logbook created = service.create(logbookOne);
-        assertEquals("EndOfFishing creation should return entity.", logbookOne, created);
+    public void createShouldInvokeEMPersist() {
+        service.create(logbookOne);
+        verify(em, times(1)).persist(any(Logbook.class));
 
     }
 
@@ -122,10 +122,10 @@ public class LogbookServiceEJBTest {
     }
 
     @Test
-    public void updateShouldReturnLogbook() {
+    public void updateShouldInvokeEMFind() throws ConcurrentChangesException {
         when(em.find(eq(Logbook.class), anyString())).thenReturn(logbookOne);
         service.updateLogbook(logbookOne);
-        verify(em, times(1)).find(eq(Logbook.class), anyString(), any(LockModeType.class));
+        verify(em, times(1)).find(eq(Logbook.class), anyString());
     }
 
     @Ignore
@@ -142,11 +142,7 @@ public class LogbookServiceEJBTest {
                 .build();
         when(em.merge(any(Logbook.class))).thenReturn(logbookUpdated);
         Thread first = new Thread(() -> {
-            try {
-//                Optional<Logbook> optional = service.updateLogbook(logbookOne);
-            } catch (TransactionFailedException e) {
-                e.printStackTrace();
-            }
+
             verify(em, times(1)).find(eq(Logbook.class), anyString());
 //            try {
 //                Thread.sleep(4000);
@@ -156,11 +152,7 @@ public class LogbookServiceEJBTest {
         });
 
         Thread second = new Thread(() -> {
-            try {
-//                Optional<Logbook> optional = service.updateLogbook(logbookOne);
-            } catch (TransactionFailedException e) {
-                e.printStackTrace();
-            }
+
             verify(em, times(2)).find(eq(Logbook.class), anyString());
 //            try {
 //                Thread.sleep(1000);

@@ -39,10 +39,9 @@ public class EndOfFishingServiceEJB implements EndOfFishingService {
     }
 
     @Override
-    public EndOfFishing create(EndOfFishing endOfFishing) {
+    public void create(EndOfFishing endOfFishing) {
         em.persist(endOfFishing);
         log.info(END_OF_FISHING_SAVE_SUCCESS_MSG, endOfFishing.getId());
-        return endOfFishing;
     }
 
     @Override

@@ -76,9 +76,10 @@ public class DepartureServiceEJBTest {
     }
 
     @Test
-    public void createShouldReturnCreatedStatusCode() {
-        Departure created = service.create(departure);
-        assertEquals("Departure creation should return entity.", departure, created);
+    public void createShouldInvokeEMPersist() {
+        service.create(departure);
+        verify(em, times(1)).persist(any(Departure.class));
+
     }
 
     @Test

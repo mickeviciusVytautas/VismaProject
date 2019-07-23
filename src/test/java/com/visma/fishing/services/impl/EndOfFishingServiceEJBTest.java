@@ -73,11 +73,11 @@ public class EndOfFishingServiceEJBTest {
     }
 
     @Test
-    public void createShouldReturnEndOfFishing() {
-        EndOfFishing created = service.create(endOfFishing);
-        assertEquals("EndOfFishing creation should return entity.", endOfFishing, created);
-    }
+    public void createShouldInvokeEMPersist() {
+        service.create(endOfFishing);
+        verify(em, times(1)).persist(any(EndOfFishing.class));
 
+    }
 
     @Test
     public void removeShouldInvokeEntityManagersRemove() {

@@ -10,6 +10,6 @@ public interface Service<T, ID extends Serializable> {
 
     Optional<T> findById(ID id);
 
-    T create(T t);
+    void create(T t);
     void remove(ID id);
 }

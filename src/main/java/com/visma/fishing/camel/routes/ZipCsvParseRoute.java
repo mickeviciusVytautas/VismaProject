@@ -44,63 +44,44 @@ public class ZipCsvParseRoute extends RouteBuilder {
         ZipFileDataFormat zipFile = new ZipFileDataFormat();
         zipFile.setUsingIterator(true);
 
-        from("file:C:\\dev")
+        from("file:C:\\dev?noop=true")
                 .unmarshal(zipFile)
                 .split(body())
                 .streaming()
                 .to("file:C:\\dev\\data");
 
         from("file:C:\\dev\\data")
-                .choice()
+            .choice()
                 .when(header(CAMEL_FILE_NAME).isEqualTo("Arrival.csv"))
                     .unmarshal(csvArrivalFormat)
                     .split(body())
                     .process(exchange ->
                         arrivalMap.putAll(exchange.getIn().getBody(Map.class))
                     )
-                .endChoice()
-                    .when(header(CAMEL_FILE_NAME).isEqualTo("Catch.csv"))
+                        .endChoice()
+                .when(header(CAMEL_FILE_NAME).isEqualTo("Catch.csv"))
                     .unmarshal(csvCatchFormat)
                     .split(body())
-                    .process(exchange -> {
-                        Entry<String, Catch> entry = exchange.getIn().getBody(Entry.class);
-                        if (catchMap.containsKey(entry.getKey())) {
-                            catchMap.get(entry.getKey()).add(entry.getValue());
-                        } else {
-                            List<Catch> catches = new ArrayList<>();
-                            catches.add(entry.getValue());
-                            catchMap.put(entry.getKey(), catches);
-                        }
-                    })
-                    .endChoice()
-                    .when(header(CAMEL_FILE_NAME).isEqualTo("Departure.csv"))
-                        .unmarshal(csvDepartureFormat)
-                        .split(body())
-                        .process(exchange ->
-                            departureMap.putAll(exchange.getIn().getBody(Map.class)))
-                    .endChoice()
-                    .when(header(CAMEL_FILE_NAME).isEqualTo("EndOfFishing.csv"))
-                        .unmarshal(csvEndOfFishingFormat)
-                        .split(body())
-                        .process(exchange ->
-                            endOfFishingMap.putAll(exchange.getIn().getBody(Map.class)))
-                    .endChoice()
-                    .when(header(CAMEL_FILE_NAME).isEqualTo("Logbook.csv"))
-                        .unmarshal(csvLogbookFormat)
-                        .split(body())
-                        .process(exchange -> {
-                            Logbook logbook = exchange.getIn().getBody(Logbook.class);
-                            String id = logbook.getId();
-                            logbook.setArrival(arrivalMap.get(id));
-                            logbook.setEndOfFishing(endOfFishingMap.get(id));
-                            logbook.setDeparture(departureMap.get(id));
-                            logbook.setCatchList(catchMap.get(id));
-                            exchange.getOut().setBody(logbook.toString());
-                        })
-                        .setHeader(Exchange.HTTP_METHOD, constant("POST"))
-                        .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
-                        .to(HTTP_POST_LOGBOOK)
-                    .endChoice();
+                    .process(this::processCatch)
+                        .endChoice()
+                .when(header(CAMEL_FILE_NAME).isEqualTo("Departure.csv"))
+                    .unmarshal(csvDepartureFormat)
+                    .split(body())
+                    .process(exchange -> departureMap.putAll(exchange.getIn().getBody(Map.class)))
+                        .endChoice()
+                .when(header(CAMEL_FILE_NAME).isEqualTo("EndOfFishing.csv"))
+                    .unmarshal(csvEndOfFishingFormat)
+                    .split(body())
+                    .process(exchange -> endOfFishingMap.putAll(exchange.getIn().getBody(Map.class)))
+                        .endChoice()
+                .when(header(CAMEL_FILE_NAME).isEqualTo("Logbook.csv"))
+                    .unmarshal(csvLogbookFormat)
+                    .split(body())
+                    .process(this::processLogbook)
+                    .setHeader(Exchange.HTTP_METHOD, constant("POST"))
+                    .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
+                    .to(HTTP_POST_LOGBOOK)
+                        .endChoice();
     }
 
     private void setupCsvDataFormat() {
@@ -125,4 +106,24 @@ public class ZipCsvParseRoute extends RouteBuilder {
                 .setRecordConverter(new LogbookRecordConverter());
     }
 
+    private void processCatch(Exchange exchange) {
+        Entry<String, Catch> entry = exchange.getIn().getBody(Entry.class);
+        if (catchMap.containsKey(entry.getKey())) {
+            catchMap.get(entry.getKey()).add(entry.getValue());
+        } else {
+            List<Catch> catches = new ArrayList<>();
+            catches.add(entry.getValue());
+            catchMap.put(entry.getKey(), catches);
+        }
+    }
+
+    private void processLogbook(Exchange exchange) {
+        Logbook logbook = exchange.getIn().getBody(Logbook.class);
+        String id = logbook.getId();
+        logbook.setArrival(arrivalMap.get(id));
+        logbook.setEndOfFishing(endOfFishingMap.get(id));
+        logbook.setDeparture(departureMap.get(id));
+        logbook.setCatchList(catchMap.get(id));
+        exchange.getOut().setBody(logbook.toString());
+    }
 }

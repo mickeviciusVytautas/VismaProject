@@ -72,9 +72,9 @@ public class ArrivalServiceEJBTest {
     }
 
     @Test
-    public void createShouldReturnCreatedStatusCode() {
-        Arrival created = service.create(arrival);
-        assertEquals("Arrival creation should return entity.", arrival, created);
+    public void createShouldInvokeEMPersist() {
+        service.create(arrival);
+        verify(em, times(1)).persist(any(Arrival.class));
     }
 
     @Test

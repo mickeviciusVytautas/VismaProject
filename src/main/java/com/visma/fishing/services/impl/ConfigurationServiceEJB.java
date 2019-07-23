@@ -37,10 +37,9 @@ public class ConfigurationServiceEJB implements ConfigurationService {
     }
 
     @Override
-    public Configuration create(Configuration configuration) {
+    public void create(Configuration configuration) {
         em.persist(configuration);
         log.info(CONFIGURATION_SAVE_SUCCESS_MSG, configuration.getKey());
-        return configuration;
 
     }
 

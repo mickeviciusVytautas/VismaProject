@@ -1,11 +1,12 @@
 package com.visma.fishing.services;
 
+import com.visma.fishing.exception.ConcurrentChangesException;
 import com.visma.fishing.model.Logbook;
 
 import java.util.List;
 
 public interface LogbookService extends Service<Logbook, String>{
-    void updateLogbook(Logbook logbook);
+    void updateLogbook(Logbook logbook) throws ConcurrentChangesException;
 
     List<Logbook> saveAll(List<Logbook> logbooks);
     List<Logbook> findByDeparturePort(String portName);

@@ -41,10 +41,9 @@ public class DepartureServiceEJB implements DepartureService {
     }
 
     @Override
-    public Departure create(Departure departure) {
+    public void create(Departure departure) {
         em.persist(departure);
         log.info(DEPARTURE_SAVE_SUCCESS_MSG, departure.getId());
-        return departure;
     }
 
     @Override

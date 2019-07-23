@@ -1,5 +1,7 @@
 package com.visma.fishing.controllers;
 
+import com.visma.fishing.exception.ConcurrentChangesException;
+import com.visma.fishing.exception.EntityNotFoundException;
 import com.visma.fishing.model.Logbook;
 import com.visma.fishing.services.LogbookService;
 import lombok.extern.log4j.Log4j2;
@@ -22,6 +24,7 @@ import java.util.List;
 import static com.visma.fishing.messages.Messages.LOGBOOK_FIND_FAILED_MSG;
 import static com.visma.fishing.messages.Messages.LOGBOOK_SAVE_SUCCESS_MSG;
 import static com.visma.fishing.messages.Messages.LOGBOOK_UPDATE_SUCCESS_MSG;
+import static com.visma.fishing.messages.Messages.format;
 
 
 @Path("/logbook")
@@ -63,9 +66,11 @@ public class LogbookController {
     public Response updateLogbookById(Logbook logbook) {
         try {
             logbookService.updateLogbook(logbook);
-            return Response.status(Response.Status.ACCEPTED).entity(LOGBOOK_UPDATE_SUCCESS_MSG + logbook.getId() + ".").build();
-        } catch (Exception e) {
-            log.info(e);
+            return Response.status(Response.Status.ACCEPTED).entity(format(LOGBOOK_UPDATE_SUCCESS_MSG,logbook.getId())).build();
+        } catch (EntityNotFoundException e){
+                return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
+            }
+        catch (ConcurrentChangesException e) {
             return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
         }
     }
