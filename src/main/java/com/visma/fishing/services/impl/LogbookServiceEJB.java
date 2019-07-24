@@ -25,9 +25,7 @@ import java.util.Optional;
 import static com.visma.fishing.messages.Messages.LOGBOOK_CONCURRENT_CHANGES_MSG;
 import static com.visma.fishing.messages.Messages.LOGBOOK_FIND_FAILED_MSG;
 import static com.visma.fishing.messages.Messages.LOGBOOK_REMOVED_SUCCESS_MSG;
-import static com.visma.fishing.messages.Messages.LOGBOOK_SAVE_SUCCESS_MSG;
-import static com.visma.fishing.messages.Messages.TO_DATABASE;
-import static com.visma.fishing.messages.Messages.TO_FILE_SYSTEM;
+import static com.visma.fishing.messages.Messages.LOGBOOK_UPDATE_SUCCESS_MSG;
 import static com.visma.fishing.messages.Messages.format;
 import static com.visma.fishing.queries.Queries.LOGBOOK_FIND_BY_ARRIVAL_PORT;
 import static com.visma.fishing.queries.Queries.LOGBOOK_FIND_BY_DEPARTURE_DATE;
@@ -40,6 +38,7 @@ import static com.visma.fishing.queries.Queries.LOGBOOK_FIND_WHERE_WEIGHT_IS_LOW
 public class LogbookServiceEJB implements LogbookService {
 
     private Logger log = LogManager.getLogger(LogbookServiceEJB.class);
+
     @Inject
     @Property(name = "databasePath",
             resource = @PropertyResource("classpath:application.properties"),
@@ -135,6 +134,8 @@ public class LogbookServiceEJB implements LogbookService {
             log.error(LOGBOOK_CONCURRENT_CHANGES_MSG, logbook.getId());
             throw new ConcurrentChangesException(format(LOGBOOK_CONCURRENT_CHANGES_MSG, logbook.getId()));
         }
+        log.info(LOGBOOK_UPDATE_SUCCESS_MSG, logbook.getId());
+
 
     }
 

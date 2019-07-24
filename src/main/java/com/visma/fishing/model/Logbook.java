@@ -75,6 +75,7 @@ public class Logbook extends BaseEntity {
         }
     }
 
+
     public static class LogbookBuilder {
 
         private Departure departure;
