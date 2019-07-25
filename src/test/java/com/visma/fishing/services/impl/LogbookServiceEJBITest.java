@@ -32,7 +32,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
-import javax.naming.NamingException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -41,7 +40,7 @@ import java.util.Optional;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(Arquillian.class)
-public class LogbookServiceEJBIT {
+public class LogbookServiceEJBITest {
 
     private static final String PORT_ARRIVAL_1= "port arrival 1";
     private static final String PORT_DEPARTURE_1 = "port departure 1";
@@ -103,7 +102,6 @@ public class LogbookServiceEJBIT {
         logbookServiceEJB.create(logbookOne);
         Optional<Logbook> optionalLogbook = logbookServiceEJB.findById(logbookOne.getId());
         assertTrue(optionalLogbook.isPresent());
-
         logbookOne.setVersion(1L);
         logbookServiceEJB.updateLogbook(logbookOne);
 

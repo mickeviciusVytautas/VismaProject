@@ -8,8 +8,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import static com.visma.fishing.messages.Messages.LOGBOOK_SAVE_SUCCESS_MSG;
-import static com.visma.fishing.messages.Messages.TO_FILE_SYSTEM;
+import static com.visma.fishing.messages.Messages.LOGBOOK_SAVE_FILESYSTEM_SUCCESS_MSG;
 
 public class FileSavingStrategy implements SavingStrategy {
 
@@ -36,7 +35,7 @@ public class FileSavingStrategy implements SavingStrategy {
             isSaved = false;
         }
         if(isSaved){
-            log.info(LOGBOOK_SAVE_SUCCESS_MSG + TO_FILE_SYSTEM, logbook.getId());
+            log.info(LOGBOOK_SAVE_FILESYSTEM_SUCCESS_MSG);
 
         }
         return logbook;
