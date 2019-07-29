@@ -135,8 +135,6 @@ public class LogbookServiceEJB implements LogbookService {
             throw new ConcurrentChangesException(format(LOGBOOK_CONCURRENT_CHANGES_MSG, logbook.getId()));
         }
         log.info(LOGBOOK_UPDATE_SUCCESS_MSG, logbook.getId());
-
-
     }
 
     @Override
