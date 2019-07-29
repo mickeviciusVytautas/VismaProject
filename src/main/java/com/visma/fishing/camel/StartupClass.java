@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.ejb.Schedule;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
@@ -42,6 +43,11 @@ public class StartupClass {
             log.error("Failed to create CamelContext and register Camel Router.", e);
         }
     }
+
+//    @Schedule(hour="*", minute="*", second = "*/1", persistent = false)
+//    public void archiveLogbooks(){
+//        System.out.println("Hello bitches");
+//    }
 
     @PreDestroy
     public void shutdown(){

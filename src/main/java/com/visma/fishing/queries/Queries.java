@@ -78,5 +78,6 @@ public class Queries {
                     + " WHERE A.DATE BETWEEN ?1 and ?2 ";
 
 
-    private Queries(){}
+    private Queries() {
+    }
 }

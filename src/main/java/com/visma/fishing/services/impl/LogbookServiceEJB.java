@@ -154,4 +154,6 @@ public class LogbookServiceEJB implements LogbookService {
         }
         return logbooks;
     }
+
+
 }

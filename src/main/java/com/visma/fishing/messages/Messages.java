@@ -3,7 +3,7 @@ package com.visma.fishing.messages;
 import org.slf4j.helpers.MessageFormatter;
 
 public class Messages {
-    public static final String LOGBOOK_SAVE_SUCCESS_MSG = "Successfully saved logbook with id {}  to database";
+    public static final String LOGBOOK_SAVE_SUCCESS_MSG = "Successfully saved logbook with id {} to database";
     public static final String LOGBOOK_SAVE_FILESYSTEM_SUCCESS_MSG = "Successfully saved logbook to filesystem.";
     public static final String LOGBOOK_UPDATE_SUCCESS_MSG = "Successfully updated logbook with id {}.";
     public static final String LOGBOOK_REMOVED_SUCCESS_MSG = "Removed logbook with id {}.";

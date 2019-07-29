@@ -1,6 +1,7 @@
 package com.visma.fishing.model;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.visma.fishing.model.base.BaseEntity;
 import lombok.Data;
@@ -8,11 +9,11 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
-import javax.persistence.MapsId;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -20,6 +21,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
@@ -48,6 +50,9 @@ public class Logbook extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private CommunicationType communicationType;
 
+    @Column(name = "CREATION_DATE", nullable = false)
+    private Date creationDate = new Date();
+
     @Version
     private Long version;
 
@@ -59,8 +64,19 @@ public class Logbook extends BaseEntity {
         this.communicationType = CommunicationType.valueOf(connectionType);
     }
 
+    public String toStringNoId() {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+
     public String toString() {
         ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(MapperFeature.USE_ANNOTATIONS, false);
         try {
             return mapper.writeValueAsString(this);
         } catch (JsonProcessingException e) {
