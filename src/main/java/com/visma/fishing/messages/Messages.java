@@ -10,8 +10,6 @@ public class Messages {
     public static final String LOGBOOK_FIND_FAILED_MSG = "Could not find logbook with id {}.";
     public static final String LOGBOOK_CONCURRENT_CHANGES_MSG = "Failed to update Logbook with id {} due to concurrent modification.";
 
-    public static final String TO_DATABASE = " to database";
-
     public static final String END_OF_FISHING_UPDATE_SUCCESS_MSG = "Successfully updated endOfFishing with id {}";
     public static final String END_OF_FISHING_REMOVED_SUCCESS_MSG = "Removed endOfFishing with id {}";
     public static final String END_OF_FISHING_SAVE_SUCCESS_MSG = "Successfully saved endOfFishing {}";
