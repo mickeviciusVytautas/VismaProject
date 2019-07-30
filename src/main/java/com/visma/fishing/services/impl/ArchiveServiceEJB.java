@@ -47,7 +47,6 @@ public class ArchiveServiceEJB implements ArchiveService {
                 "SELECT A.* FROM ARCHIVE A " +
                         "WHERE A.ARCHIVINGDATE <= DATEADD(year, -1, CURDATE())", Archive.class)
                 .getResultList();
-
         archives.forEach(archive -> em.remove(archive));
     }
 }
