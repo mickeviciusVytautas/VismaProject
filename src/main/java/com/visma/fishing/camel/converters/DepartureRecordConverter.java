@@ -11,19 +11,18 @@ import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DepartureRecordConverter implements CsvRecordConverter<Map<String, Departure>> {
+public class DepartureRecordConverter implements CsvRecordConverter<Map.Entry<String, Departure>> {
     private final Logger log = LogManager.getLogger(DepartureRecordConverter.class);
 
     @Override
-    public Map<String, Departure> convertRecord(CSVRecord record) {
-
-        Map<String, Departure> map = new HashMap<>();
+    public Map.Entry<String, Departure> convertRecord(CSVRecord record) {
+        Map.Entry<String, Departure> entry = null;
         try {
             Departure departure = new Departure(record.get("ID"), record.get("port"), DateUtils.parseDate(record.get("date"), "yyyy-MM-dd"));
-            map.put(record.get("logbookID"), departure);
+            entry = new HashMap.SimpleEntry<>(record.get("logbookID"), departure);
         } catch (ParseException e) {
             log.warn(e.toString());
         }
-        return map;
+        return entry;
     }
 }

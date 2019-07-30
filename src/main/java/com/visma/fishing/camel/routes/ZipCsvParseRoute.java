@@ -38,6 +38,7 @@ public class ZipCsvParseRoute extends RouteBuilder {
     private CsvDataFormat csvCatchFormat = new CsvDataFormat();
     private CsvDataFormat csvLogbookFormat = new CsvDataFormat();
 
+    @SuppressWarnings("unchecked")
     @Override
     public void configure() {
         setupCsvDataFormat();
@@ -55,8 +56,10 @@ public class ZipCsvParseRoute extends RouteBuilder {
                 .when(header(CAMEL_FILE_NAME).isEqualTo("Arrival.csv"))
                     .unmarshal(csvArrivalFormat)
                     .split(body())
-                    .process(exchange ->
-                        arrivalMap.putAll(exchange.getIn().getBody(Map.class))
+                    .process(exchange -> {
+                        Entry<String, Arrival> entry = exchange.getIn().getBody(Entry.class);
+                        arrivalMap.put(entry.getKey(), entry.getValue());
+                            }
                     )
                         .endChoice()
                 .when(header(CAMEL_FILE_NAME).isEqualTo("Catch.csv"))
@@ -67,12 +70,18 @@ public class ZipCsvParseRoute extends RouteBuilder {
                 .when(header(CAMEL_FILE_NAME).isEqualTo("Departure.csv"))
                     .unmarshal(csvDepartureFormat)
                     .split(body())
-                    .process(exchange -> departureMap.putAll(exchange.getIn().getBody(Map.class)))
+                    .process(exchange -> {
+                        Entry<String, Departure> entry = exchange.getIn().getBody(Entry.class);
+                        departureMap.put(entry.getKey(), entry.getValue());
+                    })
                         .endChoice()
                 .when(header(CAMEL_FILE_NAME).isEqualTo("EndOfFishing.csv"))
                     .unmarshal(csvEndOfFishingFormat)
                     .split(body())
-                    .process(exchange -> endOfFishingMap.putAll(exchange.getIn().getBody(Map.class)))
+                    .process(exchange -> {
+                        Entry<String, EndOfFishing> entry = exchange.getIn().getBody(Entry.class);
+                        endOfFishingMap.put(entry.getKey(), entry.getValue());
+                    })
                         .endChoice()
                 .when(header(CAMEL_FILE_NAME).isEqualTo("Logbook.csv"))
                     .unmarshal(csvLogbookFormat)

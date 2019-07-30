@@ -68,7 +68,6 @@ public class Logbook extends BaseEntity {
     public String toStringNoId() {
         ObjectMapper mapper = new ObjectMapper();
         mapper.addMixIn(BaseEntity.class, BaseMixIn.class);
-
         try {
             return mapper.writeValueAsString(this);
         } catch (JsonProcessingException e) {
@@ -79,7 +78,6 @@ public class Logbook extends BaseEntity {
 
     public String toString() {
         ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(MapperFeature.USE_ANNOTATIONS, false);
         try {
             return mapper.writeValueAsString(this);
         } catch (JsonProcessingException e) {

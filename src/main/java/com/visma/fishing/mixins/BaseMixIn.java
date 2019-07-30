@@ -7,5 +7,4 @@ public abstract class BaseMixIn {
     @JsonIgnore
     String id;
 
-
 }

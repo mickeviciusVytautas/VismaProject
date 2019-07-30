@@ -6,26 +6,24 @@ import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-//import org.apache.log4j.LogManager;
-//import org.apache.log4j.Logger;
 
 import java.text.ParseException;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.Map.Entry;
 
 
-public class ArrivalRecordConverter implements CsvRecordConverter<Map<String, Arrival>> {
+public class ArrivalRecordConverter implements CsvRecordConverter<Entry<String, Arrival>> {
     private final Logger log = LogManager.getLogger(ArrivalRecordConverter.class);
 
     @Override
-    public Map<String, Arrival> convertRecord(CSVRecord record) {
-        Map<String, Arrival> map = new HashMap<>();
+    public Entry<String, Arrival> convertRecord(CSVRecord record) {
+        Entry<String, Arrival> entry = null;
         try {
             Arrival arrival = new Arrival(record.get("ID"), record.get("port"), DateUtils.parseDate(record.get("date"), "yyyy-MM-dd"));
-            map.put(record.get("logbookID"), arrival);
+            entry = new HashMap.SimpleEntry<>(record.get("logbookID"), arrival);
         } catch (ParseException e) {
             log.warn(e.toString());
         }
-        return map;
+        return entry;
     }
 }

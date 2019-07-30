@@ -11,18 +11,18 @@ import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class EndOfFishingConverter implements CsvRecordConverter<Map<String, EndOfFishing>> {
+public class EndOfFishingConverter implements CsvRecordConverter<Map.Entry<String, EndOfFishing>> {
     private final Logger log = LogManager.getLogger(EndOfFishingConverter.class);
 
     @Override
-    public Map<String, EndOfFishing> convertRecord(CSVRecord record) {
-        Map<String, EndOfFishing> map = new HashMap<>();
+    public Map.Entry<String, EndOfFishing> convertRecord(CSVRecord record) {
+        Map.Entry<String, EndOfFishing> entry = null;
         try {
             EndOfFishing endOfFishing = new EndOfFishing(record.get("ID"), DateUtils.parseDate(record.get("date"), "yyyy-MM-dd"));
-            map.put(record.get("logbookID"), endOfFishing);
+            entry = new HashMap.SimpleEntry<>(record.get("logbookID"), endOfFishing);
         } catch (ParseException e) {
             log.warn(e.toString());
         }
-        return map;
+        return entry;
     }
 }
