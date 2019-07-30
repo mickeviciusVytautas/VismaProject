@@ -8,7 +8,7 @@ import java.util.List;
 public interface LogbookService extends Service<Logbook, String>{
     void updateLogbook(Logbook logbook) throws ConcurrentChangesException;
 
-    List<Logbook> saveAll(List<Logbook> logbooks);
+    void saveAll(List<Logbook> logbooks);
     List<Logbook> findByDeparturePort(String portName);
     List<Logbook> findByArrivalPort(String port);
     List<Logbook> findBySpecies(String species);

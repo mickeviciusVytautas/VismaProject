@@ -23,15 +23,13 @@ public class ArchiveServiceEJB implements ArchiveService {
     @PersistenceContext
     private EntityManager em;
 
-    @Schedule(hour = "*", minute = "*/10", second = "*", persistent = false)
+    @Schedule(hour = "*", minute = "*", second = "*/10", persistent = false)
     @SuppressWarnings("unchecked")
     public void archiveLogbooks() {
-        Date date = new Date();
         List<Logbook> logbooks = em.createNativeQuery(
                 "SELECT L.* FROM LOGBOOK L " +
                         "where L.CREATION_DATE " +
                         "<= DATEADD(year, -1, CURDATE())", Logbook.class)
-                .setParameter(1, DateUtils.addYears(date, -1))
                 .getResultList();
         logbooks.forEach(logbook -> {
             em.persist(new Archive(logbook.toString()));
@@ -39,10 +37,9 @@ public class ArchiveServiceEJB implements ArchiveService {
         });
     }
 
-    @Schedule(hour = "*", minute = "*/10", second = "*", persistent = false)
+    @Schedule(hour = "*", minute = "*", second = "*/10", persistent = false)
     @SuppressWarnings("unchecked")
     public void removeArchives() {
-        Date date = new Date();
         List<Archive> archives = em.createNativeQuery(
                 "SELECT A.* FROM ARCHIVE A " +
                         "WHERE A.ARCHIVINGDATE <= DATEADD(year, -1, CURDATE())", Archive.class)

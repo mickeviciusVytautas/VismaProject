@@ -147,12 +147,11 @@ public class LogbookServiceEJB implements LogbookService {
     }
 
     @Override
-    public List<Logbook> saveAll(List<Logbook> logbooks) {
+    public void saveAll(List<Logbook> logbooks) {
         for (Logbook logbook :
                 logbooks) {
             em.persist(logbook);
         }
-        return logbooks;
     }
 
 
