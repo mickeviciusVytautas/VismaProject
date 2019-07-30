@@ -3,6 +3,7 @@ package com.visma.fishing.model;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.visma.fishing.mixins.BaseMixIn;
 import com.visma.fishing.model.base.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -66,6 +67,8 @@ public class Logbook extends BaseEntity {
 
     public String toStringNoId() {
         ObjectMapper mapper = new ObjectMapper();
+        mapper.addMixIn(BaseEntity.class, BaseMixIn.class);
+
         try {
             return mapper.writeValueAsString(this);
         } catch (JsonProcessingException e) {

@@ -44,11 +44,6 @@ public class StartupClass {
         }
     }
 
-//    @Schedule(hour="*", minute="*", second = "*/1", persistent = false)
-//    public void archiveLogbooks(){
-//        System.out.println("Hello bitches");
-//    }
-
     @PreDestroy
     public void shutdown(){
         boolean isSuccessful = true;

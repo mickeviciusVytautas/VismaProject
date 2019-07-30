@@ -15,12 +15,12 @@ public class BaseEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
-    @JsonIgnore
+//    @JsonIgnore
     public String getId() {
         return id;
     }
 
-    @JsonProperty
+//    @JsonProperty
     public void setId(String id) {
         this.id = id;
     }
