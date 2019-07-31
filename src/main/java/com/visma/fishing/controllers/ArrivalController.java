@@ -23,7 +23,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static com.visma.fishing.messages.Messages.*;
+import static com.visma.fishing.messages.Messages.ARRIVAL_FIND_FAILED_MSG;
+import static com.visma.fishing.messages.Messages.ARRIVAL_SAVE_SUCCESS_MSG;
+import static com.visma.fishing.messages.Messages.ARRIVAL_UPDATE_SUCCESS_MSG;
 
 @Path("/arrival")
 public class ArrivalController {
@@ -36,7 +38,7 @@ public class ArrivalController {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createArrival(@Valid Arrival arrival){
+    public Response createArrival(@Valid Arrival arrival) {
         return Response.status(Response.Status.CREATED).entity(ARRIVAL_SAVE_SUCCESS_MSG).entity(arrival).build();
     }
 
@@ -59,7 +61,7 @@ public class ArrivalController {
     @PUT
     @Path("{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateArrivalById(@PathParam("id") String id, Arrival arrival){
+    public Response updateArrivalById(@PathParam("id") String id, Arrival arrival) {
         return arrivalService.updateArrivalById(id, arrival)
                 .map(configuration ->
                         Response.status(Response.Status.ACCEPTED)
@@ -70,21 +72,21 @@ public class ArrivalController {
 
     @DELETE
     @Path("{id}")
-    public void deleteArrivalById(@PathParam("id")String id) {
+    public void deleteArrivalById(@PathParam("id") String id) {
         arrivalService.remove(id);
     }
 
     @GET
     @Path("/search/{port}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Arrival> findArrivalByPort(@PathParam("port") String port){
+    public List<Arrival> findArrivalByPort(@PathParam("port") String port) {
         return arrivalService.findByPort(port);
     }
 
     @GET
     @Path("/search/{start}/{end}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Arrival> findArrivalByPeriod(@PathParam("start") String start, @PathParam("end") String end){
+    public List<Arrival> findArrivalByPeriod(@PathParam("start") String start, @PathParam("end") String end) {
         try {
             Date startDate = DateUtil.parseDate(start);
             Date endDate = DateUtil.parseDate(end);

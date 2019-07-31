@@ -5,7 +5,11 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
@@ -25,12 +29,6 @@ public class Arrival extends BaseEntity {
     private Date date;
 
     public Arrival(String port, Date date) {
-        this.port = port;
-        this.date = date;
-    }
-
-    public Arrival(String id, String port, Date date) {
-        setId(id);
         this.port = port;
         this.date = date;
     }

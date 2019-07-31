@@ -12,11 +12,9 @@ import java.io.IOException;
 import static com.visma.fishing.messages.Messages.LOGBOOK_SAVE_FILESYSTEM_SUCCESS_MSG;
 
 public class FileSavingStrategy implements SavingStrategy {
-
-    private Logger log = LogManager.getLogger(LogbookServiceEJB.class);
+    private final Logger log = LogManager.getLogger(LogbookServiceEJB.class);
 
     private String path = "C:\\dev\\database\\";
-
 
     public FileSavingStrategy(String path) {
         if (StringUtils.isNotBlank(path)) {
@@ -28,14 +26,14 @@ public class FileSavingStrategy implements SavingStrategy {
     public Logbook save(Logbook logbook) {
         boolean isSaved = true;
         String filePath = path + System.currentTimeMillis() + ".json";
-        try (FileWriter fileWriter = new FileWriter(filePath)){
+        try (FileWriter fileWriter = new FileWriter(filePath)) {
             log.info("Writing logbook to file system...");
             fileWriter.write(logbook.toStringNoId());
         } catch (IOException e) {
             log.error(e.toString());
             isSaved = false;
         }
-        if(isSaved){
+        if (isSaved) {
             log.info(LOGBOOK_SAVE_FILESYSTEM_SUCCESS_MSG);
 
         }

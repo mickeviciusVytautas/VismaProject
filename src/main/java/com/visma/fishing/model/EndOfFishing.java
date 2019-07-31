@@ -6,7 +6,11 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
@@ -23,10 +27,5 @@ public class EndOfFishing extends BaseEntity {
     @NotNull
     @Temporal(TemporalType.DATE)
     private Date date;
-
-    public EndOfFishing(String id, Date date) {
-        setId(id);
-        this.date = date;
-    }
 
 }

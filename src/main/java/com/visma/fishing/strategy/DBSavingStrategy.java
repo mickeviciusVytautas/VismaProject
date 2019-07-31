@@ -10,13 +10,14 @@ import javax.persistence.EntityManager;
 import static com.visma.fishing.messages.Messages.LOGBOOK_SAVE_SUCCESS_MSG;
 
 public class DBSavingStrategy implements SavingStrategy {
-    private Logger log = LogManager.getLogger(LogbookServiceEJB.class);
+    private final Logger log = LogManager.getLogger(LogbookServiceEJB.class);
 
     private EntityManager em;
 
-    public DBSavingStrategy (EntityManager entityManager){
+    public DBSavingStrategy(EntityManager entityManager) {
         this.em = entityManager;
     }
+
     @Override
     public Logbook save(Logbook logbook) {
         em.persist(logbook);

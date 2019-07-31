@@ -5,7 +5,14 @@ import com.visma.fishing.services.ConfigurationService;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
@@ -25,7 +32,7 @@ public class ConfigurationController {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createConfiguration(@Valid Configuration configuration){
+    public Response createConfiguration(@Valid Configuration configuration) {
         configurationService.create(configuration);
         return Response.status(Response.Status.CREATED).entity(CONFIGURATION_SAVE_SUCCESS_MSG).entity(configuration).build();
     }
@@ -64,7 +71,7 @@ public class ConfigurationController {
 
     @GET
     @Path("/value/{key}/{defaultValue}")
-    public String findValueByKey(@PathParam("key") String key, @PathParam("defaultValue") String defaultValue){
+    public String findValueByKey(@PathParam("key") String key, @PathParam("defaultValue") String defaultValue) {
         return configurationService.findValueByKey(key, defaultValue);
     }
 }

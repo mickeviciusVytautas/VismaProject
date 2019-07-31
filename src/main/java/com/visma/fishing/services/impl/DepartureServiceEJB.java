@@ -4,8 +4,6 @@ import com.visma.fishing.model.Departure;
 import com.visma.fishing.services.DepartureService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-//import org.apache.log4j.LogManager;
-//import org.apache.log4j.Logger;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -15,9 +13,14 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-import static com.visma.fishing.messages.Messages.*;
+import static com.visma.fishing.messages.Messages.DEPARTURE_FIND_FAILED_MSG;
+import static com.visma.fishing.messages.Messages.DEPARTURE_REMOVED_SUCCESS_MSG;
+import static com.visma.fishing.messages.Messages.DEPARTURE_SAVE_SUCCESS_MSG;
 import static com.visma.fishing.queries.Queries.DEPARTURE_FIND_BY_DATE;
 import static com.visma.fishing.queries.Queries.DEPARTURE_FIND_BY_PORT;
+
+//import org.apache.log4j.LogManager;
+//import org.apache.log4j.Logger;
 
 @Transactional
 @Stateless
@@ -55,9 +58,9 @@ public class DepartureServiceEJB implements DepartureService {
                     em.merge(entity);
                     return Optional.of(entity);
                 }).orElseGet(() -> {
-            log.warn(DEPARTURE_FIND_FAILED_MSG, id);
-            return Optional.empty();
-        });
+                    log.warn(DEPARTURE_FIND_FAILED_MSG, id);
+                    return Optional.empty();
+                });
     }
 
     @Override
@@ -71,7 +74,7 @@ public class DepartureServiceEJB implements DepartureService {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<Departure> findByPort(String port){
+    public List<Departure> findByPort(String port) {
         return em.createNativeQuery(DEPARTURE_FIND_BY_PORT, Departure.class)
                 .setParameter(1, port)
                 .getResultList();
@@ -79,7 +82,7 @@ public class DepartureServiceEJB implements DepartureService {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<Departure> findByPeriod(String start, String end){
+    public List<Departure> findByPeriod(String start, String end) {
         return em.createNativeQuery(DEPARTURE_FIND_BY_DATE, Departure.class)
                 .setParameter(1, start)
                 .setParameter(2, end)

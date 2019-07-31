@@ -5,12 +5,14 @@ import com.visma.fishing.model.Logbook;
 import org.apache.camel.dataformat.csv.CsvRecordConverter;
 import org.apache.commons.csv.CSVRecord;
 
-public class LogbookRecordConverter implements CsvRecordConverter<Logbook> {
+import java.util.AbstractMap;
+import java.util.Map;
+
+public class LogbookRecordConverter implements CsvRecordConverter<Map.Entry<String, Logbook>> {
     @Override
-    public Logbook convertRecord(CSVRecord record) {
+    public Map.Entry<String, Logbook> convertRecord(CSVRecord record) {
         Logbook logbook = new Logbook();
-        logbook.setId(record.get("ID"));
         logbook.setCommunicationType(CommunicationType.valueOf(record.get("communicationType")));
-        return logbook;
+        return new AbstractMap.SimpleEntry<>(record.get("ID"), logbook);
     }
 }

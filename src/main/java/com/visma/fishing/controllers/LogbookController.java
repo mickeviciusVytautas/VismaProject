@@ -37,7 +37,7 @@ public class LogbookController {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createLogbook(@Valid Logbook logbook){
+    public Response createLogbook(@Valid Logbook logbook) {
         logbookService.create(logbook);
         return Response.status(Response.Status.CREATED).entity(LOGBOOK_SAVE_SUCCESS_MSG).build();
     }
@@ -66,11 +66,10 @@ public class LogbookController {
     public Response updateLogbookById(Logbook logbook) {
         try {
             logbookService.updateLogbook(logbook);
-            return Response.status(Response.Status.ACCEPTED).entity(format(LOGBOOK_UPDATE_SUCCESS_MSG,logbook.getId())).build();
-        } catch (EntityNotFoundException e){
-                return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
-            }
-        catch (ConcurrentChangesException e) {
+            return Response.status(Response.Status.ACCEPTED).entity(format(LOGBOOK_UPDATE_SUCCESS_MSG, logbook.getId())).build();
+        } catch (EntityNotFoundException e) {
+            return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
+        } catch (ConcurrentChangesException e) {
             return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
         }
     }
@@ -78,21 +77,21 @@ public class LogbookController {
     @GET
     @Path("/departure/{port}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Logbook> getLogbooksByDeparturePort(@PathParam("port") String port){
+    public List<Logbook> getLogbooksByDeparturePort(@PathParam("port") String port) {
         return logbookService.findByDeparturePort(port);
     }
 
     @GET
     @Path("/arrival/{port}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Logbook> getLogbooksByArrivalPort(@PathParam("port") String port){
+    public List<Logbook> getLogbooksByArrivalPort(@PathParam("port") String port) {
         return logbookService.findByArrivalPort(port);
     }
 
     @GET
     @Path("/catch/{species}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Logbook> getLogbooksBySpecies(@PathParam("species") String species){
+    public List<Logbook> getLogbooksBySpecies(@PathParam("species") String species) {
         return logbookService.findBySpecies(species);
     }
 
@@ -105,7 +104,7 @@ public class LogbookController {
 
     @DELETE
     @Path("{id}")
-    public void deleteLogbookById(@PathParam("id")String id) {
+    public void deleteLogbookById(@PathParam("id") String id) {
         logbookService.remove(id);
     }
 

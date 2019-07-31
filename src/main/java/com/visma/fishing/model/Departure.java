@@ -6,7 +6,11 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
@@ -27,11 +31,5 @@ public class Departure extends BaseEntity {
     @NotNull
     @Temporal(TemporalType.DATE)
     private Date date;
-
-    public Departure(String id, String port, Date date) {
-        setId(id);
-        this.date = date;
-        this.port = port;
-    }
 
 }

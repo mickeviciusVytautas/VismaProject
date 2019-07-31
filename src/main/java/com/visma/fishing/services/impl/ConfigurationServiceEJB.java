@@ -12,7 +12,10 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-import static com.visma.fishing.messages.Messages.*;
+import static com.visma.fishing.messages.Messages.CONFIGURATION_FIND_FAILED_MSG;
+import static com.visma.fishing.messages.Messages.CONFIGURATION_REMOVED_SUCCESS_MSG;
+import static com.visma.fishing.messages.Messages.CONFIGURATION_SAVE_SUCCESS_MSG;
+import static com.visma.fishing.messages.Messages.CONFIGURATION_UPDATE_SUCCESS_MSG;
 import static com.visma.fishing.queries.Queries.CONFIGURATION_FIND_START;
 import static com.visma.fishing.queries.Queries.CONFIGURATION_FIND_VALUE_BY_KEY;
 
@@ -69,7 +72,7 @@ public class ConfigurationServiceEJB implements ConfigurationService {
     }
 
     @Override
-    public String findValueByKey(String key, String defaultValue){
+    public String findValueByKey(String key, String defaultValue) {
         try {
             Configuration configuration = (Configuration) em.createNativeQuery(CONFIGURATION_FIND_VALUE_BY_KEY, Configuration.class)
                     .setParameter(1, key)

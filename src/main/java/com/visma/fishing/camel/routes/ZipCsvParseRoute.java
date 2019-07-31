@@ -127,8 +127,9 @@ public class ZipCsvParseRoute extends RouteBuilder {
     }
 
     private void processLogbook(Exchange exchange) {
-        Logbook logbook = exchange.getIn().getBody(Logbook.class);
-        String id = logbook.getId();
+        Entry<String, Logbook> entry = exchange.getIn().getBody(Entry.class);
+        String id = entry.getKey();
+        Logbook logbook = entry.getValue();
         logbook.setArrival(arrivalMap.get(id));
         logbook.setEndOfFishing(endOfFishingMap.get(id));
         logbook.setDeparture(departureMap.get(id));

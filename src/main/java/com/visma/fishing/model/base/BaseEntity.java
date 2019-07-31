@@ -1,7 +1,5 @@
 package com.visma.fishing.model.base;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -19,8 +17,4 @@ public class BaseEntity implements Serializable {
         return id;
     }
 
-    @JsonIgnore
-    public void setId(String id) {
-        this.id = id;
-    }
 }

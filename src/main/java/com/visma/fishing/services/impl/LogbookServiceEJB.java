@@ -64,7 +64,7 @@ public class LogbookServiceEJB implements LogbookService {
     public List<Logbook> findByDeparturePort(String port) {
         return em.createNativeQuery(
                 LOGBOOK_FIND_BY_DEPARTURE_PORT, Logbook.class)
-                .setParameter(1,  "%" + port)
+                .setParameter(1, "%" + port)
                 .getResultList();
     }
 
@@ -89,7 +89,7 @@ public class LogbookServiceEJB implements LogbookService {
     @SuppressWarnings("unchecked")
     @Override
     public List<Logbook> findByWeight(Long weight, boolean searchWithLowerWeight) {
-        if(searchWithLowerWeight) {
+        if (searchWithLowerWeight) {
             return em.createNativeQuery(
                     LOGBOOK_FIND_WHERE_WEIGHT_IS_LOWER, Logbook.class)
                     .setParameter(1, weight)
@@ -103,7 +103,7 @@ public class LogbookServiceEJB implements LogbookService {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<Logbook> findByDeparturePeriod(String start, String end){
+    public List<Logbook> findByDeparturePeriod(String start, String end) {
         return em.createNativeQuery(
                 LOGBOOK_FIND_BY_DEPARTURE_DATE, Logbook.class)
                 .setParameter(1, start)
@@ -123,14 +123,15 @@ public class LogbookServiceEJB implements LogbookService {
     }
 
     @Override
-    public void updateLogbook(Logbook logbook)   {
+    public void updateLogbook(Logbook logbook) {
         if (em.find(Logbook.class, logbook.getId()) == null) {
             log.info(LOGBOOK_FIND_FAILED_MSG, logbook.getId());
             throw new EntityNotFoundException(format(LOGBOOK_FIND_FAILED_MSG, logbook.getId()));
-        }   try {
+        }
+        try {
             em.merge(logbook);
             em.flush();
-        } catch (OptimisticLockException e){
+        } catch (OptimisticLockException e) {
             log.error(LOGBOOK_CONCURRENT_CHANGES_MSG, logbook.getId());
             throw new ConcurrentChangesException(format(LOGBOOK_CONCURRENT_CHANGES_MSG, logbook.getId()));
         }

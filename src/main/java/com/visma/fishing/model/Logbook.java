@@ -1,7 +1,6 @@
 package com.visma.fishing.model;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.visma.fishing.mixins.BaseMixIn;
 import com.visma.fishing.model.base.BaseEntity;
@@ -86,9 +85,9 @@ public class Logbook extends BaseEntity {
         }
     }
 
-    public void setCatchList(List<Catch> list){
+    public void setCatchList(List<Catch> list) {
         this.catchList.clear();
-        if(list != null){
+        if (list != null) {
             this.catchList.addAll(list);
         }
     }
@@ -140,7 +139,6 @@ public class Logbook extends BaseEntity {
             logbook.setCatchList(catchList);
             logbook.setCommunicationType(communicationType);
             logbook.setEndOfFishing(endOfFishing);
-            logbook.setId(id);
             return logbook;
         }
 

@@ -1,7 +1,7 @@
 package com.visma.fishing.services.impl;
 
-import com.visma.fishing.services.CatchService;
 import com.visma.fishing.model.Catch;
+import com.visma.fishing.services.CatchService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -13,8 +13,13 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-import static com.visma.fishing.messages.Messages.*;
-import static com.visma.fishing.queries.Queries.*;
+import static com.visma.fishing.messages.Messages.CATCH_FIND_FAILED_MSG;
+import static com.visma.fishing.messages.Messages.CATCH_REMOVED_SUCCESS_MSG;
+import static com.visma.fishing.messages.Messages.CATCH_SAVE_SUCCESS_MSG;
+import static com.visma.fishing.messages.Messages.CATCH_UPDATE_SUCCESS_MSG;
+import static com.visma.fishing.queries.Queries.CATCH_FIND_BY_SPECIES;
+import static com.visma.fishing.queries.Queries.CATCH_FIND_WITH_BIGGER_WEIGHT;
+import static com.visma.fishing.queries.Queries.CATCH_FIND_WITH_LOWER_WEIGHT;
 
 @Transactional
 @Stateless
@@ -29,7 +34,6 @@ public class CatchServiceEJB implements CatchService {
     public List<Catch> findAll() {
         TypedQuery<Catch> q = em.createNamedQuery("catch.findAll", Catch.class);
         return q.getResultList();
-
     }
 
     @Override
@@ -69,7 +73,7 @@ public class CatchServiceEJB implements CatchService {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<Catch> findBySpecies(String species){
+    public List<Catch> findBySpecies(String species) {
         return em.createNativeQuery(CATCH_FIND_BY_SPECIES, Catch.class)
                 .setParameter(1, species)
                 .getResultList();
@@ -77,8 +81,8 @@ public class CatchServiceEJB implements CatchService {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<Catch> findByWeight(Long weight, boolean searchWithLowerWeight){
-        if(searchWithLowerWeight){
+    public List<Catch> findByWeight(Long weight, boolean searchWithLowerWeight) {
+        if (searchWithLowerWeight) {
             return em.createNativeQuery(CATCH_FIND_WITH_LOWER_WEIGHT, Catch.class)
                     .setParameter(1, weight)
                     .getResultList();

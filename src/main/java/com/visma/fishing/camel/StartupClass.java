@@ -11,7 +11,6 @@ import org.apache.logging.log4j.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.ejb.Schedule;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
@@ -33,7 +32,7 @@ public class StartupClass {
     private ZipCsvParseRoute zipCsvParseRoute;
 
     @PostConstruct
-    public void init (){
+    public void init() {
         log.info("Create CamelContext and register Camel Router.");
         try {
             context.addRoutes(zipCsvParseRoute);
@@ -45,7 +44,7 @@ public class StartupClass {
     }
 
     @PreDestroy
-    public void shutdown(){
+    public void shutdown() {
         boolean isSuccessful = true;
         try {
             context.stop();
@@ -53,8 +52,8 @@ public class StartupClass {
             log.error("CamelContext stopping failed.", e);
             isSuccessful = false;
         }
-        if(isSuccessful){
-           log.info("CamelContext stopped");
+        if (isSuccessful) {
+            log.info("CamelContext stopped");
         }
     }
 }

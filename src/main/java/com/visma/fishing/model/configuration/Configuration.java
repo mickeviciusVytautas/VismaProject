@@ -4,7 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.ColumnResult;
+import javax.persistence.ConstructorResult;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.SqlResultSetMapping;
 import javax.validation.constraints.NotNull;
 
 /*
@@ -14,9 +18,9 @@ import javax.validation.constraints.NotNull;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@SqlResultSetMapping(name="ConfigurationValueByKey", classes = {
+@SqlResultSetMapping(name = "ConfigurationValueByKey", classes = {
         @ConstructorResult(targetClass = Configuration.class,
-                columns = {@ColumnResult(name="mode"), @ColumnResult(name="key"), @ColumnResult(name="key")})
+                columns = {@ColumnResult(name = "mode"), @ColumnResult(name = "key"), @ColumnResult(name = "key")})
 })
 public class Configuration {
 

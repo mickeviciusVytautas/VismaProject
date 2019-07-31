@@ -13,9 +13,11 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-import static com.visma.fishing.messages.Messages.*;
+import static com.visma.fishing.messages.Messages.END_OF_FISHING_FIND_FAILED_MSG;
+import static com.visma.fishing.messages.Messages.END_OF_FISHING_REMOVED_SUCCESS_MSG;
+import static com.visma.fishing.messages.Messages.END_OF_FISHING_SAVE_SUCCESS_MSG;
+import static com.visma.fishing.messages.Messages.END_OF_FISHING_UPDATE_SUCCESS_MSG;
 import static com.visma.fishing.queries.Queries.END_OF_FISHING_FIND_BY_DATE;
-import static com.visma.fishing.queries.Queries.END_OF_FISHING_FIND_START;
 
 @Transactional
 @Stateless
@@ -53,9 +55,9 @@ public class EndOfFishingServiceEJB implements EndOfFishingService {
                     log.info(END_OF_FISHING_UPDATE_SUCCESS_MSG, id);
                     return Optional.of(entity);
                 }).orElseGet(() -> {
-            log.warn(END_OF_FISHING_FIND_FAILED_MSG, id);
-            return Optional.empty();
-        });
+                    log.warn(END_OF_FISHING_FIND_FAILED_MSG, id);
+                    return Optional.empty();
+                });
 
 
     }
@@ -71,7 +73,7 @@ public class EndOfFishingServiceEJB implements EndOfFishingService {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<EndOfFishing> findByPeriod(String start, String end){
+    public List<EndOfFishing> findByPeriod(String start, String end) {
         return em.createNativeQuery(END_OF_FISHING_FIND_BY_DATE, EndOfFishing.class)
                 .setParameter(1, start)
                 .setParameter(2, end)

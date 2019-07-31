@@ -26,10 +26,4 @@ public class Catch extends BaseEntity {
     @NotNull
     private Long weight;
 
-    public Catch(String id, String species, Long weight) {
-        setId(id);
-        this.species = species;
-        this.weight = weight;
-    }
-
 }
