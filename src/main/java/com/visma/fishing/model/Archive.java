@@ -16,6 +16,7 @@ import java.util.Date;
 public class Archive extends BaseEntity {
 
     private Date archivingDate;
+
     @Lob
     private String serializedLogbook;
 

@@ -134,6 +134,6 @@ public class ZipCsvParseRoute extends RouteBuilder {
         logbook.setEndOfFishing(endOfFishingMap.get(id));
         logbook.setDeparture(departureMap.get(id));
         logbook.setCatchList(catchMap.get(id));
-        exchange.getOut().setBody(logbook.toStringNoId());
+        exchange.getOut().setBody(logbook.toString());
     }
 }

@@ -1,5 +1,7 @@
 package com.visma.fishing.services.impl;
 
+import com.visma.fishing.exception.ConcurrentChangesException;
+import com.visma.fishing.exception.EntityNotFoundException;
 import com.visma.fishing.model.Catch;
 import com.visma.fishing.services.CatchService;
 import org.apache.logging.log4j.LogManager;
@@ -7,16 +9,20 @@ import org.apache.logging.log4j.Logger;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.OptimisticLockException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+import static com.visma.fishing.messages.Messages.CATCH_CONCURRENT_CHANGES_MSG;
 import static com.visma.fishing.messages.Messages.CATCH_FIND_FAILED_MSG;
 import static com.visma.fishing.messages.Messages.CATCH_REMOVED_SUCCESS_MSG;
 import static com.visma.fishing.messages.Messages.CATCH_SAVE_SUCCESS_MSG;
 import static com.visma.fishing.messages.Messages.CATCH_UPDATE_SUCCESS_MSG;
+import static com.visma.fishing.messages.Messages.DEPARTURE_FIND_FAILED_MSG;
+import static com.visma.fishing.messages.Messages.format;
 import static com.visma.fishing.queries.Queries.CATCH_FIND_BY_SPECIES;
 import static com.visma.fishing.queries.Queries.CATCH_FIND_WITH_BIGGER_WEIGHT;
 import static com.visma.fishing.queries.Queries.CATCH_FIND_WITH_LOWER_WEIGHT;
@@ -48,20 +54,24 @@ public class CatchServiceEJB implements CatchService {
     }
 
     @Override
-    public Optional<Catch> updateCatchById(String id, Catch aCatch) {
-        return Optional.ofNullable(em.find(Catch.class, id))
-                .map(entity -> {
-                    entity.setSpecies(aCatch.getSpecies());
-                    entity.setWeight(aCatch.getWeight());
-                    em.merge(entity);
-                    log.info(CATCH_UPDATE_SUCCESS_MSG, id);
-                    return Optional.of(entity);
-                }).orElseGet(() -> {
-                    log.warn(CATCH_FIND_FAILED_MSG, id);
-                    return Optional.empty();
-                });
+    public void updateCatch(Catch aCatch) {
+        catchExists(aCatch.getId());
+        try {
+            em.merge(aCatch);
+            em.flush();
+        } catch (OptimisticLockException e) {
+            log.error(CATCH_CONCURRENT_CHANGES_MSG, aCatch.getId());
+            throw new ConcurrentChangesException(format(CATCH_CONCURRENT_CHANGES_MSG, aCatch.getId()));
+        }
+        log.info(CATCH_UPDATE_SUCCESS_MSG, aCatch.getId());
     }
 
+    private void catchExists(String id) {
+        if (em.find(Catch.class, id) == null) {
+            log.info(CATCH_FIND_FAILED_MSG, id);
+            throw new EntityNotFoundException(format(CATCH_FIND_FAILED_MSG, id));
+        }
+    }
     @Override
     public void remove(String id) {
         Optional.ofNullable(em.find(Catch.class, id))

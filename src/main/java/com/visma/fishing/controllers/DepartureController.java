@@ -1,5 +1,7 @@
 package com.visma.fishing.controllers;
 
+import com.visma.fishing.exception.ConcurrentChangesException;
+import com.visma.fishing.exception.EntityNotFoundException;
 import com.visma.fishing.model.Departure;
 import com.visma.fishing.services.DepartureService;
 
@@ -20,6 +22,7 @@ import java.util.List;
 import static com.visma.fishing.messages.Messages.DEPARTURE_FIND_FAILED_MSG;
 import static com.visma.fishing.messages.Messages.DEPARTURE_SAVE_SUCCESS_MSG;
 import static com.visma.fishing.messages.Messages.DEPARTURE_UPDATE_SUCCESS_MSG;
+import static com.visma.fishing.messages.Messages.format;
 
 @Path("/departure")
 public class DepartureController {
@@ -52,12 +55,16 @@ public class DepartureController {
     }
 
     @PUT
-    @Path("{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateDepartureById(@PathParam("id") String id, Departure update) {
-        return departureService.updateDepartureById(id, update)
-                .map(departure -> Response.status(Response.Status.ACCEPTED).entity(DEPARTURE_UPDATE_SUCCESS_MSG + update.getId() + ".").build())
-                .orElse(Response.status(Response.Status.NOT_FOUND).entity(DEPARTURE_FIND_FAILED_MSG + id + ".").build());
+    public Response updateDeparture(Departure departure) {
+        try {
+            departureService.updateDeparture(departure);
+            return Response.status(Response.Status.ACCEPTED).entity(format(DEPARTURE_UPDATE_SUCCESS_MSG, departure.getId())).build();
+        } catch (EntityNotFoundException e) {
+            return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
+        } catch (ConcurrentChangesException e) {
+            return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
+        }
     }
 
     @DELETE

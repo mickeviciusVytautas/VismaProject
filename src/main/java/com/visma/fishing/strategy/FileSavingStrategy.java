@@ -28,7 +28,7 @@ public class FileSavingStrategy implements SavingStrategy {
         String filePath = path + System.currentTimeMillis() + ".json";
         try (FileWriter fileWriter = new FileWriter(filePath)) {
             log.info("Writing logbook to file system...");
-            fileWriter.write(logbook.toStringNoId());
+            fileWriter.write(logbook.toString());
         } catch (IOException e) {
             log.error(e.toString());
             isSaved = false;

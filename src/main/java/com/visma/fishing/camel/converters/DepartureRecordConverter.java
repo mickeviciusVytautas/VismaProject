@@ -18,7 +18,7 @@ public class DepartureRecordConverter implements CsvRecordConverter<Map.Entry<St
     public Map.Entry<String, Departure> convertRecord(CSVRecord record) {
         Map.Entry<String, Departure> entry = null;
         try {
-            Departure departure = new Departure(record.get("ID"), record.get("port"), DateUtils.parseDate(record.get("date"), "yyyy-MM-dd"));
+            Departure departure = new Departure(record.get("port"), DateUtils.parseDate(record.get("date"), "yyyy-MM-dd"));
             entry = new HashMap.SimpleEntry<>(record.get("logbookID"), departure);
         } catch (ParseException e) {
             log.warn(e.toString());

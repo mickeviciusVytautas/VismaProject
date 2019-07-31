@@ -1,5 +1,7 @@
 package com.visma.fishing.services.impl;
 
+import com.visma.fishing.exception.ConcurrentChangesException;
+import com.visma.fishing.exception.EntityNotFoundException;
 import com.visma.fishing.model.EndOfFishing;
 import com.visma.fishing.services.EndOfFishingService;
 import org.apache.logging.log4j.LogManager;
@@ -7,16 +9,21 @@ import org.apache.logging.log4j.Logger;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.OptimisticLockException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+import static com.visma.fishing.messages.Messages.END_OF_FISHING_CONCURRENT_CHANGES_MSG;
 import static com.visma.fishing.messages.Messages.END_OF_FISHING_FIND_FAILED_MSG;
 import static com.visma.fishing.messages.Messages.END_OF_FISHING_REMOVED_SUCCESS_MSG;
 import static com.visma.fishing.messages.Messages.END_OF_FISHING_SAVE_SUCCESS_MSG;
-import static com.visma.fishing.messages.Messages.END_OF_FISHING_UPDATE_SUCCESS_MSG;
+import static com.visma.fishing.messages.Messages.LOGBOOK_CONCURRENT_CHANGES_MSG;
+import static com.visma.fishing.messages.Messages.LOGBOOK_FIND_FAILED_MSG;
+import static com.visma.fishing.messages.Messages.LOGBOOK_UPDATE_SUCCESS_MSG;
+import static com.visma.fishing.messages.Messages.format;
 import static com.visma.fishing.queries.Queries.END_OF_FISHING_FIND_BY_DATE;
 
 @Transactional
@@ -47,19 +54,23 @@ public class EndOfFishingServiceEJB implements EndOfFishingService {
     }
 
     @Override
-    public Optional<EndOfFishing> updateEndOfFishingById(String id, EndOfFishing endOfFishing) {
-        return Optional.ofNullable(em.find(EndOfFishing.class, id))
-                .map(entity -> {
-                    entity.setDate(endOfFishing.getDate());
-                    em.merge(entity);
-                    log.info(END_OF_FISHING_UPDATE_SUCCESS_MSG, id);
-                    return Optional.of(entity);
-                }).orElseGet(() -> {
-                    log.warn(END_OF_FISHING_FIND_FAILED_MSG, id);
-                    return Optional.empty();
-                });
+    public void updateEndOfFishing(EndOfFishing endOfFishing) {
+        endOfFishingExists(endOfFishing.getId());
+        try {
+            em.merge(endOfFishing);
+            em.flush();
+        } catch (OptimisticLockException e) {
+            log.error(END_OF_FISHING_CONCURRENT_CHANGES_MSG, endOfFishing.getId());
+            throw new ConcurrentChangesException(format(END_OF_FISHING_CONCURRENT_CHANGES_MSG, endOfFishing.getId()));
+        }
+        log.info(END_OF_FISHING_SAVE_SUCCESS_MSG, endOfFishing.getId());
+    }
 
-
+    private void endOfFishingExists(String id) {
+        if (em.find(EndOfFishing.class, id) == null) {
+            log.info(END_OF_FISHING_FIND_FAILED_MSG, id);
+            throw new EntityNotFoundException(format(END_OF_FISHING_FIND_FAILED_MSG, id));
+        }
     }
 
     @Override

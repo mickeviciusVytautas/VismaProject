@@ -124,10 +124,7 @@ public class LogbookServiceEJB implements LogbookService {
 
     @Override
     public void updateLogbook(Logbook logbook) {
-        if (em.find(Logbook.class, logbook.getId()) == null) {
-            log.info(LOGBOOK_FIND_FAILED_MSG, logbook.getId());
-            throw new EntityNotFoundException(format(LOGBOOK_FIND_FAILED_MSG, logbook.getId()));
-        }
+        logbookExists(logbook.getId());
         try {
             em.merge(logbook);
             em.flush();
@@ -136,6 +133,13 @@ public class LogbookServiceEJB implements LogbookService {
             throw new ConcurrentChangesException(format(LOGBOOK_CONCURRENT_CHANGES_MSG, logbook.getId()));
         }
         log.info(LOGBOOK_UPDATE_SUCCESS_MSG, logbook.getId());
+    }
+
+    private void logbookExists(String id) {
+        if (em.find(Logbook.class, id) == null) {
+            log.info(LOGBOOK_FIND_FAILED_MSG, id);
+            throw new EntityNotFoundException(format(LOGBOOK_FIND_FAILED_MSG, id));
+        }
     }
 
     @Override

@@ -26,9 +26,7 @@ import static com.visma.fishing.messages.Messages.LOGBOOK_SAVE_SUCCESS_MSG;
 import static com.visma.fishing.messages.Messages.LOGBOOK_UPDATE_SUCCESS_MSG;
 import static com.visma.fishing.messages.Messages.format;
 
-
 @Path("/logbook")
-@Log4j2
 public class LogbookController {
 
     @Inject

@@ -29,7 +29,7 @@ public class JsonParseRoute extends RouteBuilder {
                     ObjectMapper mapper = new ObjectMapper();
                     Logbook logbook;
                     logbook = mapper.readValue(file, Logbook.class);
-                    exchange.getOut().setBody(logbook.toStringNoId());
+                    exchange.getOut().setBody(logbook.toString());
                 })
                 .setHeader(Exchange.HTTP_METHOD, constant("POST"))
                 .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))

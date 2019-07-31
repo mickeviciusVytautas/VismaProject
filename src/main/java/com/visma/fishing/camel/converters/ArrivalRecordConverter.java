@@ -19,7 +19,7 @@ public class ArrivalRecordConverter implements CsvRecordConverter<Entry<String, 
     public Entry<String, Arrival> convertRecord(CSVRecord record) {
         Entry<String, Arrival> entry = null;
         try {
-            Arrival arrival = new Arrival(record.get("ID"), record.get("port"), DateUtils.parseDate(record.get("date"), "yyyy-MM-dd"));
+            Arrival arrival = new Arrival(record.get("port"), DateUtils.parseDate(record.get("date"), "yyyy-MM-dd"));
             entry = new HashMap.SimpleEntry<>(record.get("logbookID"), arrival);
         } catch (ParseException e) {
             log.warn(e.toString());

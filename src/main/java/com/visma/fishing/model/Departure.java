@@ -11,6 +11,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
@@ -22,7 +23,6 @@ import java.util.Date;
 @NamedQueries(
         @NamedQuery(name = "departure.findAll", query = "SELECT d FROM Departure d")
 )
-@AllArgsConstructor
 public class Departure extends BaseEntity {
 
     @NotNull
@@ -31,5 +31,13 @@ public class Departure extends BaseEntity {
     @NotNull
     @Temporal(TemporalType.DATE)
     private Date date;
+
+    @Version
+    private Long version;
+
+    public Departure(String port, Date date) {
+        this.port = port;
+        this.date = date;
+    }
 
 }

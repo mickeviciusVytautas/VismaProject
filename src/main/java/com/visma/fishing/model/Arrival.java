@@ -10,6 +10,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
@@ -24,9 +25,13 @@ public class Arrival extends BaseEntity {
 
     @NotNull
     private String port;
+
     @NotNull
     @Temporal(TemporalType.DATE)
     private Date date;
+
+    @Version
+    private Long version;
 
     public Arrival(String port, Date date) {
         this.port = port;

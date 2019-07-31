@@ -26,9 +26,11 @@ public class Configuration {
 
     @NotNull
     private String mode;
+
     @Id
     @NotNull
     private String key;
+
     @NotNull
     private String value;
 

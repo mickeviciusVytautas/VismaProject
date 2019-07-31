@@ -1,5 +1,7 @@
 package com.visma.fishing.controllers;
 
+import com.visma.fishing.exception.ConcurrentChangesException;
+import com.visma.fishing.exception.EntityNotFoundException;
 import com.visma.fishing.model.EndOfFishing;
 import com.visma.fishing.services.EndOfFishingService;
 
@@ -20,10 +22,10 @@ import java.util.List;
 import static com.visma.fishing.messages.Messages.END_OF_FISHING_FIND_FAILED_MSG;
 import static com.visma.fishing.messages.Messages.END_OF_FISHING_SAVE_SUCCESS_MSG;
 import static com.visma.fishing.messages.Messages.END_OF_FISHING_UPDATE_SUCCESS_MSG;
+import static com.visma.fishing.messages.Messages.format;
 
 @Path("/endoffishing")
 public class EndOfFishingController {
-
 
     @Inject
     private EndOfFishingService endOfFishingService;
@@ -59,12 +61,18 @@ public class EndOfFishingController {
     }
 
     @PUT
-    @Path("{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateEndOfFishing(@PathParam("id") String id, EndOfFishing update) {
-        return endOfFishingService.updateEndOfFishingById(id, update)
-                .map(endOfFishing -> Response.status(Response.Status.ACCEPTED).entity(END_OF_FISHING_UPDATE_SUCCESS_MSG + endOfFishing.getId() + ".").build())
-                .orElse(Response.status(Response.Status.NOT_FOUND).entity(END_OF_FISHING_FIND_FAILED_MSG + id + ".").build());
+    public Response updateEndOfFishing(EndOfFishing endOfFishing) {
+        try {
+            endOfFishingService.updateEndOfFishing(endOfFishing);
+            return Response.status(Response.Status.ACCEPTED)
+                    .entity(format(END_OF_FISHING_UPDATE_SUCCESS_MSG, endOfFishing.getId()))
+                    .build();
+        } catch (EntityNotFoundException e) {
+            return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
+        } catch (ConcurrentChangesException e) {
+            return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
+        }
     }
 
     @GET

@@ -11,6 +11,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
@@ -28,4 +29,11 @@ public class EndOfFishing extends BaseEntity {
     @Temporal(TemporalType.DATE)
     private Date date;
 
+    @Version
+    private Long version;
+
+    public EndOfFishing(Date date) {
+        this.date = date;
+    }
 }
+

@@ -1,5 +1,7 @@
 package com.visma.fishing.controllers;
 
+import com.visma.fishing.exception.ConcurrentChangesException;
+import com.visma.fishing.exception.EntityNotFoundException;
 import com.visma.fishing.model.Catch;
 import com.visma.fishing.services.CatchService;
 
@@ -21,10 +23,10 @@ import java.util.List;
 import static com.visma.fishing.messages.Messages.CATCH_FIND_FAILED_MSG;
 import static com.visma.fishing.messages.Messages.CATCH_SAVE_SUCCESS_MSG;
 import static com.visma.fishing.messages.Messages.CATCH_UPDATE_SUCCESS_MSG;
+import static com.visma.fishing.messages.Messages.format;
 
 @Path("/catch")
 public class CatchController {
-
 
     @Inject
     private CatchService catchService;
@@ -42,8 +44,7 @@ public class CatchController {
     public Response getCatch(@PathParam("id") String id) {
         return catchService.findById(id)
                 .map(aCatch -> Response.status(Response.Status.FOUND).entity(aCatch).build())
-                .orElse(Response.status(Response.Status.NOT_FOUND).entity("Catch by id " + id + " is not found.").build());
-
+                .orElse(Response.status(Response.Status.NOT_FOUND).entity(format(CATCH_FIND_FAILED_MSG, id)).build());
     }
 
     @GET
@@ -54,12 +55,16 @@ public class CatchController {
     }
 
     @PUT
-    @Path("{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateCatchById(@PathParam("id") String id, Catch aCatch) {
-        return catchService.updateCatchById(id, aCatch)
-                .map(configuration -> Response.status(Response.Status.ACCEPTED).entity(CATCH_UPDATE_SUCCESS_MSG + id + ".").build())
-                .orElse(Response.status(Response.Status.NOT_FOUND).entity(CATCH_FIND_FAILED_MSG + id + ".").build());
+    public Response updateCatchById(Catch aCatch) {
+        try {
+            catchService.updateCatch(aCatch);
+            return Response.status(Response.Status.ACCEPTED).entity(format(CATCH_UPDATE_SUCCESS_MSG, aCatch.getId())).build();
+        } catch (EntityNotFoundException e) {
+            return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
+        } catch (ConcurrentChangesException e) {
+            return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
+        }
     }
 
     @DELETE

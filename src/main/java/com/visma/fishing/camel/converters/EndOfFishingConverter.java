@@ -18,7 +18,7 @@ public class EndOfFishingConverter implements CsvRecordConverter<Map.Entry<Strin
     public Map.Entry<String, EndOfFishing> convertRecord(CSVRecord record) {
         Map.Entry<String, EndOfFishing> entry = null;
         try {
-            EndOfFishing endOfFishing = new EndOfFishing(record.get("ID"), DateUtils.parseDate(record.get("date"), "yyyy-MM-dd"));
+            EndOfFishing endOfFishing = new EndOfFishing((DateUtils.parseDate(record.get("date"), "yyyy-MM-dd")));
             entry = new HashMap.SimpleEntry<>(record.get("logbookID"), endOfFishing);
         } catch (ParseException e) {
             log.warn(e.toString());

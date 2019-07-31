@@ -1,5 +1,7 @@
 package com.visma.fishing.services.impl;
 
+import com.visma.fishing.exception.ConcurrentChangesException;
+import com.visma.fishing.exception.EntityNotFoundException;
 import com.visma.fishing.model.Arrival;
 import com.visma.fishing.services.ArrivalService;
 import org.apache.logging.log4j.LogManager;
@@ -7,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.OptimisticLockException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
@@ -14,10 +17,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import static com.visma.fishing.messages.Messages.ARRIVAL_CONCURRENT_CHANGES_MSG;
 import static com.visma.fishing.messages.Messages.ARRIVAL_FIND_FAILED_MSG;
 import static com.visma.fishing.messages.Messages.ARRIVAL_REMOVED_SUCCESS_MSG;
 import static com.visma.fishing.messages.Messages.ARRIVAL_SAVE_SUCCESS_MSG;
 import static com.visma.fishing.messages.Messages.ARRIVAL_UPDATE_SUCCESS_MSG;
+import static com.visma.fishing.messages.Messages.format;
 import static com.visma.fishing.queries.Queries.ARRIVAL_FIND_BY_DATE;
 import static com.visma.fishing.queries.Queries.ARRIVAL_FIND_BY_PORT;
 
@@ -48,19 +53,24 @@ public class ArrivalServiceEJB implements ArrivalService {
     }
 
     @Override
-    public Optional<Arrival> updateArrivalById(String id, Arrival arrival) {
-        return Optional.ofNullable(em.find(Arrival.class, id))
-                .map(entity -> {
-                    entity.setPort(arrival.getPort());
-                    em.merge(entity);
-                    log.info(ARRIVAL_UPDATE_SUCCESS_MSG, id);
-                    return Optional.of(entity);
-                }).orElseGet(() -> {
-                    log.warn(ARRIVAL_FIND_FAILED_MSG, id);
-                    return Optional.empty();
-                });
+    public void updateArrival(Arrival arrival) {
+        arrivalExists(arrival.getId());
+        try {
+            em.merge(arrival);
+            em.flush();
+        } catch (OptimisticLockException e) {
+            log.error(ARRIVAL_CONCURRENT_CHANGES_MSG, arrival.getId());
+            throw new ConcurrentChangesException(format(ARRIVAL_CONCURRENT_CHANGES_MSG, arrival.getId()));
+        }
+        log.info(ARRIVAL_UPDATE_SUCCESS_MSG, arrival.getId());
     }
 
+    private void arrivalExists(String id) {
+        if (em.find(Arrival.class, id) == null) {
+            log.info(ARRIVAL_FIND_FAILED_MSG, id);
+            throw new EntityNotFoundException(format(ARRIVAL_FIND_FAILED_MSG, id));
+        }
+    }
     @Override
     public void remove(String id) {
         Optional.ofNullable(em.find(Arrival.class, id))

@@ -2,7 +2,6 @@ package com.visma.fishing.model;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.visma.fishing.mixins.BaseMixIn;
 import com.visma.fishing.model.base.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -18,6 +17,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -37,20 +38,25 @@ public class Logbook extends BaseEntity {
     @NotNull
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private Departure departure;
+
     @NotNull
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private EndOfFishing endOfFishing;
+
     @NotNull
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private Arrival arrival;
+
     @NotNull
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Catch> catchList = new ArrayList<>();
+
     @NotNull
     @Enumerated(EnumType.STRING)
     private CommunicationType communicationType;
 
     @Column(name = "CREATION_DATE", nullable = false)
+    @Temporal(TemporalType.DATE)
     private Date creationDate = new Date();
 
     @Version
@@ -62,17 +68,6 @@ public class Logbook extends BaseEntity {
         this.arrival = arrival;
         this.endOfFishing = endOfFishing;
         this.communicationType = CommunicationType.valueOf(connectionType);
-    }
-
-    public String toStringNoId() {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.addMixIn(BaseEntity.class, BaseMixIn.class);
-        try {
-            return mapper.writeValueAsString(this);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            return "";
-        }
     }
 
     public String toString() {
@@ -100,7 +95,6 @@ public class Logbook extends BaseEntity {
         private Arrival arrival;
         private List<Catch> catchList;
         private CommunicationType communicationType;
-        private String id;
 
         public LogbookBuilder withDeparture(Departure departure) {
             this.departure = departure;
@@ -124,11 +118,6 @@ public class Logbook extends BaseEntity {
 
         public LogbookBuilder withCommunicationType(CommunicationType communicationType) {
             this.communicationType = communicationType;
-            return this;
-        }
-
-        public LogbookBuilder withId(String id) {
-            this.id = id;
             return this;
         }
 

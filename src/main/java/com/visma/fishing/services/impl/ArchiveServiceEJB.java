@@ -38,7 +38,7 @@ public class ArchiveServiceEJB implements ArchiveService {
     /**
      * Archives logbooks that are created in a specified interval of time
      */
-    @Schedule(hour = "*", minute = "*", second = "*/10", persistent = false)
+//    @Schedule(hour = "*", minute = "*", second = "*/10", persistent = false)
     @SuppressWarnings("unchecked")
     public void archiveLogbooks() {
         List<Logbook> logbooks = em.createNativeQuery(

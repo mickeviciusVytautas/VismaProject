@@ -1,5 +1,7 @@
 package com.visma.fishing.controllers;
 
+import com.visma.fishing.exception.ConcurrentChangesException;
+import com.visma.fishing.exception.EntityNotFoundException;
 import com.visma.fishing.model.Arrival;
 import com.visma.fishing.services.ArrivalService;
 import org.apache.commons.httpclient.util.DateParseException;
@@ -26,6 +28,7 @@ import java.util.List;
 import static com.visma.fishing.messages.Messages.ARRIVAL_FIND_FAILED_MSG;
 import static com.visma.fishing.messages.Messages.ARRIVAL_SAVE_SUCCESS_MSG;
 import static com.visma.fishing.messages.Messages.ARRIVAL_UPDATE_SUCCESS_MSG;
+import static com.visma.fishing.messages.Messages.format;
 
 @Path("/arrival")
 public class ArrivalController {
@@ -59,15 +62,16 @@ public class ArrivalController {
     }
 
     @PUT
-    @Path("{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateArrivalById(@PathParam("id") String id, Arrival arrival) {
-        return arrivalService.updateArrivalById(id, arrival)
-                .map(configuration ->
-                        Response.status(Response.Status.ACCEPTED)
-                                .entity(ARRIVAL_UPDATE_SUCCESS_MSG + id + ".").build())
-                .orElse(Response.status(Response.Status.NOT_FOUND)
-                        .entity(ARRIVAL_FIND_FAILED_MSG + id + ".").build());
+    public Response updateArrivalById(Arrival arrival) {
+        try {
+            arrivalService.updateArrival(arrival);
+            return Response.status(Response.Status.ACCEPTED).entity(format(ARRIVAL_UPDATE_SUCCESS_MSG, arrival.getId())).build();
+        } catch (EntityNotFoundException e) {
+            return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
+        } catch (ConcurrentChangesException e) {
+            return Response.status(Response.Status.CONFLICT).entity(e.getMessage()).build();
+        }
     }
 
     @DELETE
