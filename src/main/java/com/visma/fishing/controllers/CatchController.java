@@ -41,7 +41,7 @@ public class CatchController {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{id}")
-    public Response getCatch(@PathParam("id") String id) {
+    public Response getCatch(@PathParam("id") Long id) {
         return catchService.findById(id)
                 .map(aCatch -> Response.status(Response.Status.FOUND).entity(aCatch).build())
                 .orElse(Response.status(Response.Status.NOT_FOUND).entity(format(CATCH_FIND_FAILED_MSG, id)).build());
@@ -69,7 +69,7 @@ public class CatchController {
 
     @DELETE
     @Path("{id}")
-    public Response deleteCatchById(@PathParam("id") String id) {
+    public Response deleteCatchById(@PathParam("id") Long id) {
         catchService.remove(id);
         return Response.ok().build();
     }

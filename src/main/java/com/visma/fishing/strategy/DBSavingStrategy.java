@@ -19,10 +19,9 @@ public class DBSavingStrategy implements SavingStrategy {
     }
 
     @Override
-    public Logbook save(Logbook logbook) {
+    public void save(Logbook logbook) {
         em.persist(logbook);
         log.info(LOGBOOK_SAVE_SUCCESS_MSG, logbook.getId());
-        return logbook;
     }
 
 }

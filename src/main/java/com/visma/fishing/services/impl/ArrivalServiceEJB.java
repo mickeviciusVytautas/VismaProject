@@ -42,7 +42,7 @@ public class ArrivalServiceEJB implements ArrivalService {
     }
 
     @Override
-    public Optional<Arrival> findById(String id) {
+    public Optional<Arrival> findById(Long id) {
         return Optional.ofNullable(em.find(Arrival.class, id));
     }
 
@@ -65,14 +65,14 @@ public class ArrivalServiceEJB implements ArrivalService {
         log.info(ARRIVAL_UPDATE_SUCCESS_MSG, arrival.getId());
     }
 
-    private void arrivalExists(String id) {
+    private void arrivalExists(Long id) {
         if (em.find(Arrival.class, id) == null) {
             log.info(ARRIVAL_FIND_FAILED_MSG, id);
             throw new EntityNotFoundException(format(ARRIVAL_FIND_FAILED_MSG, id));
         }
     }
     @Override
-    public void remove(String id) {
+    public void remove(Long id) {
         Optional.ofNullable(em.find(Arrival.class, id))
                 .ifPresent(entity -> {
                     em.remove(entity);

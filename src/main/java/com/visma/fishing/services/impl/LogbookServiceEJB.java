@@ -55,7 +55,7 @@ public class LogbookServiceEJB implements LogbookService {
     }
 
     @Override
-    public Optional<Logbook> findById(String id) {
+    public Optional<Logbook> findById(Long id) {
         return Optional.ofNullable(em.find(Logbook.class, id));
     }
 
@@ -122,6 +122,7 @@ public class LogbookServiceEJB implements LogbookService {
         savingStrategy.save(logbook);
     }
 
+
     @Override
     public void updateLogbook(Logbook logbook) {
         logbookExists(logbook.getId());
@@ -135,7 +136,7 @@ public class LogbookServiceEJB implements LogbookService {
         log.info(LOGBOOK_UPDATE_SUCCESS_MSG, logbook.getId());
     }
 
-    private void logbookExists(String id) {
+    private void logbookExists(Long id) {
         if (em.find(Logbook.class, id) == null) {
             log.info(LOGBOOK_FIND_FAILED_MSG, id);
             throw new EntityNotFoundException(format(LOGBOOK_FIND_FAILED_MSG, id));
@@ -143,7 +144,7 @@ public class LogbookServiceEJB implements LogbookService {
     }
 
     @Override
-    public void remove(String id) {
+    public void remove(Long id) {
         Optional.ofNullable(em.find(Logbook.class, id))
                 .ifPresent(entity -> {
                     em.remove(entity);

@@ -10,7 +10,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -19,14 +18,19 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.anyLong;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CatchServiceEJBTest {
 
     private static final String SPECIES_1 = "species 1";
     private static final String SPECIES_2 = "SPECIES 2";
-    private static final String ID_1 = "ID 1";
+    private static final Long ID_1 = 1L;
     private static final Long WEIGHT_1 = 10L;
     private static final Long WEIGHT_2 = 100L;
 

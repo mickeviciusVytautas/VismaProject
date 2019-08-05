@@ -52,45 +52,45 @@ public class ZipCsvParseRoute extends RouteBuilder {
                 .to("file:C:\\dev\\data");
 
         from("file:C:\\dev\\data")
-            .choice()
+                .choice()
                 .when(header(CAMEL_FILE_NAME).isEqualTo("Arrival.csv"))
-                    .unmarshal(csvArrivalFormat)
-                    .split(body())
-                    .process(exchange -> {
-                        Entry<String, Arrival> entry = exchange.getIn().getBody(Entry.class);
-                        arrivalMap.put(entry.getKey(), entry.getValue());
-                            }
-                    )
-                        .endChoice()
+                .unmarshal(csvArrivalFormat)
+                .split(body())
+                .process(exchange -> {
+                            Entry<String, Arrival> entry = exchange.getIn().getBody(Entry.class);
+                            arrivalMap.put(entry.getKey(), entry.getValue());
+                        }
+                )
+                .endChoice()
                 .when(header(CAMEL_FILE_NAME).isEqualTo("Catch.csv"))
-                    .unmarshal(csvCatchFormat)
-                    .split(body())
-                    .process(this::processCatch)
-                        .endChoice()
+                .unmarshal(csvCatchFormat)
+                .split(body())
+                .process(this::processCatch)
+                .endChoice()
                 .when(header(CAMEL_FILE_NAME).isEqualTo("Departure.csv"))
-                    .unmarshal(csvDepartureFormat)
-                    .split(body())
-                    .process(exchange -> {
-                        Entry<String, Departure> entry = exchange.getIn().getBody(Entry.class);
-                        departureMap.put(entry.getKey(), entry.getValue());
-                    })
-                        .endChoice()
+                .unmarshal(csvDepartureFormat)
+                .split(body())
+                .process(exchange -> {
+                    Entry<String, Departure> entry = exchange.getIn().getBody(Entry.class);
+                    departureMap.put(entry.getKey(), entry.getValue());
+                })
+                .endChoice()
                 .when(header(CAMEL_FILE_NAME).isEqualTo("EndOfFishing.csv"))
-                    .unmarshal(csvEndOfFishingFormat)
-                    .split(body())
-                    .process(exchange -> {
-                        Entry<String, EndOfFishing> entry = exchange.getIn().getBody(Entry.class);
-                        endOfFishingMap.put(entry.getKey(), entry.getValue());
-                    })
-                        .endChoice()
+                .unmarshal(csvEndOfFishingFormat)
+                .split(body())
+                .process(exchange -> {
+                    Entry<String, EndOfFishing> entry = exchange.getIn().getBody(Entry.class);
+                    endOfFishingMap.put(entry.getKey(), entry.getValue());
+                })
+                .endChoice()
                 .when(header(CAMEL_FILE_NAME).isEqualTo("Logbook.csv"))
-                    .unmarshal(csvLogbookFormat)
-                    .split(body())
-                    .process(this::processLogbook)
-                    .setHeader(Exchange.HTTP_METHOD, constant("POST"))
-                    .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
-                    .to(HTTP_POST_LOGBOOK)
-                        .endChoice();
+                .unmarshal(csvLogbookFormat)
+                .split(body())
+                .process(this::processLogbook)
+                .setHeader(Exchange.HTTP_METHOD, constant("POST"))
+                .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
+                .to(HTTP_POST_LOGBOOK)
+                .endChoice();
     }
 
     private void setupCsvDataFormat() {
@@ -115,6 +115,7 @@ public class ZipCsvParseRoute extends RouteBuilder {
                 .setRecordConverter(new LogbookRecordConverter());
     }
 
+    @SuppressWarnings("unchecked")
     private void processCatch(Exchange exchange) {
         Entry<String, Catch> entry = exchange.getIn().getBody(Entry.class);
         if (catchMap.containsKey(entry.getKey())) {
@@ -126,6 +127,7 @@ public class ZipCsvParseRoute extends RouteBuilder {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void processLogbook(Exchange exchange) {
         Entry<String, Logbook> entry = exchange.getIn().getBody(Entry.class);
         String id = entry.getKey();

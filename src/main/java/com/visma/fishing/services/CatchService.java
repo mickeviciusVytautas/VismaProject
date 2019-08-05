@@ -4,7 +4,7 @@ import com.visma.fishing.model.Catch;
 
 import java.util.List;
 
-public interface CatchService extends Service<Catch, String> {
+public interface CatchService extends Service<Catch, Long> {
 
     void updateCatch(Catch aCatch);
 

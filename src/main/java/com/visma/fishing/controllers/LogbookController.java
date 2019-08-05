@@ -3,8 +3,8 @@ package com.visma.fishing.controllers;
 import com.visma.fishing.exception.ConcurrentChangesException;
 import com.visma.fishing.exception.EntityNotFoundException;
 import com.visma.fishing.model.Logbook;
+import com.visma.fishing.security.filter.JWTTokenNeeded;
 import com.visma.fishing.services.LogbookService;
-import lombok.extern.log4j.Log4j2;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -19,12 +19,14 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.security.Principal;
 import java.util.List;
 
 import static com.visma.fishing.messages.Messages.LOGBOOK_FIND_FAILED_MSG;
 import static com.visma.fishing.messages.Messages.LOGBOOK_SAVE_SUCCESS_MSG;
 import static com.visma.fishing.messages.Messages.LOGBOOK_UPDATE_SUCCESS_MSG;
 import static com.visma.fishing.messages.Messages.format;
+import static com.visma.fishing.security.RoleName.User;
 
 @Path("/logbook")
 public class LogbookController {
@@ -43,7 +45,7 @@ public class LogbookController {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{id}")
-    public Response getLogbook(@PathParam("id") String id) {
+    public Response getLogbook(@PathParam("id") Long id) {
         return logbookService.findById(id)
                 .map(logbook -> Response.status(Response.Status.FOUND).entity(logbook).build())
                 .orElse(Response.status(Response.Status.NOT_FOUND).entity(LOGBOOK_FIND_FAILED_MSG).build());
@@ -51,12 +53,19 @@ public class LogbookController {
 
     @GET
     @Path("/all")
+    @JWTTokenNeeded(Permission = User)
     @Produces(MediaType.APPLICATION_JSON)
     public Response getLogbooks() {
         List<Logbook> logbookList = logbookService.findAll();
         return Response.status(Response.Status.OK).entity(logbookList).build();
     }
 
+    @Path(value = "/principal/name")
+    @GET
+    public String getName(Principal principal) {
+        System.out.println(principal.getName());
+        return "";
+    }
     @PUT
     @Path("")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -102,7 +111,7 @@ public class LogbookController {
 
     @DELETE
     @Path("{id}")
-    public void deleteLogbookById(@PathParam("id") String id) {
+    public void deleteLogbookById(@PathParam("id") Long id) {
         logbookService.remove(id);
     }
 

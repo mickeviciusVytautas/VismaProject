@@ -41,7 +41,7 @@ public class DepartureServiceEJB implements DepartureService {
     }
 
     @Override
-    public Optional<Departure> findById(String id) {
+    public Optional<Departure> findById(Long id) {
         return Optional.ofNullable(em.find(Departure.class, id));
     }
 
@@ -64,7 +64,7 @@ public class DepartureServiceEJB implements DepartureService {
         log.info(DEPARTURE_SAVE_SUCCESS_MSG, departure.getId());
     }
 
-    private void departureExists(String id) {
+    private void departureExists(Long id) {
         if (em.find(Departure.class, id) == null) {
             log.info(DEPARTURE_FIND_FAILED_MSG, id);
             throw new EntityNotFoundException(format(DEPARTURE_FIND_FAILED_MSG, id));
@@ -72,7 +72,7 @@ public class DepartureServiceEJB implements DepartureService {
     }
 
     @Override
-    public void remove(String id) {
+    public void remove(Long id) {
         Optional.ofNullable(em.find(Departure.class, id))
                 .ifPresent(entity -> {
                     em.remove(entity);

@@ -41,7 +41,7 @@ public class DepartureController {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{id}")
-    public Response getDeparture(@PathParam("id") String id) {
+    public Response getDeparture(@PathParam("id") Long id) {
         return departureService.findById(id).map(
                 departure -> Response.status(Response.Status.FOUND).entity(departure).build())
                 .orElse(Response.status(Response.Status.NOT_FOUND).entity(DEPARTURE_FIND_FAILED_MSG + id + ".").build());
@@ -69,7 +69,7 @@ public class DepartureController {
 
     @DELETE
     @Path("{id}")
-    public void deleteDepartureById(@PathParam("id") String id) {
+    public void deleteDepartureById(@PathParam("id") Long id) {
         departureService.remove(id);
     }
 

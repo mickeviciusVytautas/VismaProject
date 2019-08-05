@@ -41,7 +41,7 @@ public class EndOfFishingController {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{id}")
-    public Response getEndOfFishing(@PathParam("id") String id) {
+    public Response getEndOfFishing(@PathParam("id") Long id) {
         return endOfFishingService.findById(id)
                 .map(endOfFishing -> Response.status(Response.Status.FOUND).entity(endOfFishing).build())
                 .orElse(Response.status(Response.Status.NOT_FOUND).entity(END_OF_FISHING_FIND_FAILED_MSG + id + ".").build());
@@ -56,7 +56,7 @@ public class EndOfFishingController {
 
     @DELETE
     @Path("{id}")
-    public void deleteEndOfFishing(@PathParam("id") String id) {
+    public void deleteEndOfFishing(@PathParam("id") Long id) {
         endOfFishingService.remove(id);
     }
 

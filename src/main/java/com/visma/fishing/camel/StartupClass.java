@@ -2,6 +2,10 @@ package com.visma.fishing.camel;
 
 import com.visma.fishing.camel.routes.JsonParseRoute;
 import com.visma.fishing.camel.routes.ZipCsvParseRoute;
+import com.visma.fishing.model.Role;
+import com.visma.fishing.model.User;
+import com.visma.fishing.security.RoleName;
+import com.visma.fishing.security.service.AuthenticationService;
 import io.xlate.inject.Property;
 import io.xlate.inject.PropertyResource;
 import org.apache.camel.CamelContext;
@@ -14,6 +18,7 @@ import javax.annotation.PreDestroy;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
+import java.util.ArrayList;
 
 @Singleton
 @Startup
@@ -31,8 +36,14 @@ public class StartupClass {
     @Inject
     private ZipCsvParseRoute zipCsvParseRoute;
 
+    @Inject
+    private AuthenticationService authenticationService;
+
     @PostConstruct
     public void init() {
+
+        createUser();
+
         log.info("Create CamelContext and register Camel Router.");
         try {
             context.addRoutes(zipCsvParseRoute);
@@ -41,6 +52,18 @@ public class StartupClass {
         } catch (Exception e) {
             log.error("Failed to create CamelContext and register Camel Router.", e);
         }
+    }
+
+    private void createUser() {
+        authenticationService.createRole(new Role(RoleName.NoRights));
+        Role role = authenticationService.findRoleByName(RoleName.NoRights);
+        authenticationService.createUser(
+                new User("admin", "password",
+                        new ArrayList() {{
+                            add(role);
+                        }}
+                )
+        );
     }
 
     @PreDestroy

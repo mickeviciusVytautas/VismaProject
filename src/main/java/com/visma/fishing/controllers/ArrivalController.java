@@ -48,7 +48,7 @@ public class ArrivalController {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{id}")
-    public Response getArrival(@PathParam("id") String id) {
+    public Response getArrival(@PathParam("id") Long id) {
         return arrivalService.findById(id)
                 .map(arrival -> Response.status(Response.Status.FOUND).entity(arrival).build())
                 .orElse(Response.status(Response.Status.NOT_FOUND).entity(ARRIVAL_FIND_FAILED_MSG + id + ".").build());
@@ -76,7 +76,7 @@ public class ArrivalController {
 
     @DELETE
     @Path("{id}")
-    public void deleteArrivalById(@PathParam("id") String id) {
+    public void deleteArrivalById(@PathParam("id") Long id) {
         arrivalService.remove(id);
     }
 

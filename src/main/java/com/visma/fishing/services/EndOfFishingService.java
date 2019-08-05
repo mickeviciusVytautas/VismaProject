@@ -4,7 +4,7 @@ import com.visma.fishing.model.EndOfFishing;
 
 import java.util.List;
 
-public interface EndOfFishingService extends Service<EndOfFishing, String> {
+public interface EndOfFishingService extends Service<EndOfFishing, Long> {
 
     void updateEndOfFishing(EndOfFishing endOfFishing);
 

@@ -5,7 +5,7 @@ import com.visma.fishing.model.Arrival;
 import java.util.Date;
 import java.util.List;
 
-public interface ArrivalService extends Service<Arrival, String> {
+public interface ArrivalService extends Service<Arrival, Long> {
 
     void updateArrival(Arrival arrival);
 

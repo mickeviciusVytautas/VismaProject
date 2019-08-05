@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.transaction.Transactional;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -23,7 +24,8 @@ public class FileSavingStrategy implements SavingStrategy {
     }
 
     @Override
-    public Logbook save(Logbook logbook) {
+    @Transactional(value = Transactional.TxType.REQUIRES_NEW)
+    public void save(Logbook logbook) {
         boolean isSaved = true;
         String filePath = path + System.currentTimeMillis() + ".json";
         try (FileWriter fileWriter = new FileWriter(filePath)) {
@@ -37,6 +39,5 @@ public class FileSavingStrategy implements SavingStrategy {
             log.info(LOGBOOK_SAVE_FILESYSTEM_SUCCESS_MSG);
 
         }
-        return logbook;
     }
 }

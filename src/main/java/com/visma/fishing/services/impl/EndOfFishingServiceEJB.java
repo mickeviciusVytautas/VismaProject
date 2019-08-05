@@ -20,9 +20,6 @@ import static com.visma.fishing.messages.Messages.END_OF_FISHING_CONCURRENT_CHAN
 import static com.visma.fishing.messages.Messages.END_OF_FISHING_FIND_FAILED_MSG;
 import static com.visma.fishing.messages.Messages.END_OF_FISHING_REMOVED_SUCCESS_MSG;
 import static com.visma.fishing.messages.Messages.END_OF_FISHING_SAVE_SUCCESS_MSG;
-import static com.visma.fishing.messages.Messages.LOGBOOK_CONCURRENT_CHANGES_MSG;
-import static com.visma.fishing.messages.Messages.LOGBOOK_FIND_FAILED_MSG;
-import static com.visma.fishing.messages.Messages.LOGBOOK_UPDATE_SUCCESS_MSG;
 import static com.visma.fishing.messages.Messages.format;
 import static com.visma.fishing.queries.Queries.END_OF_FISHING_FIND_BY_DATE;
 
@@ -43,7 +40,7 @@ public class EndOfFishingServiceEJB implements EndOfFishingService {
     }
 
     @Override
-    public Optional<EndOfFishing> findById(String id) {
+    public Optional<EndOfFishing> findById(Long id) {
         return Optional.ofNullable(em.find(EndOfFishing.class, id));
     }
 
@@ -66,7 +63,7 @@ public class EndOfFishingServiceEJB implements EndOfFishingService {
         log.info(END_OF_FISHING_SAVE_SUCCESS_MSG, endOfFishing.getId());
     }
 
-    private void endOfFishingExists(String id) {
+    private void endOfFishingExists(Long id) {
         if (em.find(EndOfFishing.class, id) == null) {
             log.info(END_OF_FISHING_FIND_FAILED_MSG, id);
             throw new EntityNotFoundException(format(END_OF_FISHING_FIND_FAILED_MSG, id));
@@ -74,7 +71,7 @@ public class EndOfFishingServiceEJB implements EndOfFishingService {
     }
 
     @Override
-    public void remove(String id) {
+    public void remove(Long id) {
         Optional.ofNullable(em.find(EndOfFishing.class, id))
                 .ifPresent(entity -> {
                     em.remove(entity);

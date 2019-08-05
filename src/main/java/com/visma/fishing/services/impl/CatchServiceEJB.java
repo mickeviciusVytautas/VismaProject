@@ -21,7 +21,6 @@ import static com.visma.fishing.messages.Messages.CATCH_FIND_FAILED_MSG;
 import static com.visma.fishing.messages.Messages.CATCH_REMOVED_SUCCESS_MSG;
 import static com.visma.fishing.messages.Messages.CATCH_SAVE_SUCCESS_MSG;
 import static com.visma.fishing.messages.Messages.CATCH_UPDATE_SUCCESS_MSG;
-import static com.visma.fishing.messages.Messages.DEPARTURE_FIND_FAILED_MSG;
 import static com.visma.fishing.messages.Messages.format;
 import static com.visma.fishing.queries.Queries.CATCH_FIND_BY_SPECIES;
 import static com.visma.fishing.queries.Queries.CATCH_FIND_WITH_BIGGER_WEIGHT;
@@ -43,7 +42,7 @@ public class CatchServiceEJB implements CatchService {
     }
 
     @Override
-    public Optional<Catch> findById(String id) {
+    public Optional<Catch> findById(Long id) {
         return Optional.ofNullable(em.find(Catch.class, id));
     }
 
@@ -66,14 +65,14 @@ public class CatchServiceEJB implements CatchService {
         log.info(CATCH_UPDATE_SUCCESS_MSG, aCatch.getId());
     }
 
-    private void catchExists(String id) {
+    private void catchExists(Long id) {
         if (em.find(Catch.class, id) == null) {
             log.info(CATCH_FIND_FAILED_MSG, id);
             throw new EntityNotFoundException(format(CATCH_FIND_FAILED_MSG, id));
         }
     }
     @Override
-    public void remove(String id) {
+    public void remove(Long id) {
         Optional.ofNullable(em.find(Catch.class, id))
                 .ifPresent(entity -> {
                     em.remove(entity);

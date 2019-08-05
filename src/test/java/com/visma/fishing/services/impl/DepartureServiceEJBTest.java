@@ -11,23 +11,27 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DepartureServiceEJBTest {
 
     private static final String PORT_1 = "port 1";
     private static final String PORT_2 = "port 2";
-    private static final String ID_1 = "ID 1";
+    private static final Long ID_1 = 1L;
     private static final Date DATE_1 = new Date(2016 - 5 - 1);
     private static final Date DATE_2 = new Date(2016 - 6 - 1);
 

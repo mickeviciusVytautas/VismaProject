@@ -1,4 +1,4 @@
-package com.visma.fishing.services.impl;
+package com.visma.fishing.services.impl.integration;
 
 import com.visma.fishing.exception.ConcurrentChangesException;
 import com.visma.fishing.exception.EntityNotFoundException;
@@ -12,6 +12,7 @@ import com.visma.fishing.model.Logbook;
 import com.visma.fishing.model.base.BaseEntity;
 import com.visma.fishing.services.LogbookService;
 import com.visma.fishing.services.Service;
+import com.visma.fishing.services.impl.LogbookServiceEJB;
 import com.visma.fishing.strategy.SavingStrategy;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Logger;

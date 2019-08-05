@@ -44,8 +44,8 @@ public class Messages {
 
     }
 
-    public static String format(String msg, Object... objs) {
-        return MessageFormatter.arrayFormat(msg, objs).getMessage();
+    public static String format(String msg, Long objs) {
+        return MessageFormatter.arrayFormat(msg, new String[]{String.valueOf(objs)}).getMessage();
     }
 
 }
