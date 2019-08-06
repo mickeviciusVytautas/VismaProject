@@ -1,4 +1,4 @@
-package com.visma.fishing.security;
+package com.visma.fishing.security.utils;
 
 public class Credentials {
 

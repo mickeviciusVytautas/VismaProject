@@ -1,7 +1,7 @@
-package com.visma.fishing.model;
+package com.visma.fishing.model.security;
 
 import com.visma.fishing.model.base.BaseEntity;
-import com.visma.fishing.security.RoleName;
+import com.visma.fishing.security.utils.RoleName;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;

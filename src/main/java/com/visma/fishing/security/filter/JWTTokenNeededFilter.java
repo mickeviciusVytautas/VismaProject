@@ -1,6 +1,6 @@
 package com.visma.fishing.security.filter;
 
-import com.visma.fishing.security.RoleName;
+import com.visma.fishing.security.utils.RoleName;
 import com.visma.fishing.security.key.KeyGenerator;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -53,20 +53,17 @@ public class JWTTokenNeededFilter implements ContainerRequestFilter {
 
     private void validateRole(Key key, String token, ContainerRequestContext requestContext) {
         Claims claims = Jwts.parser().setSigningKey(key).parseClaimsJws(token).getBody();
-
         Method method = resourceInfo.getResourceMethod();
         if (method != null) {
-
             JWTTokenNeeded jwtContext = method.getAnnotation(JWTTokenNeeded.class);
             RoleName permission = jwtContext.Permission();
-
-            if (permission != RoleName.NoRights) {
+            if (permission != RoleName.NO_RIGHTS) {
                 // Get Role from jwt
                 String roles = claims.get("Role", String.class);
                 RoleName roleUser = RoleName.valueOf(roles);
 
                 // if role allowed != role jwt -> UNAUTHORIZED
-                if (!permission.equals(roleUser)) {
+                if (permission.ordinal() > roleUser.ordinal()) {
                     requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).entity("Invalid role.").build());
                 }
 

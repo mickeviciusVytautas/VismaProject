@@ -26,9 +26,10 @@ import static com.visma.fishing.messages.Messages.LOGBOOK_FIND_FAILED_MSG;
 import static com.visma.fishing.messages.Messages.LOGBOOK_SAVE_SUCCESS_MSG;
 import static com.visma.fishing.messages.Messages.LOGBOOK_UPDATE_SUCCESS_MSG;
 import static com.visma.fishing.messages.Messages.format;
-import static com.visma.fishing.security.RoleName.User;
+import static com.visma.fishing.security.utils.RoleName.USER;
 
 @Path("/logbook")
+
 public class LogbookController {
 
     @Inject
@@ -53,8 +54,8 @@ public class LogbookController {
 
     @GET
     @Path("/all")
-    @JWTTokenNeeded(Permission = User)
     @Produces(MediaType.APPLICATION_JSON)
+    @JWTTokenNeeded(Permission = USER)
     public Response getLogbooks() {
         List<Logbook> logbookList = logbookService.findAll();
         return Response.status(Response.Status.OK).entity(logbookList).build();

@@ -1,7 +1,8 @@
-package com.visma.fishing.model;
+package com.visma.fishing.model.security;
 
 import com.visma.fishing.model.base.BaseEntity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
@@ -16,6 +17,7 @@ public class User extends BaseEntity {
     @NotNull
     private String username;
     @NotNull
+    @Column(length = 256, nullable = false)
     private String password;
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Role> roles;

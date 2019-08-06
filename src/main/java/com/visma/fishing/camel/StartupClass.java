@@ -2,9 +2,9 @@ package com.visma.fishing.camel;
 
 import com.visma.fishing.camel.routes.JsonParseRoute;
 import com.visma.fishing.camel.routes.ZipCsvParseRoute;
-import com.visma.fishing.model.Role;
-import com.visma.fishing.model.User;
-import com.visma.fishing.security.RoleName;
+import com.visma.fishing.model.security.Role;
+import com.visma.fishing.model.security.User;
+import com.visma.fishing.security.utils.RoleName;
 import com.visma.fishing.security.service.AuthenticationService;
 import io.xlate.inject.Property;
 import io.xlate.inject.PropertyResource;
@@ -55,8 +55,8 @@ public class StartupClass {
     }
 
     private void createUser() {
-        authenticationService.createRole(new Role(RoleName.NoRights));
-        Role role = authenticationService.findRoleByName(RoleName.NoRights);
+        authenticationService.createRole(new Role(RoleName.MANAGER));
+        Role role = authenticationService.findRoleByName(RoleName.MANAGER);
         authenticationService.createUser(
                 new User("admin", "password",
                         new ArrayList() {{

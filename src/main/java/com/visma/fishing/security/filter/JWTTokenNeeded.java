@@ -1,7 +1,7 @@
 package com.visma.fishing.security.filter;
 
 
-import com.visma.fishing.security.RoleName;
+import com.visma.fishing.security.utils.RoleName;
 
 import javax.ws.rs.NameBinding;
 import java.lang.annotation.Retention;
@@ -15,5 +15,5 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 @Target({TYPE, METHOD})
 public @interface JWTTokenNeeded {
-    RoleName Permission() default RoleName.NoRights;
+    RoleName Permission() default RoleName.NO_RIGHTS;
 }
