@@ -42,7 +42,7 @@ public class StartupClass {
     @PostConstruct
     public void init() {
 
-        createUser();
+//        createUser();
 
         log.info("Create CamelContext and register Camel Router.");
         try {

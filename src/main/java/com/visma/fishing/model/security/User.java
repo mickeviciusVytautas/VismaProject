@@ -15,6 +15,7 @@ import java.util.List;
 public class User extends BaseEntity {
 
     @NotNull
+    @Column(unique = true)
     private String username;
     @NotNull
     @Column(length = 256, nullable = false)

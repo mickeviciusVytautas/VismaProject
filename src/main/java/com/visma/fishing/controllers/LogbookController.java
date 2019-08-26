@@ -29,7 +29,7 @@ import static com.visma.fishing.messages.Messages.format;
 import static com.visma.fishing.security.utils.RoleName.USER;
 
 @Path("/logbook")
-
+@JWTTokenNeeded(Permission = USER)
 public class LogbookController {
 
     @Inject
@@ -55,18 +55,11 @@ public class LogbookController {
     @GET
     @Path("/all")
     @Produces(MediaType.APPLICATION_JSON)
-    @JWTTokenNeeded(Permission = USER)
     public Response getLogbooks() {
         List<Logbook> logbookList = logbookService.findAll();
         return Response.status(Response.Status.OK).entity(logbookList).build();
     }
 
-    @Path(value = "/principal/name")
-    @GET
-    public String getName(Principal principal) {
-        System.out.println(principal.getName());
-        return "";
-    }
     @PUT
     @Path("")
     @Consumes(MediaType.APPLICATION_JSON)

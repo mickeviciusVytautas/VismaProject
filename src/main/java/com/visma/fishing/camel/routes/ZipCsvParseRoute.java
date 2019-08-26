@@ -45,6 +45,7 @@ public class ZipCsvParseRoute extends RouteBuilder {
         ZipFileDataFormat zipFile = new ZipFileDataFormat();
         zipFile.setUsingIterator(true);
 
+
         from("file:C:\\dev?noop=true")
                 .unmarshal(zipFile)
                 .split(body())
@@ -89,7 +90,7 @@ public class ZipCsvParseRoute extends RouteBuilder {
                 .process(this::processLogbook)
                 .setHeader(Exchange.HTTP_METHOD, constant("POST"))
                 .setHeader(Exchange.CONTENT_TYPE, constant("application/json"))
-                .to(HTTP_POST_LOGBOOK)
+//                .to(HTTP_POST_LOGBOOK)
                 .endChoice();
     }
 

@@ -2,7 +2,7 @@ package com.visma.fishing.security.controller;
 
 import com.visma.fishing.model.security.User;
 import com.visma.fishing.security.service.AuthenticationService;
-import com.visma.fishing.security.utils.Credentials;
+import com.visma.fishing.security.utils.UserCredentials;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -33,7 +33,7 @@ public class AuthenticationController {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response authenticateUser(Credentials credentials) {
+    public Response authenticateUser(UserCredentials credentials) {
         try {
             String token = authenticationService.authenticateUser(credentials, uriInfo);
             return Response.ok().entity(token).build();

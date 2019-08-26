@@ -1,6 +1,6 @@
 package com.visma.fishing.security.utils;
 
-public class Credentials {
+public class UserCredentials {
 
     private String username;
     private String password;

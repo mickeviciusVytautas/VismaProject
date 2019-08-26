@@ -3,7 +3,7 @@ package com.visma.fishing.security.service;
 import com.visma.fishing.model.security.Role;
 import com.visma.fishing.model.security.User;
 import com.visma.fishing.security.key.KeyGenerator;
-import com.visma.fishing.security.utils.Credentials;
+import com.visma.fishing.security.utils.UserCredentials;
 import com.visma.fishing.security.utils.PasswordEncoder;
 import com.visma.fishing.security.utils.RoleName;
 import io.jsonwebtoken.Jwts;
@@ -14,7 +14,6 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 
 import java.security.Key;
@@ -29,8 +28,6 @@ public class AuthenticationService {
 
     @PersistenceContext
     private EntityManager em;
-
-
 
     @Inject
     private KeyGenerator keyGenerator;
@@ -50,7 +47,7 @@ public class AuthenticationService {
                 .getSingleResult();
     }
 
-    public String authenticateUser(Credentials credentials, UriInfo uriInfo) throws IllegalAccessException {
+    public String authenticateUser(UserCredentials credentials, UriInfo uriInfo) throws IllegalAccessException {
         User user = authenticate(credentials);
         return issueToken(user, uriInfo);
     }
@@ -67,7 +64,7 @@ public class AuthenticationService {
                 .compact();
     }
 
-    private User authenticate(Credentials credentials) throws IllegalAccessException {
+    private User authenticate(UserCredentials credentials) throws IllegalAccessException {
         String username = credentials.getUsername();
         String password = PasswordEncoder.encode(credentials.getPassword());
         try {

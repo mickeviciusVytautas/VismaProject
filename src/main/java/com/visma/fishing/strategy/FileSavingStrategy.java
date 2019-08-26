@@ -15,7 +15,7 @@ import static com.visma.fishing.messages.Messages.LOGBOOK_SAVE_FILESYSTEM_SUCCES
 public class FileSavingStrategy implements SavingStrategy {
     private final Logger log = LogManager.getLogger(LogbookServiceEJB.class);
 
-    private String path = "C:\\dev\\database\\";
+    private String path;
 
     public FileSavingStrategy(String path) {
         if (StringUtils.isNotBlank(path)) {
